@@ -729,6 +729,49 @@ body.quiz-active .video-section {
     text-decoration: none;
 }
 
+/* Contact Form Styles */
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.contact-form select,
+.contact-form input[type="text"],
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    transition: border-color 0.3s;
+}
+
+.contact-form select:focus,
+.contact-form input[type="text"]:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #0064A4;
+    box-shadow: 0 0 0 3px rgba(0, 100, 164, 0.1);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form select {
+    cursor: pointer;
+    background-color: white;
+}
+
 /* Responsive Design */
 
 /* Tablet and below */

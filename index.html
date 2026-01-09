@@ -163,7 +163,8 @@
             <div id="registerForm" class="auth-form" style="display: none;">
                 <h3>Register</h3>
                 <form onsubmit="handleRegister(event)">
-                    <input type="text" id="registerName" placeholder="Name" required>
+                    <input type="text" id="registerFirstName" placeholder="First Name" required>
+                    <input type="text" id="registerLastName" placeholder="Last Name" required>
                     <input type="email" id="registerEmail" placeholder="Email" required>
                     <input type="password" id="registerPassword" placeholder="Create New Password" minlength="6" required>
                     <button type="submit" class="btn-primary">Register</button>
@@ -200,7 +201,49 @@
             <p style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; color: #0064A4;">
                 <i class="fas fa-info-circle"></i> Complete quizzes with 80%+ score to earn module certificates. Check the sidebar for available certificates!
             </p>
-            <button class="btn-primary" onclick="closeCongrats()">Continue Learning</button>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-primary" onclick="showContactForm()">
+                    <i class="fas fa-envelope"></i> Ask Questions
+                </button>
+                <button class="btn-secondary" onclick="closeCongrats()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact/Question Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="close-btn" onclick="closeContactForm()">×</button>
+            <h2><i class="fas fa-envelope"></i> Ask a Question</h2>
+            <p style="color: #666; margin-bottom: 20px;">Have questions about the course? Select a professor and send your question.</p>
+            
+            <form onsubmit="handleContactSubmit(event)" class="contact-form">
+                <div class="form-group">
+                    <label for="professorSelect">Select Professor:</label>
+                    <select id="professorSelect" required>
+                        <option value="">-- Choose a Professor --</option>
+                    </select>
+                </div>
+                
+                <div id="professorInfo" style="display: none; margin: 15px 0;"></div>
+                
+                <div class="form-group">
+                    <label for="questionSubject">Subject:</label>
+                    <input type="text" id="questionSubject" placeholder="Brief subject of your question" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="questionMessage">Your Question:</label>
+                    <textarea id="questionMessage" rows="6" placeholder="Type your question here..." required></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closeContactForm()">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Send Question
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -209,5 +252,6 @@
     <script src="js/quiz.js"></script>
     <script src="js/progress.js"></script>
     <script src="js/certificate.js"></script>
+    <script src="js/contact.js"></script>
 </body>
 </html>
