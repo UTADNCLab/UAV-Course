@@ -218,7 +218,11 @@ function loadModulesList() {
         modulesList.appendChild(sectionContainer);
     });
     
-    // Add certificate module if it exists
+    // Certificate section will be added at the end after updateProgress()
+
+    updateProgress();
+    
+    // Add certificate module at the END if it exists
     if (hasCertificateModule) {
         const certificateIndex = modulesCount - 1;
         const certificateModule = courseData.modules[certificateIndex];
@@ -227,8 +231,14 @@ function loadModulesList() {
         const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
         const hasEligibleScore = Object.values(quizScores).some(score => score.percentage >= 80);
         
+        // Count how many modules are eligible
+        const eligibleCount = Object.values(quizScores).filter(score => score.percentage >= 80).length;
+        
         const certificateItem = document.createElement('div');
         certificateItem.className = 'module-section';
+        certificateItem.style.marginTop = '20px';
+        certificateItem.style.borderTop = '2px solid #F47E3C';
+        certificateItem.style.paddingTop = '15px';
         
         if (!hasEligibleScore) {
             certificateItem.style.opacity = '0.5';
@@ -237,15 +247,24 @@ function loadModulesList() {
         
         const certificateHeader = document.createElement('div');
         certificateHeader.className = 'module-section-header';
+        certificateHeader.style.background = 'linear-gradient(135deg, #0064A4 0%, #003366 100%)';
+        certificateHeader.style.color = 'white';
+        certificateHeader.style.padding = '15px';
+        certificateHeader.style.borderRadius = '8px';
+        
         if (currentModuleIndex === certificateIndex) {
             certificateHeader.classList.add('active');
         }
         
+        const statusText = hasEligibleScore 
+            ? `${eligibleCount} Module${eligibleCount > 1 ? 's' : ''} Completed` 
+            : 'Complete quizzes to unlock';
+        
         certificateHeader.innerHTML = `
             <i class="fas fa-certificate toggle-icon" style="color: #F47E3C;"></i>
             <span class="section-title">${certificateModule.title}</span>
-            <div class="section-meta">
-                <span>${certificateModule.duration}</span>
+            <div class="section-meta" style="color: white;">
+                <span>${statusText}</span>
                 ${hasEligibleScore ? '<i class="fas fa-unlock" style="color: #10b981;"></i>' : '<i class="fas fa-lock" style="color: #999;"></i>'}
             </div>
         `;
@@ -261,8 +280,6 @@ function loadModulesList() {
         certificateItem.appendChild(certificateHeader);
         modulesList.appendChild(certificateItem);
     }
-
-    updateProgress();
 }
 
 // ===================================

@@ -348,11 +348,11 @@ function generateCumulativeCertificate() {
                         
                         <h2 class="recipient-name">${userName}</h2>
                         
-                        <p class="certificate-text">has successfully completed</p>
+                        <p class="certificate-text">has successfully completed the following modules in</p>
                         
                         <h3 class="course-name">UAV Design: Foundations of Cyber-Physical Systems</h3>
                         
-                        <p class="certificate-text" style="margin: 20px 0 15px 0;">Completed Modules:</p>
+                        <p class="certificate-text" style="margin: 20px 0 15px 0; font-weight: 600;">Modules Completed with Excellence:</p>
                         
                         <div style="max-width: 600px; margin: 0 auto; text-align: left;">
                             ${modulesListHTML}
