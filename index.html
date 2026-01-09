@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAV Course - Open Learning</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Simple Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <a href="landing.html" class="logo">
+                <i class="fas fa-graduation-cap"></i> Open Course Learning
+            </a>
+            <div class="nav-right">
+                <span class="progress-badge">Progress: <strong id="progressPercent">0%</strong></span>
+                <button id="authButton" class="auth-btn" onclick="showAuthModal()">
+                    <i class="fas fa-user"></i> Login
+                </button>
+                <div id="userInfo" class="user-info" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Video Player Section (Left) -->
+        <div class="video-section">
+            <div class="video-player">
+                <iframe id="videoPlayer" 
+                        src="" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" 
+                        allowfullscreen
+                        webkitallowfullscreen
+                        mozallowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- Video Info -->
+            <div class="video-info">
+                <h1 id="videoTitle">Module 1: UAV Fundamentals</h1>
+                <div class="video-meta">
+                    <span><i class="fas fa-clock"></i> <span id="videoDuration">45 min</span></span>
+                    <span><i class="fas fa-eye"></i> Module <span id="moduleNumber">1</span> of 4</span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="description-box">
+                <h3>About This Module</h3>
+                <p id="videoDescription">Learn the fundamentals of UAV design and operation.</p>
+            </div>
+
+            <!-- Action Buttons Below Video -->
+            <div class="action-buttons">
+                <button class="btn-secondary" id="prevBtn" onclick="previousModule()">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn-primary" id="completeBtn" onclick="markComplete()">
+                    <i class="fas fa-check"></i> Mark Complete
+                </button>
+                <button class="btn-primary" id="nextBtn" onclick="nextModule()">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Course Outline - Sidebar (Right Side - Always Visible) -->
+        <div class="course-outline" id="courseOutline">
+            <div class="sidebar-header">
+                <h3>Course Content</h3>
+            </div>
+            <div class="progress-info">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p class="progress-text"><span id="completedCount">0</span> / 8 completed</p>
+            </div>
+
+            <!-- Certificate Section -->
+            <div class="certificate-section" id="certificateSection" style="display: none;">
+                <div class="certificate-card">
+                    <i class="fas fa-certificate"></i>
+                    <h4>Certificates Available</h4>
+                    <p id="certificateModules">Complete quizzes with 80%+ to earn certificates</p>
+                    <button class="btn-certificate" onclick="downloadCertificate()">
+                        <i class="fas fa-download"></i> Download Certificates
+                    </button>
+                </div>
+            </div>
+
+            <div class="modules-list" id="modulesList">
+                <!-- Modules will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Section (Hidden by default) -->
+    <div id="quizSection" class="quiz-section" style="display: none;">
+        <div class="quiz-container">
+            <h2 id="quizTitle">Quiz</h2>
+            
+            <div id="quizIntro" class="quiz-intro">
+                <p>Test your knowledge!</p>
+                <button class="btn-primary" onclick="startQuiz()">Start Quiz</button>
+                
+                <!-- Navigation Buttons - ONLY on quiz intro (to skip quiz if needed) -->
+                <div class="quiz-navigation" style="margin-top: 20px;">
+                    <button class="btn-secondary" onclick="previousModule()">
+                        <i class="fas fa-arrow-left"></i> Previous Module
+                    </button>
+                    <button class="btn-primary" onclick="nextModule()">
+                        Next Module <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="quizContent" class="quiz-content" style="display: none;">
+                <div class="question-card">
+                    <p class="question-number" id="questionNumber">Question 1 of 8</p>
+                    <h3 id="questionText"></h3>
+                    <div id="optionsContainer" class="options"></div>
+                    <button class="btn-primary" id="nextQuestionBtn" onclick="nextQuestion()" style="display: none;">
+                        Next Question
+                    </button>
+                </div>
+            </div>
+
+            <div id="quizResults" class="quiz-results" style="display: none;">
+                <h3 id="resultsTitle">Quiz Complete!</h3>
+                <p class="score">Score: <span id="scoreDisplay">0/8</span></p>
+                <p class="score-message" id="scoreMessage"></p>
+                <div class="quiz-actions">
+                    <button class="btn-secondary" onclick="retryQuiz()">
+                        <i class="fas fa-redo"></i> Retry Quiz
+                    </button>
+                    <button class="btn-primary" onclick="completeQuiz()">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAuthModal()">×</button>
+            
+            <div id="loginForm" class="auth-form">
+                <h3>Login</h3>
+                <form onsubmit="handleLogin(event)">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+                <p><a href="#" id="showForgotPassword">Forgot Password?</a></p>
+            </div>
+
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <h3>Register</h3>
+                <form onsubmit="handleRegister(event)">
+                    <input type="text" id="registerName" placeholder="Name" required>
+                    <input type="email" id="registerEmail" placeholder="Email" required>
+                    <input type="password" id="registerPassword" placeholder="Create New Password" minlength="6" required>
+                    <button type="submit" class="btn-primary">Register</button>
+                </form>
+                <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+            </div>
+
+            <div id="forgotPasswordForm" class="auth-form" style="display: none;">
+                <h3>Reset Password</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Enter your email address and we'll send you instructions to reset your password.</p>
+                <form onsubmit="handleForgotPassword(event)">
+                    <input type="email" id="forgotEmail" placeholder="Email" required>
+                    <button type="submit" class="btn-primary">Send Reset Link</button>
+                </form>
+                <p><a href="#" id="backToLogin">Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to the Course!</h2>
+            <div id="welcomeText"></div>
+            <button class="btn-primary" onclick="closeWelcomeModal()">Start Learning</button>
+        </div>
+    </div>
+
+    <!-- Congratulations Modal -->
+    <div id="congratsModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-trophy"></i> Congratulations!</h2>
+            <div id="congratsText"></div>
+            <button class="btn-primary" onclick="downloadCertificate()">Download Certificate</button>
+            <button class="btn-secondary" onclick="closeCongrats()">Close</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/course.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/progress.js"></script>
+</body>
+</html>
