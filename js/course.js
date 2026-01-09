@@ -106,9 +106,15 @@ function loadModulesList() {
     const modulesList = document.getElementById('modulesList');
     modulesList.innerHTML = '';
 
-    // Group modules by section (every 2 items = 1 video + 1 quiz)
+    // Group modules by section (every 2 items = 1 video + 1 quiz), except last item if it's certificate
     const sections = [];
-    for (let i = 0; i < courseData.modules.length; i += 2) {
+    const modulesCount = courseData.modules.length;
+    const lastModule = courseData.modules[modulesCount - 1];
+    const hasCertificateModule = lastModule && lastModule.type === 'certificate';
+    
+    const regularModulesCount = hasCertificateModule ? modulesCount - 1 : modulesCount;
+    
+    for (let i = 0; i < regularModulesCount; i += 2) {
         sections.push({
             video: courseData.modules[i],
             quiz: courseData.modules[i + 1],
@@ -211,6 +217,50 @@ function loadModulesList() {
         
         modulesList.appendChild(sectionContainer);
     });
+    
+    // Add certificate module if it exists
+    if (hasCertificateModule) {
+        const certificateIndex = modulesCount - 1;
+        const certificateModule = courseData.modules[certificateIndex];
+        
+        // Check if user has at least one quiz with 80%+
+        const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+        const hasEligibleScore = Object.values(quizScores).some(score => score.percentage >= 80);
+        
+        const certificateItem = document.createElement('div');
+        certificateItem.className = 'module-section';
+        
+        if (!hasEligibleScore) {
+            certificateItem.style.opacity = '0.5';
+            certificateItem.style.pointerEvents = 'none';
+        }
+        
+        const certificateHeader = document.createElement('div');
+        certificateHeader.className = 'module-section-header';
+        if (currentModuleIndex === certificateIndex) {
+            certificateHeader.classList.add('active');
+        }
+        
+        certificateHeader.innerHTML = `
+            <i class="fas fa-certificate toggle-icon" style="color: #F47E3C;"></i>
+            <span class="section-title">${certificateModule.title}</span>
+            <div class="section-meta">
+                <span>${certificateModule.duration}</span>
+                ${hasEligibleScore ? '<i class="fas fa-unlock" style="color: #10b981;"></i>' : '<i class="fas fa-lock" style="color: #999;"></i>'}
+            </div>
+        `;
+        
+        certificateHeader.onclick = () => {
+            if (hasEligibleScore) {
+                loadModule(certificateIndex);
+            } else {
+                showNotification('Complete at least one quiz with 80%+ to unlock certificate', 'info');
+            }
+        };
+        
+        certificateItem.appendChild(certificateHeader);
+        modulesList.appendChild(certificateItem);
+    }
 
     updateProgress();
 }
@@ -249,6 +299,14 @@ function loadModule(index) {
             quizSection.classList.add('active');
             quizSection.style.display = 'block';
         }
+    } else if (module.type === 'certificate') {
+        // Generate and show certificate
+        if (typeof generateCumulativeCertificate === 'function') {
+            generateCumulativeCertificate();
+        } else {
+            showNotification('Certificate system loading...', 'info');
+        }
+        return; // Don't update modules list or scroll
     }
 
     // Update modules list

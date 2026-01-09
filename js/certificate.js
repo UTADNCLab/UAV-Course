@@ -3,9 +3,9 @@
 // ===================================
 
 // ===================================
-// GENERATE CERTIFICATE
+// GENERATE CUMULATIVE CERTIFICATE
 // ===================================
-function generateCertificate(moduleName) {
+function generateCumulativeCertificate() {
     const user = window.authFunctions ? window.authFunctions.currentUser() : null;
     if (!user) {
         showNotification('Please login to generate certificate', 'error');
@@ -19,11 +19,48 @@ function generateCertificate(moduleName) {
         day: 'numeric' 
     });
 
-    // Get quiz score for this module
+    // Get all quiz scores
     const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-    const moduleIndex = getModuleIndex(moduleName);
-    const quizId = `quiz-${moduleIndex}`;
-    const score = quizScores[quizId] ? quizScores[quizId].percentage : 0;
+    
+    // Get eligible modules (80%+)
+    const moduleNames = [
+        'Open Airborne Computing Platforms',
+        'UAV Communications and Networking',
+        'Networked Control and Co-Design',
+        'Airborne Computing and AI'
+    ];
+    
+    const completedModules = [];
+    const quizIds = ['quiz-1', 'quiz-2', 'quiz-3', 'quiz-4'];
+    
+    quizIds.forEach((quizId, i) => {
+        if (quizScores[quizId] && quizScores[quizId].percentage >= 80) {
+            completedModules.push({
+                name: moduleNames[i],
+                score: quizScores[quizId].percentage
+            });
+        }
+    });
+    
+    if (completedModules.length === 0) {
+        showNotification('Complete quizzes with 80%+ to earn certificate', 'info');
+        return;
+    }
+    
+    // Calculate average score
+    const averageScore = Math.round(
+        completedModules.reduce((sum, m) => sum + m.score, 0) / completedModules.length
+    );
+    
+    // Create modules list HTML
+    const modulesListHTML = completedModules.map(m => `
+        <div style="padding: 12px; background: #f0f9ff; border-left: 4px solid #0064A4; margin: 8px 0; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 16px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+                <span style="font-size: 14px; color: #0064A4; font-weight: bold;">${m.score}%</span>
+            </div>
+        </div>
+    `).join('');
 
     // Create certificate HTML
     const certificateHTML = `
@@ -32,7 +69,8 @@ function generateCertificate(moduleName) {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Certificate of Completion - ${moduleName}</title>
+            <title>Certificate of Completion - UAV Course</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
                 @page {
                     size: A4 landscape;
@@ -310,16 +348,18 @@ function generateCertificate(moduleName) {
                         
                         <h2 class="recipient-name">${userName}</h2>
                         
-                        <p class="certificate-text">has successfully completed the module</p>
+                        <p class="certificate-text">has successfully completed</p>
                         
-                        <h3 class="course-name">${moduleName}</h3>
+                        <h3 class="course-name">UAV Design: Foundations of Cyber-Physical Systems</h3>
                         
-                        <p class="certificate-text">in the course</p>
+                        <p class="certificate-text" style="margin: 20px 0 15px 0;">Completed Modules:</p>
                         
-                        <p class="achievement-text"><strong>UAV Design: Foundations of Cyber-Physical Systems</strong></p>
+                        <div style="max-width: 600px; margin: 0 auto; text-align: left;">
+                            ${modulesListHTML}
+                        </div>
                         
-                        <div class="score-badge">
-                            <i class="fas fa-trophy"></i> Score: ${score}%
+                        <div class="score-badge" style="margin-top: 25px;">
+                            <i class="fas fa-trophy"></i> Average Score: ${averageScore}% | ${completedModules.length} of 4 Modules
                         </div>
                         
                         <p class="achievement-text">
@@ -351,82 +391,23 @@ function generateCertificate(moduleName) {
                     </div>
                     
                     <div class="certificate-id">
-                        Certificate ID: UAV-${Date.now()}-${moduleIndex}
+                        Certificate ID: UAV-${Date.now()}-CUMULATIVE
                     </div>
                 </div>
             </div>
-            
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         </body>
         </html>
     `;
 
     // Open certificate in new window
     const certificateWindow = window.open('', '_blank');
-    certificateWindow.document.write(certificateHTML);
-    certificateWindow.document.close();
-}
-
-// ===================================
-// GENERATE ALL CERTIFICATES
-// ===================================
-function generateAllCertificates() {
-    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
-    if (!user) {
-        showNotification('Please login to generate certificates', 'error');
-        return;
+    if (certificateWindow) {
+        certificateWindow.document.write(certificateHTML);
+        certificateWindow.document.close();
+        showNotification('Certificate opened in new window!', 'success');
+    } else {
+        showNotification('Please allow popups to view certificate', 'error');
     }
-
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-    const eligibleModules = [];
-    
-    const moduleNames = [
-        'Open Airborne Computing Platforms',
-        'UAV Communications and Networking',
-        'Networked Control and Co-Design',
-        'Airborne Computing and AI'
-    ];
-    
-    const quizIds = ['quiz-1', 'quiz-2', 'quiz-3', 'quiz-4'];
-    quizIds.forEach((quizId, i) => {
-        if (quizScores[quizId] && quizScores[quizId].percentage >= 80) {
-            eligibleModules.push(moduleNames[i]);
-        }
-    });
-    
-    if (eligibleModules.length === 0) {
-        showNotification('Complete quizzes with 80%+ to earn certificates', 'info');
-        return;
-    }
-    
-    // Generate certificate for each eligible module
-    eligibleModules.forEach((moduleName, index) => {
-        setTimeout(() => {
-            generateCertificate(moduleName);
-        }, index * 500); // Stagger the window opening
-    });
-    
-    showNotification(`Opening ${eligibleModules.length} certificate(s)...`, 'success');
-}
-
-// ===================================
-// HELPER FUNCTIONS
-// ===================================
-function getModuleIndex(moduleName) {
-    const moduleNames = [
-        'Open Airborne Computing Platforms',
-        'UAV Communications and Networking',
-        'Networked Control and Co-Design',
-        'Airborne Computing and AI'
-    ];
-    return moduleNames.indexOf(moduleName) + 1;
-}
-
-// ===================================
-// UPDATE DOWNLOAD CERTIFICATE FUNCTION
-// ===================================
-function downloadCertificate() {
-    generateAllCertificates();
 }
 
 console.log('%c🎓 Certificate System Loaded', 'color: #F47E3C; font-weight: bold;');

@@ -405,6 +405,13 @@
           "explanation": "SLAM (Simultaneous Localization and Mapping) enables UAVs to build maps of unknown environments while tracking their own location within those maps."
         }
       ]
+    },
+    {
+      "id": 9,
+      "title": "Module 5: Course Certificate",
+      "description": "Download your course completion certificate! This certificate will list all modules you've completed with a quiz score of 80% or higher. Complete more quizzes to add more modules to your certificate.",
+      "type": "certificate",
+      "duration": "5 min"
     }
   ]
 }
