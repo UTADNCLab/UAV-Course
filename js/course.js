@@ -453,8 +453,34 @@ function loadProgress() {
     const saved = localStorage.getItem('uav_course_progress');
     if (saved) {
         completedModules = new Set(JSON.parse(saved));
-        updateProgress();
     }
+    
+    // Sync with quiz scores - mark modules complete if quiz was passed
+    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+    const quizIdMap = {
+        'quiz-1': 1,  // Module index 1
+        'quiz-2': 3,  // Module index 3
+        'quiz-3': 5,  // Module index 5
+        'quiz-4': 7   // Module index 7
+    };
+    
+    Object.keys(quizScores).forEach(quizId => {
+        const score = quizScores[quizId];
+        if (score.percentage >= 70) {
+            const quizIndex = quizIdMap[quizId];
+            if (quizIndex !== undefined) {
+                // Mark quiz as complete
+                completedModules.add(quizIndex);
+                // Also mark the video module before it as complete
+                if (quizIndex > 0) {
+                    completedModules.add(quizIndex - 1);
+                }
+            }
+        }
+    });
+    
+    // Save the synced progress
+    saveProgress();
 }
 
 // ===================================
