@@ -242,7 +242,7 @@ function saveQuizScore(quizIndex, percentage, score, total) {
 // COMPLETE QUIZ
 // ===================================
 function completeQuiz() {
-    // NEVER auto-navigate to certificate - ALWAYS go back to course landing page
+    // NEVER auto-navigate to certificate - ALWAYS go back to course page (index.html)
     
     // Check if ALL modules are completed (excluding certificate module)
     const totalModules = courseData.modules.filter(m => m.type !== 'certificate').length;
@@ -251,21 +251,35 @@ function completeQuiz() {
     const allModulesCompleted = completedCount === totalModules;
     
     if (allModulesCompleted) {
-        // All modules completed - show notification and redirect to landing page
-        showNotification('🎉 Congratulations! All modules completed! Redirecting to course page...', 'success');
+        // All modules completed - show notification and go to first module
+        showNotification('🎉 Congratulations! All modules completed! Click the certificate module to view your certificate.', 'success');
         
-        // Redirect to landing page after 2 seconds
+        // Go to first module (never certificate)
         setTimeout(() => {
-            window.location.href = 'landing.html';
-        }, 2000);
-    } else {
-        // Not all modules completed - redirect to landing page
-        showNotification('Great job! Check the course page to continue with remaining modules.', 'success');
-        
-        // Redirect to landing page after 1.5 seconds
-        setTimeout(() => {
-            window.location.href = 'landing.html';
+            loadModule(0);
         }, 1500);
+    } else {
+        // Not all modules completed - find next NON-certificate module
+        let nextIndex = currentModuleIndex + 1;
+        
+        // Skip certificate modules
+        while (nextIndex < courseData.modules.length && courseData.modules[nextIndex].type === 'certificate') {
+            nextIndex++;
+        }
+        
+        // If we've gone past all modules, wrap back to first module
+        if (nextIndex >= courseData.modules.length) {
+            nextIndex = 0;
+        }
+        
+        // Load the next non-certificate module
+        setTimeout(() => {
+            loadModule(nextIndex);
+        }, 1000);
+        
+        // Show remaining modules message
+        const remaining = totalModules - completedCount;
+        showNotification(`Great job! ${remaining} module${remaining > 1 ? 's' : ''} remaining.`, 'success');
     }
 }
 
