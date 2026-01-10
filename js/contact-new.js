@@ -63,6 +63,13 @@ function showContactForm(professorKey = null) {
 }
 
 // ===================================
+// SHOW CONTACT FORM WITH PROFESSOR PRE-SELECTED
+// ===================================
+function showContactFormWithProfessor(professorKey) {
+    showContactForm(professorKey);
+}
+
+// ===================================
 // CLOSE CONTACT FORM
 // ===================================
 function closeContactForm() {

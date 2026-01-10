@@ -267,18 +267,11 @@
         <div class="modal-content" style="max-width: 600px;">
             <button class="close-btn" onclick="closeContactForm()">×</button>
             <h2><i class="fas fa-envelope"></i> Ask a Question</h2>
-            <p style="color: #666; margin-bottom: 20px;">Have questions about the course? Select a professor and send your question.</p>
+            <p style="color: #666; margin-bottom: 20px;">Have questions about the course? Send your question directly to the professor.</p>
+            
+            <div id="professorInfo" style="margin: 15px 0;"></div>
             
             <form onsubmit="handleContactSubmit(event)" class="contact-form">
-                <div class="form-group">
-                    <label for="professorSelect">Select Professor:</label>
-                    <select id="professorSelect" required>
-                        <option value="">-- Choose a Professor --</option>
-                    </select>
-                </div>
-                
-                <div id="professorInfo" style="display: none; margin: 15px 0;"></div>
-                
                 <div class="form-group">
                     <label for="questionSubject">Subject:</label>
                     <input type="text" id="questionSubject" placeholder="Brief subject of your question" required>
@@ -304,6 +297,6 @@
     <script src="js/course.js"></script>
     <script src="js/quiz.js"></script>
     <script src="js/certificate.js"></script>
-    <script src="js/contact.js"></script>
+    <script src="js/contact-new.js"></script>
 </body>
 </html>
