@@ -78,15 +78,6 @@
             <div class="course-features">
                 <p class="features-note">This course includes 4 comprehensive video modules, 28 interactive quiz questions across 4 quizzes, and certificates of completion.</p>
             </div>
-            
-            <!-- Certificates Section -->
-            <div class="certificates-section" id="certificatesSection" style="display: none;">
-                <h3><i class="fas fa-certificate"></i> Your Certificates</h3>
-                <p class="cert-description">Complete each module's quiz with 80% or higher to earn a certificate for that module!</p>
-                <div class="certificates-grid" id="certificatesGrid">
-                    <!-- Certificates will be loaded here by JavaScript -->
-                </div>
-            </div>
         </div>
     </section>
 
@@ -194,85 +185,6 @@
 
     <script src="js/auth.js"></script>
     <script>
-        // Load certificates on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCertificates();
-        });
-
-        // Load and display certificates
-        function loadCertificates() {
-            const currentUser = localStorage.getItem('uav_course_current_user');
-            if (!currentUser) return;
-
-            const user = JSON.parse(currentUser);
-            const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-            
-            // Check if user has any qualifying scores (80%+)
-            const qualifyingModules = [];
-            if (quizScores['quiz-1'] && quizScores['quiz-1'].percentage >= 80) {
-                qualifyingModules.push({ id: 1, title: 'Module 1: Open Airborne Computing Platforms', score: quizScores['quiz-1'].percentage });
-            }
-            if (quizScores['quiz-2'] && quizScores['quiz-2'].percentage >= 80) {
-                qualifyingModules.push({ id: 2, title: 'Module 2: UAV Communications and Networking', score: quizScores['quiz-2'].percentage });
-            }
-            if (quizScores['quiz-3'] && quizScores['quiz-3'].percentage >= 80) {
-                qualifyingModules.push({ id: 3, title: 'Module 3: Networked Control and Co-Design', score: quizScores['quiz-3'].percentage });
-            }
-            if (quizScores['quiz-4'] && quizScores['quiz-4'].percentage >= 80) {
-                qualifyingModules.push({ id: 4, title: 'Module 4: Airborne Computing and AI', score: quizScores['quiz-4'].percentage });
-            }
-
-            if (qualifyingModules.length === 0) return;
-
-            // Show certificates section
-            document.getElementById('certificatesSection').style.display = 'block';
-            
-            // Generate certificate cards
-            const certificatesGrid = document.getElementById('certificatesGrid');
-            certificatesGrid.innerHTML = qualifyingModules.map(module => `
-                <div class="certificate-card">
-                    <div class="cert-icon">
-                        <i class="fas fa-certificate"></i>
-                    </div>
-                    <h4>${module.title}</h4>
-                    <p class="cert-score">Score: ${module.score}%</p>
-                    <p class="cert-status"><i class="fas fa-check-circle"></i> Completed</p>
-                    <button class="download-cert-btn" onclick="downloadCertificate(${module.id}, '${module.title}', ${module.score})">
-                        <i class="fas fa-download"></i> Download Certificate
-                    </button>
-                </div>
-            `).join('');
-
-            // Check if all 4 modules completed
-            if (qualifyingModules.length === 4) {
-                certificatesGrid.innerHTML += `
-                    <div class="certificate-card full-course-cert">
-                        <div class="cert-icon gold">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h4>Complete Course Certificate</h4>
-                        <p class="cert-score">All 4 Modules Completed!</p>
-                        <p class="cert-status"><i class="fas fa-star"></i> Full Course Completion</p>
-                        <button class="download-cert-btn gold" onclick="downloadFullCourseCertificate()">
-                            <i class="fas fa-download"></i> Download Full Certificate
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        // Download individual module certificate
-        function downloadCertificate(moduleId, moduleTitle, score) {
-            const user = JSON.parse(localStorage.getItem('uav_course_current_user'));
-            alert(`Certificate for ${user.name}\n\n${moduleTitle}\nScore: ${score}%\n\nCertificate download feature coming soon!`);
-        }
-
-        // Download full course certificate
-        function downloadFullCourseCertificate() {
-            const user = JSON.parse(localStorage.getItem('uav_course_current_user'));
-            alert(`Full Course Certificate for ${user.name}\n\nUAV Design: Foundations of Cyber-Physical Systems\nAll 4 Modules Completed\n\nCertificate download feature coming soon!`);
-        }
-
         // Contact form
         document.getElementById('contactForm').addEventListener('submit', (e) => {
             e.preventDefault();
