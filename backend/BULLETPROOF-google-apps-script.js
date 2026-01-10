@@ -217,13 +217,13 @@ function handleProgress(progressData) {
       name.lastName || '',
       email,
       `${completionPercent}%`,
-      modulesCompleted,
-      totalModules,
+      Number(modulesCompleted), // Ensure it's a number, not a string
+      Number(totalModules),
       formatPct(q1),
       formatPct(q2),
       formatPct(q3),
       formatPct(q4),
-      quizAttempts,
+      Number(quizAttempts),
       eligibleYesNo
     ];
 
