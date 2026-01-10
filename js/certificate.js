@@ -54,11 +54,9 @@ function generateCumulativeCertificate() {
     
     // Create modules list HTML
     const modulesListHTML = completedModules.map(m => `
-        <div style="padding: 12px; background: #f0f9ff; border-left: 4px solid #0064A4; margin: 8px 0; border-radius: 4px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 16px; color: #333; font-weight: 500;">✓ ${m.name}</span>
-                <span style="font-size: 14px; color: #0064A4; font-weight: bold;">${m.score}%</span>
-            </div>
+        <div style="padding: 15px 20px; background: #f0f9ff; border-left: 4px solid #0064A4; margin: 10px 0; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; min-height: 50px;">
+            <span style="font-size: 18px; color: #333; font-weight: 500; flex: 1; padding-right: 20px;">✓ ${m.name}</span>
+            <span style="font-size: 18px; color: #0064A4; font-weight: bold; white-space: nowrap; min-width: 60px; text-align: right;">${m.score}%</span>
         </div>
     `).join('');
 
@@ -354,7 +352,7 @@ function generateCumulativeCertificate() {
                         
                         <p class="certificate-text" style="margin: 20px 0 15px 0; font-weight: 600;">Modules Completed with Excellence:</p>
                         
-                        <div style="max-width: 600px; margin: 0 auto; text-align: left;">
+                        <div style="max-width: 700px; margin: 0 auto; text-align: left; padding: 0 20px;">
                             ${modulesListHTML}
                         </div>
                         
