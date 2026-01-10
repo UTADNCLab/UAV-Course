@@ -159,7 +159,7 @@ function handleLogin(userData) {
 // ===================================
 // PROGRESS UPDATE (Progress sheet)
 // Columns:
-// First Name | Last Name | Email | Completion% | Modules Completed | Total Modules |
+// First Name | Last Name | Email | Completion% |
 // Quiz1 | Quiz2 | Quiz3 | Quiz4 | Quiz Attempts | Certificates Eligible (YES/NO)
 // ===================================
 function handleProgress(progressData) {
@@ -168,8 +168,6 @@ function handleProgress(progressData) {
     'Last Name',
     'Email',
     'Completion %',
-    'Modules Completed',
-    'Total Modules',
     'Quiz 1 Score',
     'Quiz 2 Score',
     'Quiz 3 Score',
@@ -197,12 +195,7 @@ function handleProgress(progressData) {
   // Attempts: prefer frontend totalQuizAttempts if you send it; else count saved quiz entries
   const quizAttempts = progressData.totalQuizAttempts ?? Object.keys(quizScores).length ?? 0;
 
-  // IMPORTANT: your frontend sends completedModules, not modulesCompleted
-  const modulesCompleted =
-    progressData.completedModules ?? progressData.modulesCompleted ?? 0;
-
   const completionPercent = progressData.completionPercentage ?? 0;
-  const totalModules = progressData.totalModules ?? 8;
 
   // Use lock to prevent concurrent duplicates
   const lock = LockService.getScriptLock();
@@ -217,14 +210,12 @@ function handleProgress(progressData) {
       name.lastName || '',
       email,
       `${completionPercent}%`,           // Column D: "75%" (with %)
-      Number(modulesCompleted),           // Column E: 6 (just number, NO %)
-      Number(totalModules),               // Column F: 8 (just number, NO %)
-      formatPct(q1),                      // Column G: "100%" or "Not taken"
-      formatPct(q2),                      // Column H: "100%" or "Not taken"
-      formatPct(q3),                      // Column I: "Not taken"
-      formatPct(q4),                      // Column J: "Not taken"
-      Number(quizAttempts),               // Column K: 2 (just number)
-      eligibleYesNo                       // Column L: "YES" or "NO"
+      formatPct(q1),                      // Column E: "100%" or "Not taken"
+      formatPct(q2),                      // Column F: "100%" or "Not taken"
+      formatPct(q3),                      // Column G: "Not taken"
+      formatPct(q4),                      // Column H: "Not taken"
+      Number(quizAttempts),               // Column I: 2 (just number)
+      eligibleYesNo                       // Column J: "YES" or "NO"
     ];
 
     if (row > 0) {
@@ -251,13 +242,13 @@ function resetSheetsClean() {
   users.clear();
   users.getRange(1,1,1,3).setValues([['First Name','Last Name','Email']]);
 
-  // Progress
+  // Progress (REMOVED: Modules Completed, Total Modules)
   let progress = ss.getSheetByName('Progress');
   if (!progress) progress = ss.insertSheet('Progress');
   progress.clear();
-  progress.getRange(1,1,1,12).setValues([[
+  progress.getRange(1,1,1,10).setValues([[
     'First Name','Last Name','Email',
-    'Completion %','Modules Completed','Total Modules',
+    'Completion %',
     'Quiz 1 Score','Quiz 2 Score','Quiz 3 Score','Quiz 4 Score',
     'Quiz Attempts','Certificates Eligible'
   ]]);

@@ -32,6 +32,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ===================================
+// OPEN NEXT NON-CERTIFICATE MODULE
+// ===================================
+function openNextNonCertificateModule(fromIndex) {
+    for (let i = fromIndex + 1; i < courseData.modules.length; i++) {
+        if (!isCertificateModule(courseData.modules[i])) {
+            loadModule(i);
+            return true;
+        }
+    }
+    // No next learning module exists - go to first module
+    loadModule(getDefaultModuleIndex());
+    return false;
+}
+
+// ===================================
 // CHECK USER AUTHENTICATION
 // ===================================
 function checkUserAuthentication() {
@@ -106,8 +121,8 @@ function initializePage() {
     // Load modules list
     loadModulesList();
     
-    // Load first module
-    loadModule(0);
+    // Load first NON-CERTIFICATE module
+    loadModule(getDefaultModuleIndex());
 }
 
 // ===================================
@@ -323,13 +338,46 @@ function loadModulesList() {
 }
 
 // ===================================
+// HELPER: Check if module is certificate
+// ===================================
+function isCertificateModule(mod) {
+    return mod && mod.type === 'certificate';
+}
+
+// ===================================
+// GET DEFAULT MODULE INDEX (never certificate)
+// ===================================
+function getDefaultModuleIndex() {
+    // Open first non-certificate module
+    for (let i = 0; i < courseData.modules.length; i++) {
+        if (!isCertificateModule(courseData.modules[i])) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+// ===================================
 // LOAD MODULE
 // ===================================
 function loadModule(index) {
     if (!courseData || index < 0 || index >= courseData.modules.length) return;
 
-    currentModuleIndex = index;
     const module = courseData.modules[index];
+    
+    // CRITICAL: Certificate can ONLY be opened via explicit click
+    if (isCertificateModule(module)) {
+        // Generate and show certificate
+        if (typeof generateCumulativeCertificate === 'function') {
+            generateCumulativeCertificate();
+        } else {
+            showNotification('Certificate system loading...', 'info');
+        }
+        return; // Don't update currentModuleIndex or UI
+    }
+
+    // Safe to load non-certificate module
+    currentModuleIndex = index;
 
     // Hide both sections first
     const videoSection = document.querySelector('.video-section');
@@ -356,14 +404,6 @@ function loadModule(index) {
             quizSection.classList.add('active');
             quizSection.style.display = 'block';
         }
-    } else if (module.type === 'certificate') {
-        // Generate and show certificate
-        if (typeof generateCumulativeCertificate === 'function') {
-            generateCumulativeCertificate();
-        } else {
-            showNotification('Certificate system loading...', 'info');
-        }
-        return; // Don't update modules list or scroll
     }
 
     // Update modules list
@@ -451,17 +491,12 @@ function markComplete() {
     
     showNotification('Module completed! 🎉', 'success');
     
-    // Auto-advance to next module
-    if (currentModuleIndex < courseData.modules.length - 1) {
-        setTimeout(() => nextModule(), 1000);
-    } else {
-        // Course completed
-        setTimeout(() => showCongratsModal(), 1000);
-    }
+    // Auto-advance to next non-certificate module
+    setTimeout(() => nextModule(), 1000);
 }
 
 // ===================================
-// NAVIGATION
+// NAVIGATION (Skip certificate modules)
 // ===================================
 function previousModule() {
     if (currentModuleIndex > 0) {
@@ -470,9 +505,15 @@ function previousModule() {
 }
 
 function nextModule() {
-    if (currentModuleIndex < courseData.modules.length - 1) {
-        loadModule(currentModuleIndex + 1);
+    // Find next non-certificate module
+    for (let i = currentModuleIndex + 1; i < courseData.modules.length; i++) {
+        if (!isCertificateModule(courseData.modules[i])) {
+            loadModule(i);
+            return;
+        }
     }
+    // No next learning module - stay on current
+    showNotification('You have completed all modules! Click the certificate to view.', 'success');
 }
 
 // ===================================
