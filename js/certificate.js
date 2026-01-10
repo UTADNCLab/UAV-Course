@@ -54,9 +54,9 @@ function generateCumulativeCertificate() {
     
     // Create modules list HTML - simple and compact
     const modulesListHTML = completedModules.map(m => `
-        <div style="padding: 10px 15px; background: #f0f9ff; border-left: 3px solid #0064A4; margin: 8px 0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 15px; color: #333; font-weight: 500;">✓ ${m.name}</span>
-            <span style="font-size: 15px; color: #0064A4; font-weight: bold; margin-left: 20px;">${m.score}%</span>
+        <div style="padding: 8px 12px; background: #f0f9ff; border-left: 3px solid #0064A4; margin: 5px 0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 14px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+            <span style="font-size: 14px; color: #0064A4; font-weight: bold; margin-left: 15px;">${m.score}%</span>
         </div>
     `).join('');
 
@@ -132,28 +132,28 @@ function generateCumulativeCertificate() {
                 }
                 
                 .certificate-header {
-                    margin-top: 20px;
+                    margin-top: 10px;
                 }
                 
                 .certificate-logo {
-                    font-size: 48px;
+                    font-size: 40px;
                     color: #0064A4;
-                    margin-bottom: 10px;
+                    margin-bottom: 5px;
                 }
                 
                 .certificate-title {
-                    font-size: 48px;
+                    font-size: 42px;
                     color: #0064A4;
                     font-weight: bold;
-                    margin-bottom: 10px;
+                    margin-bottom: 5px;
                     text-transform: uppercase;
-                    letter-spacing: 4px;
+                    letter-spacing: 3px;
                 }
                 
                 .certificate-subtitle {
-                    font-size: 24px;
+                    font-size: 20px;
                     color: #666;
-                    margin-bottom: 30px;
+                    margin-bottom: 15px;
                 }
                 
                 .certificate-body {
@@ -165,46 +165,46 @@ function generateCumulativeCertificate() {
                 }
                 
                 .certificate-text {
-                    font-size: 20px;
+                    font-size: 16px;
                     color: #333;
-                    margin-bottom: 20px;
-                    line-height: 1.6;
+                    margin-bottom: 12px;
+                    line-height: 1.5;
                 }
                 
                 .recipient-name {
-                    font-size: 56px;
+                    font-size: 48px;
                     color: #0064A4;
                     font-weight: bold;
-                    margin: 30px 0;
+                    margin: 15px 0;
                     font-family: 'Brush Script MT', cursive;
                     text-decoration: underline;
                     text-decoration-color: #F47E3C;
-                    text-underline-offset: 10px;
+                    text-underline-offset: 8px;
                 }
                 
                 .course-name {
-                    font-size: 28px;
+                    font-size: 24px;
                     color: #F47E3C;
                     font-weight: bold;
-                    margin: 20px 0;
-                    line-height: 1.4;
+                    margin: 12px 0;
+                    line-height: 1.3;
                 }
                 
                 .achievement-text {
-                    font-size: 18px;
+                    font-size: 15px;
                     color: #666;
-                    margin: 15px 0;
+                    margin: 10px 0;
                 }
                 
                 .score-badge {
                     display: inline-block;
                     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                     color: white;
-                    padding: 10px 30px;
+                    padding: 8px 24px;
                     border-radius: 50px;
-                    font-size: 20px;
+                    font-size: 16px;
                     font-weight: bold;
-                    margin: 20px 0;
+                    margin: 12px 0;
                     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
                 }
                 
@@ -350,13 +350,13 @@ function generateCumulativeCertificate() {
                         
                         <h3 class="course-name">UAV Design: Foundations of Cyber-Physical Systems</h3>
                         
-                        <p class="certificate-text" style="margin: 20px 0 15px 0; font-weight: 600;">Modules Completed with Excellence:</p>
+                        <p class="certificate-text" style="margin: 12px 0 8px 0; font-weight: 600;">Modules Completed with Excellence:</p>
                         
                         <div style="max-width: 600px; margin: 0 auto; text-align: left;">
                             ${modulesListHTML}
                         </div>
                         
-                        <div class="score-badge" style="margin-top: 25px;">
+                        <div class="score-badge" style="margin-top: 15px;">
                             <i class="fas fa-trophy"></i> Average Score: ${averageScore}% | ${completedModules.length} of 4 Modules
                         </div>
                         
