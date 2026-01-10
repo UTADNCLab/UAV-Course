@@ -72,14 +72,17 @@ function closeAuthModal() {
 async function handleRegister(event) {
     event.preventDefault();
     
-    const name = document.getElementById('registerName').value.trim();
+    const firstName = document.getElementById('registerFirstName').value.trim();
+    const lastName = document.getElementById('registerLastName').value.trim();
     const email = document.getElementById('registerEmail').value.trim();
     const password = document.getElementById('registerPassword').value;
     
-    if (!name || !email || !password) {
+    if (!firstName || !lastName || !email || !password) {
         showNotification('Please fill in all fields', 'error');
         return;
     }
+    
+    const name = `${firstName} ${lastName}`;
     
     if (!isValidEmail(email)) {
         showNotification('Please enter a valid email address', 'error');
@@ -110,6 +113,8 @@ async function handleRegister(event) {
         
         // Create user object
         const user = {
+            firstName: firstName,
+            lastName: lastName,
             name: name,
             email: email,
             password: hashPassword(password),
