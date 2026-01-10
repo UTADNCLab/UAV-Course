@@ -654,7 +654,15 @@ body.quiz-active .video-section {
     color: #F47E3C;
     font-size: 0.9rem;
     font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.instructor-info .instructor-university {
+    color: #0064A4;
+    font-size: 0.85rem;
+    font-weight: 500;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .instructor-info .instructor-bio {

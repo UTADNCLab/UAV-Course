@@ -264,6 +264,14 @@ body {
     text-align: center;
     color: #F47E3C;
     font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.instructor-university {
+    text-align: center;
+    color: #0064A4;
+    font-size: 0.9rem;
+    font-weight: 500;
     margin-bottom: 15px;
 }
 
