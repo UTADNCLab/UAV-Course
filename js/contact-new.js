@@ -6,27 +6,27 @@
 const PROFESSOR_CONTACTS = {
     'dr-yan-wan': {
         name: 'Dr. Yan Wan',
-        title: 'Professor of Electrical Engineering',
+        title: 'Distinguished University Professor, Electrical Engineering',
         email: 'yan.wan@uta.edu',
-        expertise: 'Cyber-physical systems, networked control systems, multi-agent coordination'
+        expertise: 'Cyber-physical systems, networked control systems, and multi-agent coordination. Research focuses on intelligent UAV systems for disaster response and infrastructure monitoring.'
     },
     'dr-junfei-xie': {
         name: 'Dr. Junfei Xie',
-        title: 'Professor of Computer Science',
+        title: 'Professor, Department of Electrical and Computer Engineering',
         email: 'jxie4@sdsu.edu',
-        expertise: 'Machine learning, computer vision, AI applications'
+        expertise: 'Unmanned aerial systems, artificial intelligence, and large-scale dynamical networks. Research focuses on cyber-physical systems, networked airborne computing, and stochastic modeling and control for autonomous and intelligent UAV systems. Work also addresses airborne networks, air traffic flow management, and complex information systems for scalable autonomous operations.'
     },
     'dr-kejie-lu': {
         name: 'Dr. Kejie Lu',
-        title: 'Professor of Electrical Engineering',
+        title: 'IEEE Senior Member, Professor, Department of Computer Science and Engineering',
         email: 'kejie.lu@upr.edu',
-        expertise: 'Wireless communications, network optimization, 5G/6G technologies'
+        expertise: 'Computer and communication networks, including network architecture, protocol design, performance evaluation, and security. Research also covers wireless communications, space-time coding, and channel capacity analysis, contributing to robust and high-performance communication frameworks for UAV and distributed networked systems.'
     },
     'dr-shengli-fu': {
         name: 'Dr. Shengli Fu',
-        title: 'Professor of Computer Engineering',
+        title: 'Professor, Department of Electrical Engineering',
         email: 'Shengli.Fu@unt.edu',
-        expertise: 'Embedded systems, IoT architectures, distributed computing'
+        expertise: 'Modulation, coding, and information theory, with strong emphasis on wireless communications and sensor networks. Work spans cooperative communications, distributed networks, and pattern recognition, including audio and visual signal processing, supporting reliable and efficient communication systems for modern networked and airborne platforms.'
     }
 };
 
