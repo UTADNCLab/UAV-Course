@@ -21,8 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // User is logged in, proceed with loading course
     await loadCourseData();
-    initializePage();
+    
+    // CRITICAL: Load progress BEFORE rendering UI
     loadProgress();
+    
+    // THEN render the UI with loaded progress
+    initializePage();
+    
     showWelcomeModal();
 });
 
