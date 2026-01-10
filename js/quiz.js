@@ -202,7 +202,10 @@ function showQuizResults() {
 // SAVE QUIZ SCORE
 // ===================================
 function saveQuizScore(quizIndex, percentage, score, total) {
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+    // Get current user for per-user storage
+    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+    const key = user?.email ? `uav_course_quiz_scores_${user.email.toLowerCase()}` : 'uav_course_quiz_scores_guest';
+    const quizScores = JSON.parse(localStorage.getItem(key) || '{}');
     
     // Map module indices to quiz IDs for backend compatibility
     // Module indices: 1, 3, 5, 7 -> Quiz IDs: quiz-1, quiz-2, quiz-3, quiz-4
@@ -224,7 +227,9 @@ function saveQuizScore(quizIndex, percentage, score, total) {
         date: new Date().toISOString()
     };
     
-    localStorage.setItem('uav_course_quiz_scores', JSON.stringify(quizScores));
+    localStorage.setItem(key, JSON.stringify(quizScores));
+    
+    console.log(`Quiz score saved for ${user?.email || 'guest'}: ${quizId} = ${percentage}%`);
     
     // Also trigger progress update to backend
     if (window.authFunctions && window.authFunctions.currentUser()) {

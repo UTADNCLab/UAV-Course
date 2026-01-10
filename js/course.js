@@ -77,6 +77,12 @@ async function loadCourseData() {
         const response = await fetch('data/course-data.json');
         courseData = await response.json();
         console.log('Course data loaded successfully');
+        
+        // Store total modules per user
+        const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+        const email = user?.email ? user.email.toLowerCase() : 'guest';
+        localStorage.setItem(`uav_course_total_modules_${email}`, String(courseData.modules.length));
+        
     } catch (error) {
         console.error('Error loading course data:', error);
         alert('Failed to load course data. Please refresh the page.');
@@ -232,12 +238,41 @@ function loadModulesList() {
         const certificateIndex = modulesCount - 1;
         const certificateModule = courseData.modules[certificateIndex];
         
-        // Check if user has at least one quiz with 80%+
-        const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-        const hasEligibleScore = Object.values(quizScores).some(score => score.percentage >= 80);
+        // Get user-specific quiz scores
+        const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+        const quizKey = user?.email ? `uav_course_quiz_scores_${user.email.toLowerCase()}` : 'uav_course_quiz_scores_guest';
+        const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
         
-        // Count how many modules are eligible
-        const eligibleCount = Object.values(quizScores).filter(score => score.percentage >= 80).length;
+        // Check if user has completed BOTH video AND quiz for at least one module with 80%+
+        const hasEligibleScore = Object.entries(quizScores).some(([quizId, score]) => {
+            if (score.percentage >= 80) {
+                // Check if corresponding video is also completed
+                const quizIdMap = {
+                    'quiz-1': { video: 0, quiz: 1 },
+                    'quiz-2': { video: 2, quiz: 3 },
+                    'quiz-3': { video: 4, quiz: 5 },
+                    'quiz-4': { video: 6, quiz: 7 }
+                };
+                const moduleIndices = quizIdMap[quizId];
+                return moduleIndices && completedModules.has(moduleIndices.video) && completedModules.has(moduleIndices.quiz);
+            }
+            return false;
+        });
+        
+        // Count how many complete modules are eligible (both video AND quiz done with 80%+)
+        const eligibleCount = Object.entries(quizScores).filter(([quizId, score]) => {
+            if (score.percentage >= 80) {
+                const quizIdMap = {
+                    'quiz-1': { video: 0, quiz: 1 },
+                    'quiz-2': { video: 2, quiz: 3 },
+                    'quiz-3': { video: 4, quiz: 5 },
+                    'quiz-4': { video: 6, quiz: 7 }
+                };
+                const moduleIndices = quizIdMap[quizId];
+                return moduleIndices && completedModules.has(moduleIndices.video) && completedModules.has(moduleIndices.quiz);
+            }
+            return false;
+        }).length;
         
         const certificateItem = document.createElement('div');
         certificateItem.className = 'module-section';
@@ -466,11 +501,8 @@ function saveProgress() {
     if (!user) return;
     
     // Save progress per user
-    const userProgressKey = `uav_course_progress_${user.email}`;
+    const userProgressKey = `uav_course_progress_${user.email.toLowerCase()}`;
     localStorage.setItem(userProgressKey, JSON.stringify(Array.from(completedModules)));
-    
-    // Also save to generic key for backward compatibility
-    localStorage.setItem('uav_course_progress', JSON.stringify(Array.from(completedModules)));
     
     updateProgress();
     
@@ -482,17 +514,22 @@ function loadProgress() {
     const user = window.authFunctions ? window.authFunctions.currentUser() : null;
     if (!user) return;
     
-    // Load progress for this specific user
-    const userProgressKey = `uav_course_progress_${user.email}`;
+    // Load progress for this specific user (use lowercase email)
+    const userProgressKey = `uav_course_progress_${user.email.toLowerCase()}`;
     const saved = localStorage.getItem(userProgressKey);
     
     if (saved) {
         completedModules = new Set(JSON.parse(saved));
         console.log(`Progress loaded for ${user.email}:`, Array.from(completedModules));
+    } else {
+        // New user - initialize empty progress
+        completedModules = new Set();
+        console.log(`New user ${user.email} - starting with 0% progress`);
     }
     
-    // Sync with quiz scores - mark quizzes complete if passed with 80%+
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+    // Sync with user-specific quiz scores - mark quizzes complete if passed with 80%+
+    const quizKey = user?.email ? `uav_course_quiz_scores_${user.email.toLowerCase()}` : 'uav_course_quiz_scores_guest';
+    const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
     const quizIdMap = {
         'quiz-1': 1,  // Module index 1
         'quiz-2': 3,  // Module index 3
@@ -514,10 +551,9 @@ function loadProgress() {
         }
     });
     
-    // ALWAYS save progress after loading to ensure it persists
-    if (progressChanged || completedModules.size > 0) {
+    // Save progress after loading if there were changes
+    if (progressChanged) {
         localStorage.setItem(userProgressKey, JSON.stringify(Array.from(completedModules)));
-        localStorage.setItem('uav_course_progress', JSON.stringify(Array.from(completedModules)));
         console.log(`Progress persisted for ${user.email}`);
     }
     
