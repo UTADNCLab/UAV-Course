@@ -473,18 +473,25 @@ function loadProgress() {
         'quiz-4': 7   // Module index 7
     };
     
+    let progressChanged = false;
     Object.keys(quizScores).forEach(quizId => {
         const score = quizScores[quizId];
         if (score.percentage >= 80) {
             const quizIndex = quizIdMap[quizId];
-            if (quizIndex !== undefined) {
+            if (quizIndex !== undefined && !completedModules.has(quizIndex)) {
                 // Mark quiz as complete
                 completedModules.add(quizIndex);
+                progressChanged = true;
             }
         }
     });
     
-    // Update progress display without overwriting localStorage
+    // Save to localStorage if quiz sync added new completions
+    if (progressChanged) {
+        localStorage.setItem('uav_course_progress', JSON.stringify(Array.from(completedModules)));
+    }
+    
+    // Update progress display
     updateProgress();
 }
 
