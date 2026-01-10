@@ -242,6 +242,8 @@ function saveQuizScore(quizIndex, percentage, score, total) {
 // COMPLETE QUIZ
 // ===================================
 function completeQuiz() {
+    // NEVER auto-navigate to certificate - ALWAYS go back to course landing page
+    
     // Check if ALL modules are completed (excluding certificate module)
     const totalModules = courseData.modules.filter(m => m.type !== 'certificate').length;
     const completedCount = Array.from(completedModules).filter(i => courseData.modules[i]?.type !== 'certificate').length;
@@ -249,20 +251,21 @@ function completeQuiz() {
     const allModulesCompleted = completedCount === totalModules;
     
     if (allModulesCompleted) {
-        // All modules completed - show notification but DON'T auto-open certificate
-        showNotification('🎉 Congratulations! All modules completed! Click the certificate module to view your certificate.', 'success');
-        // Go back to first module instead of next (which might be certificate)
-        loadModule(0);
+        // All modules completed - show notification and redirect to landing page
+        showNotification('🎉 Congratulations! All modules completed! Redirecting to course page...', 'success');
+        
+        // Redirect to landing page after 2 seconds
+        setTimeout(() => {
+            window.location.href = 'landing.html';
+        }, 2000);
     } else {
-        // Not all modules completed - go to next module BUT skip certificate if it's next
-        const nextIndex = currentModuleIndex + 1;
-        if (nextIndex < courseData.modules.length && courseData.modules[nextIndex].type === 'certificate') {
-            // Next is certificate, go to first module instead
-            loadModule(0);
-        } else {
-            // Safe to go to next module
-            nextModule();
-        }
+        // Not all modules completed - redirect to landing page
+        showNotification('Great job! Check the course page to continue with remaining modules.', 'success');
+        
+        // Redirect to landing page after 1.5 seconds
+        setTimeout(() => {
+            window.location.href = 'landing.html';
+        }, 1500);
     }
 }
 
