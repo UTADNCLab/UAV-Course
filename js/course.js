@@ -512,8 +512,11 @@ function nextModule() {
             return;
         }
     }
-    // No next learning module - stay on current
-    showNotification('You have completed all modules! Click the certificate to view.', 'success');
+    // No next learning module - go back to first module
+    showNotification('All modules completed! Going back to Module 1.', 'success');
+    setTimeout(() => {
+        loadModule(getDefaultModuleIndex());
+    }, 1000);
 }
 
 // ===================================
