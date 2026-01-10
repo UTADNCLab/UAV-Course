@@ -1,9 +1,0 @@
-Version: 2.0.0
-Last Updated: 2024-01-15 15:30:00
-Changes:
-- Fixed horizontal layout with course content at top
-- Fixed navigation buttons (Previous, Next, Mark Complete)
-- Added sample YouTube videos for all modules
-- Added complete quiz content with 7 questions each
-- Improved responsive design
-- Fixed collapsible sections
