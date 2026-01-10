@@ -185,6 +185,24 @@
 
     <script src="js/auth.js"></script>
     <script>
+        // Update login button based on auth status
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.querySelector('.login-btn');
+            const savedUser = localStorage.getItem('uav_course_current_user');
+            
+            if (savedUser && loginBtn) {
+                const user = JSON.parse(savedUser);
+                loginBtn.textContent = 'Switch Account';
+                loginBtn.onclick = () => {
+                    // Show logout confirmation
+                    if (confirm(`Currently logged in as ${user.name}. Do you want to switch accounts?`)) {
+                        localStorage.removeItem('uav_course_current_user');
+                        showAuthModal();
+                    }
+                };
+            }
+        });
+
         // Contact form
         document.getElementById('contactForm').addEventListener('submit', (e) => {
             e.preventDefault();
