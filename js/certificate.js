@@ -52,13 +52,11 @@ function generateCumulativeCertificate() {
         completedModules.reduce((sum, m) => sum + m.score, 0) / completedModules.length
     );
     
-    // Create modules list HTML with proper spacing
+    // Create modules list HTML - simple and compact
     const modulesListHTML = completedModules.map(m => `
-        <div style="padding: 15px; background: #f0f9ff; border-left: 4px solid #0064A4; margin: 12px 0; border-radius: 4px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 30px;">
-                <span style="font-size: 17px; color: #333; font-weight: 500; flex: 1;">✓ ${m.name}</span>
-                <span style="font-size: 17px; color: #0064A4; font-weight: bold; min-width: 50px; text-align: right;">${m.score}%</span>
-            </div>
+        <div style="padding: 10px 15px; background: #f0f9ff; border-left: 3px solid #0064A4; margin: 8px 0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 15px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+            <span style="font-size: 15px; color: #0064A4; font-weight: bold; margin-left: 20px;">${m.score}%</span>
         </div>
     `).join('');
 
@@ -354,7 +352,7 @@ function generateCumulativeCertificate() {
                         
                         <p class="certificate-text" style="margin: 20px 0 15px 0; font-weight: 600;">Modules Completed with Excellence:</p>
                         
-                        <div style="max-width: 650px; margin: 0 auto; text-align: left;">
+                        <div style="max-width: 600px; margin: 0 auto; text-align: left;">
                             ${modulesListHTML}
                         </div>
                         

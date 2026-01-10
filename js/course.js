@@ -455,7 +455,7 @@ function loadProgress() {
         completedModules = new Set(JSON.parse(saved));
     }
     
-    // Sync with quiz scores - mark modules complete if quiz was passed
+    // Sync with quiz scores - ONLY mark quizzes complete, NOT video modules
     const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
     const quizIdMap = {
         'quiz-1': 1,  // Module index 1
@@ -469,12 +469,8 @@ function loadProgress() {
         if (score.percentage >= 70) {
             const quizIndex = quizIdMap[quizId];
             if (quizIndex !== undefined) {
-                // Mark quiz as complete
+                // Mark quiz as complete ONLY
                 completedModules.add(quizIndex);
-                // Also mark the video module before it as complete
-                if (quizIndex > 0) {
-                    completedModules.add(quizIndex - 1);
-                }
             }
         }
     });
