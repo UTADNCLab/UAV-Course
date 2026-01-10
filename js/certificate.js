@@ -19,8 +19,10 @@ function generateCumulativeCertificate() {
         day: 'numeric' 
     });
 
-    // Get all quiz scores
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+    // Get all quiz scores (per-user)
+    const email = user.email ? user.email.toLowerCase() : 'guest';
+    const quizKey = `uav_course_quiz_scores_${email}`;
+    const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
     
     // Get eligible modules (80%+)
     const moduleNames = [
