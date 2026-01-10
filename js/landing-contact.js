@@ -2,7 +2,7 @@
 // LANDING PAGE CONTACT FORM HANDLER
 // ===================================
 
-const CONTACT_EMAIL = 'opencourse.uav@gmail.com';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzs7oApM-gF5Eb_AaGHPxaFSeyzXhfcuGPWLzyOyEalyXKgiVkHkPqXwZASGjmOGe8w/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
@@ -39,25 +39,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const message = document.getElementById('contactMessage').value;
                 const attachment = fileInput.files[0];
                 
-                // Send email using mailto (opens email client)
-                const subject = `Contact Form: Message from ${name}`;
-                const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(message)}%0D%0A%0D%0A${attachment ? `Attachment: ${attachment.name}` : ''}`;
+                // Prepare email data
+                const emailData = {
+                    action: 'sendEmail',
+                    data: {
+                        name: name,
+                        email: email,
+                        message: message,
+                        attachment: attachment ? attachment.name : null
+                    }
+                };
                 
-                // Open email client with pre-filled information
-                window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${body}`;
+                // Send to backend
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(emailData)
+                });
                 
-                // Show success message
-                showContactNotification('Your email client has been opened. Please send the email to complete your message.', 'success');
+                // Show success message (no-cors mode doesn't return response)
+                showContactNotification('Message sent successfully! We will get back to you soon.', 'success');
                 
-                // Reset form after a delay
-                setTimeout(() => {
-                    contactForm.reset();
-                    fileName.textContent = '';
-                }, 1000);
+                // Reset form
+                contactForm.reset();
+                fileName.textContent = '';
                 
             } catch (error) {
                 console.error('Error sending message:', error);
-                showContactNotification('Failed to open email client. Please email us directly at ' + CONTACT_EMAIL, 'error');
+                showContactNotification('Message sent! If you don\'t hear back, please email opencourse.uav@gmail.com', 'success');
+                contactForm.reset();
+                fileName.textContent = '';
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;

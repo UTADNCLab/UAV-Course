@@ -304,6 +304,28 @@ body {
     text-decoration: underline;
 }
 
+.instructor-video-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #0064A4;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.instructor-video-link:hover {
+    background: #004d7a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 100, 164, 0.3);
+}
+
+.instructor-video-link i {
+    margin-right: 5px;
+}
+
 /* Contact */
 .contact {
     padding: 60px 20px;

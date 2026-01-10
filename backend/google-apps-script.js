@@ -14,6 +14,8 @@ function doPost(e) {
     if (action === 'register') return handleRegister(data);
     if (action === 'login') return handleLogin(data);     // optional, does nothing now
     if (action === 'progress') return handleProgress(data);
+    if (action === 'sendEmail') return handleSendEmail(data);
+    if (action === 'sendProfessorEmail') return handleSendProfessorEmail(data);
 
     return json({ status: 'error', message: 'Unknown action' });
 
@@ -194,4 +196,91 @@ function handleProgress(progressData) {
   }
 
   return json({ status: 'success', message: 'Progress updated' });
+}
+
+// ===================================
+// SEND CONTACT FORM EMAIL
+// ===================================
+function handleSendEmail(emailData) {
+  try {
+    const name = emailData.name || 'Anonymous';
+    const email = emailData.email || 'no-reply@example.com';
+    const message = emailData.message || '';
+    const attachment = emailData.attachment || null;
+    
+    const recipient = 'opencourse.uav@gmail.com';
+    const subject = `Contact Form: Message from ${name}`;
+    
+    let body = `You have received a new message from the UAV Course contact form.\n\n`;
+    body += `Name: ${name}\n`;
+    body += `Email: ${email}\n\n`;
+    body += `Message:\n${message}\n\n`;
+    body += `---\n`;
+    body += `Sent via UAV Course Platform\n`;
+    body += `${new Date().toLocaleString()}`;
+    
+    // Send email
+    MailApp.sendEmail({
+      to: recipient,
+      subject: subject,
+      body: body,
+      replyTo: email
+    });
+    
+    return json({ status: 'success', message: 'Email sent successfully' });
+    
+  } catch (err) {
+    Logger.log('Email error: ' + err.toString());
+    return json({ status: 'error', message: 'Failed to send email: ' + err.toString() });
+  }
+}
+
+// ===================================
+// SEND PROFESSOR QUESTION EMAIL
+// ===================================
+function handleSendProfessorEmail(emailData) {
+  try {
+    const studentName = emailData.studentName || 'Anonymous';
+    const studentEmail = emailData.studentEmail || 'no-reply@example.com';
+    const professorEmail = emailData.professorEmail || '';
+    const professorName = emailData.professorName || 'Professor';
+    const subject = emailData.subject || 'Question from UAV Course';
+    const question = emailData.question || '';
+    
+    if (!professorEmail) {
+      return json({ status: 'error', message: 'Professor email is required' });
+    }
+    
+    let body = `Dear ${professorName},\n\n`;
+    body += `You have received a question from a student in the UAV Course.\n\n`;
+    body += `Student Name: ${studentName}\n`;
+    body += `Student Email: ${studentEmail}\n\n`;
+    body += `Subject: ${subject}\n\n`;
+    body += `Question:\n${question}\n\n`;
+    body += `---\n`;
+    body += `Sent via UAV Course Platform\n`;
+    body += `${new Date().toLocaleString()}`;
+    
+    // Send email to professor
+    MailApp.sendEmail({
+      to: professorEmail,
+      subject: `[UAV Course Question] ${subject}`,
+      body: body,
+      replyTo: studentEmail
+    });
+    
+    // Also send a copy to the main course email
+    MailApp.sendEmail({
+      to: 'opencourse.uav@gmail.com',
+      subject: `[Copy] Question to ${professorName}: ${subject}`,
+      body: body,
+      replyTo: studentEmail
+    });
+    
+    return json({ status: 'success', message: 'Question sent successfully' });
+    
+  } catch (err) {
+    Logger.log('Professor email error: ' + err.toString());
+    return json({ status: 'error', message: 'Failed to send question: ' + err.toString() });
+  }
 }
