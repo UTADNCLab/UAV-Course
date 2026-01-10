@@ -14,12 +14,12 @@
 
 ## ✅ Step 2: Verify Web App URL in auth.js
 
-The current URL in `js/auth.js` is:
+The NEW URL in `js/auth.js` has been updated to:
 ```
-https://script.google.com/macros/s/AKfycbz02DQTg34crQIAsmPZEhK5kcX_0CIIVxeqCzcQfoZ89xdg5F3cwL8GdnelXcTt44FJ/exec
+https://script.google.com/macros/s/AKfycbydIxbmfk7UIZVRsdDocnECUJByx8VWExiE2aRmYrnQ5-Hetn4H3oF0vriBZe0dj_i9Mg/exec
 ```
 
-Make sure this matches your new deployment URL from Step 1.
+This should match your new deployment URL from Step 1.
 
 ## ✅ Step 3: Deploy Frontend Changes
 
