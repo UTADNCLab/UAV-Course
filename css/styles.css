@@ -491,6 +491,23 @@ body.quiz-active .video-section {
 
 .question-card h3 {
     margin-bottom: 20px;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+/* Style for quiz question options within the question text */
+.question-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Make options in question text smaller and display on separate lines */
+.quiz-question-options {
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 2;
+    margin-top: 15px;
+    display: block;
 }
 
 .options {
