@@ -165,7 +165,7 @@ function handleProgress(progressData) {
     ? eligibleModules.join(' | ')
     : 'None';
 
-  // Count total quiz attempts
+  // Count total quiz attempts (number of quizzes taken, not percentage)
   const quizAttempts = Object.keys(quizScores).length;
 
   const completionPercent = progressData.completionPercentage || 0;
