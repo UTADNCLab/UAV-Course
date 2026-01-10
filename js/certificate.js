@@ -24,22 +24,34 @@ function generateCumulativeCertificate() {
     const quizKey = `uav_course_quiz_scores_${email}`;
     const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
     
-    // Get eligible modules (80%+)
-    const moduleNames = [
-        'Open Airborne Computing Platforms',
-        'UAV Communications and Networking',
-        'Networked Control and Co-Design',
-        'Airborne Computing and AI'
+    // Get completed modules (per-user)
+    const progressKey = `uav_course_progress_${email}`;
+    const completed = JSON.parse(localStorage.getItem(progressKey) || '[]');
+    
+    // Module pairs: video index and quiz ID
+    // Module 1: video index 0, quiz index 1
+    // Module 2: video index 2, quiz index 3
+    // Module 3: video index 4, quiz index 5
+    // Module 4: video index 6, quiz index 7
+    const pairs = [
+        { videoIndex: 0, quizId: 'quiz-1', name: 'Open Airborne Computing Platforms' },
+        { videoIndex: 2, quizId: 'quiz-2', name: 'UAV Communications and Networking' },
+        { videoIndex: 4, quizId: 'quiz-3', name: 'Networked Control and Co-Design' },
+        { videoIndex: 6, quizId: 'quiz-4', name: 'Airborne Computing and AI' }
     ];
     
     const completedModules = [];
-    const quizIds = ['quiz-1', 'quiz-2', 'quiz-3', 'quiz-4'];
     
-    quizIds.forEach((quizId, i) => {
-        if (quizScores[quizId] && quizScores[quizId].percentage >= 80) {
+    pairs.forEach(pair => {
+        const videoDone = completed.includes(pair.videoIndex);
+        const quiz = quizScores[pair.quizId];
+        const quizOk = quiz && quiz.percentage >= 80;
+        
+        // Module is eligible ONLY if BOTH video is completed AND quiz score >= 80%
+        if (videoDone && quizOk) {
             completedModules.push({
-                name: moduleNames[i],
-                score: quizScores[quizId].percentage
+                name: pair.name,
+                score: quiz.percentage
             });
         }
     });

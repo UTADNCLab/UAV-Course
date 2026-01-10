@@ -325,15 +325,20 @@ async function sendToGoogleSheets(action, data) {
 async function sendProgressUpdate(eventType = 'progress') {
     if (!currentUser) return;
     
+    // Get per-user keys
+    const email = currentUser.email.toLowerCase();
+    const progressKey = `uav_course_progress_${email}`;
+    const quizKey = `uav_course_quiz_scores_${email}`;
+    
     // Get progress from per-user localStorage keys
-    const progressArray = JSON.parse(localStorage.getItem(userKey('uav_course_progress')) || '[]');
+    const progressArray = JSON.parse(localStorage.getItem(progressKey) || '[]');
     const completedModules = Array.isArray(progressArray) ? progressArray : [];
     
     // Get quiz scores from per-user storage
-    const quizScores = JSON.parse(localStorage.getItem(userKey('uav_course_quiz_scores')) || '{}');
+    const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
     
     // Get total modules (or default to 8)
-    const totalModules = parseInt(localStorage.getItem(userKey('uav_course_total_modules')) || '8');
+    const totalModules = 8;
     
     // Calculate statistics
     const completionPercentage = Math.round((completedModules.length / totalModules) * 100);
