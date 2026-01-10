@@ -5,6 +5,14 @@
 let currentUser = null;
 
 // ===================================
+// HELPER FUNCTION FOR PER-USER KEYS
+// ===================================
+function userKey(base) {
+    const email = currentUser?.email ? currentUser.email.toLowerCase() : 'guest';
+    return `${base}_${email}`;
+}
+
+// ===================================
 // GOOGLE SHEETS INTEGRATION
 // ===================================
 
@@ -317,34 +325,34 @@ async function sendToGoogleSheets(action, data) {
 async function sendProgressUpdate(eventType = 'progress') {
     if (!currentUser) return;
     
-    // Get progress from localStorage
-    const progressArray = JSON.parse(localStorage.getItem('uav_course_progress') || '[]');
+    // Get progress from per-user localStorage keys
+    const progressArray = JSON.parse(localStorage.getItem(userKey('uav_course_progress')) || '[]');
     const completedModules = Array.isArray(progressArray) ? progressArray : [];
     
-    // Get quiz scores from separate storage
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
+    // Get quiz scores from per-user storage
+    const quizScores = JSON.parse(localStorage.getItem(userKey('uav_course_quiz_scores')) || '{}');
+    
+    // Get total modules (or default to 8)
+    const totalModules = parseInt(localStorage.getItem(userKey('uav_course_total_modules')) || '8');
     
     // Calculate statistics
-    const totalModules = 8;
     const completionPercentage = Math.round((completedModules.length / totalModules) * 100);
     
     const quizResults = Object.values(quizScores);
-    const averageQuizScore = quizResults.length > 0
-        ? Math.round(quizResults.reduce((sum, q) => sum + q.percentage, 0) / quizResults.length)
-        : 0;
+    const totalQuizAttempts = quizResults.length;
     
     const progressData = {
         email: currentUser.email,
+        firstName: currentUser.firstName || '',
+        lastName: currentUser.lastName || '',
         name: currentUser.name,
         eventType: eventType,
         completionPercentage: completionPercentage,
         completedModules: completedModules.length,
         totalModules: totalModules,
-        quizzesTaken: quizResults.length,
-        averageQuizScore: averageQuizScore,
         quizScores: quizScores,
-        lastUpdated: new Date().toISOString(),
-        timeSpent: 0
+        totalQuizAttempts: totalQuizAttempts,
+        lastUpdated: new Date().toISOString()
     };
     
     console.log('Sending progress update:', progressData);
