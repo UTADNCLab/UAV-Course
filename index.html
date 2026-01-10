@@ -133,12 +133,18 @@
     <section id="contact" class="contact">
         <div class="container">
             <h2>Contact</h2>
-            <p class="contact-info">For general inquiries, please email us at: <a href="mailto:opencourse.uav@gmail.com">opencourse.uav@gmail.com</a></p>
             <form id="contactForm">
-                <input type="text" placeholder="Name" required>
-                <input type="email" placeholder="Email" required>
-                <textarea placeholder="Message" rows="4" required></textarea>
-                <button type="submit">Send</button>
+                <input type="text" id="contactName" name="name" placeholder="Name" required>
+                <input type="email" id="contactEmail" name="email" placeholder="Email" required>
+                <textarea id="contactMessage" name="message" placeholder="Message" rows="4" required></textarea>
+                <div class="file-upload-wrapper">
+                    <label for="contactAttachment" class="file-upload-label">
+                        <i class="fas fa-paperclip"></i> Attach Image (Optional)
+                    </label>
+                    <input type="file" id="contactAttachment" name="attachment" accept="image/*" class="file-input">
+                    <span id="fileName" class="file-name"></span>
+                </div>
+                <button type="submit" id="contactSubmitBtn">Send</button>
             </form>
         </div>
     </section>
@@ -192,14 +198,8 @@
     </div>
 
     <script src="js/auth.js"></script>
+    <script src="js/landing-contact.js"></script>
     <script>
-        // Contact form
-        document.getElementById('contactForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Message sent!');
-            e.target.reset();
-        });
-
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(link => {
             link.addEventListener('click', (e) => {

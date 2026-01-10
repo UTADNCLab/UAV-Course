@@ -363,6 +363,42 @@ body {
     background: #003366;
 }
 
+.file-upload-wrapper {
+    margin: 15px 0;
+}
+
+.file-upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #0064A4;
+    border: 2px dashed #0064A4;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+.file-upload-label:hover {
+    background: #e0e0e0;
+    border-color: #003366;
+}
+
+.file-upload-label i {
+    margin-right: 8px;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-name {
+    display: inline-block;
+    margin-left: 15px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
 /* Footer */
 .footer {
     background: #1e293b;
