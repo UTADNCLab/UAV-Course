@@ -173,70 +173,70 @@
       "type": "quiz",
       "questions": [
         {
-          "question": "According to the video, which of the following modes belong to UAV communications?",
+          "question": "According to the video, which of the following modes belong to UAV communications? (Select all that apply - Correct answers: A, B, C)",
           "options": [
-            "Air-to-air",
-            "Air-to-ground",
-            "Air-to-satellite",
-            "Ground-to-satellite"
+            "A. Air-to-air",
+            "B. Air-to-ground",
+            "C. Air-to-satellite",
+            "D. Ground-to-satellite"
           ],
           "correctAnswer": 0,
-          "explanation": "UAV communications include air-to-air (between drones), air-to-ground (drone to ground station), and air-to-satellite modes. Note: This is a multiple-answer question - correct answers are options 1, 2, and 3."
+          "explanation": "UAV communications include air-to-air (between drones), air-to-ground (drone to ground station), and air-to-satellite modes. Correct answers are A, B, and C."
         },
         {
           "question": "According to the video, what is the main role of UAV in 3GPP release 17?",
           "options": [
-            "User equipment",
-            "Base station",
-            "Relay station",
-            "Surveillance station"
+            "A. User equipment",
+            "B. Base station",
+            "C. Relay station",
+            "D. Surveillance station"
           ],
           "correctAnswer": 0,
-          "explanation": "In 3GPP Release 17, UAVs are primarily considered as user equipment (UE) in cellular networks."
+          "explanation": "In 3GPP Release 17, UAVs are primarily considered as user equipment (UE) in cellular networks. Correct answer: A."
         },
         {
-          "question": "According to the video, which of the following are possible applications of airborne computing for communications and networking?",
+          "question": "According to the video, which of the following are possible applications of airborne computing for communications and networking? (Select all that apply - Correct answers: A, D)",
           "options": [
-            "Controlling the trajectory of a UAV-enabled base station",
-            "Recording videos on a UAV",
-            "Sending videos from a UAV to a control center",
-            "Identifying a vehicle on a UAV and then using directional antenna to communicate with the vehicle"
+            "A. Controlling the trajectory of a UAV-enabled base station",
+            "B. Recording videos on a UAV",
+            "C. Sending videos from a UAV to a control center",
+            "D. Identifying a vehicle on a UAV and then using directional antenna to communicate with the vehicle"
           ],
           "correctAnswer": 0,
-          "explanation": "Airborne computing enables trajectory control for UAV base stations and intelligent directional antenna alignment. Note: Correct answers are options 1 and 4."
+          "explanation": "Airborne computing enables trajectory control for UAV base stations and intelligent directional antenna alignment. Correct answers are A and D."
         },
         {
-          "question": "According to the video, what are the main challenges in the design and deployment of airborne computing for communications and networking?",
+          "question": "According to the video, what are the main challenges in the design and deployment of airborne computing for communications and networking? (Select all that apply - Correct answers: A, B)",
           "options": [
-            "Diverse application requirements",
-            "Limitations of UAV platform",
-            "Regulation of frequency allocation",
-            "Patent of technology"
+            "A. Diverse application requirements",
+            "B. Limitations of UAV platform",
+            "C. Regulation of frequency allocation",
+            "D. Patent of technology"
           ],
           "correctAnswer": 0,
-          "explanation": "The main challenges include diverse application requirements and UAV platform limitations. Note: Correct answers are options 1 and 2."
+          "explanation": "The main challenges include diverse application requirements and UAV platform limitations. Correct answers are A and B."
         },
         {
-          "question": "According to the video, what are design guidelines for using airborne computing to enhance communications and networking?",
+          "question": "According to the video, what are design guidelines for using airborne computing to enhance communications and networking? (Select all that apply - Correct answers: A, B, C, D, and also 'Optimizing the system performance')",
           "options": [
-            "Identifying the computing needs",
-            "Clarifying the system model",
-            "Specifying the computing model",
-            "Understanding the relevant factors"
+            "A. Identifying the computing needs",
+            "B. Clarifying the system model",
+            "C. Specifying the computing model",
+            "D. Understanding the relevant factors"
           ],
           "correctAnswer": 0,
-          "explanation": "All listed items are important design guidelines. Note: This includes all options plus 'Optimizing the system performance'."
+          "explanation": "All listed items are important design guidelines: identifying computing needs, clarifying the system model, specifying the computing model, understanding relevant factors, and optimizing system performance. Correct answers are A, B, C, and D."
         },
         {
-          "question": "According to the video, what are the desired features of enabling technologies for using airborne computing to enhance communications and networking?",
+          "question": "According to the video, what are the desired features of enabling technologies for using airborne computing to enhance communications and networking? (Select all that apply - Correct answers: A, B, C)",
           "options": [
-            "Improving the capabilities of UAV",
-            "Improving the scalability",
-            "Providing flexibility",
-            "Reducing the cost of UAV"
+            "A. Improving the capabilities of UAV",
+            "B. Improving the scalability",
+            "C. Providing flexibility",
+            "D. Reducing the cost of UAV"
           ],
           "correctAnswer": 0,
-          "explanation": "Desired features include improving UAV capabilities, scalability, and flexibility. Note: Correct answers are options 1, 2, and 3."
+          "explanation": "Desired features include improving UAV capabilities, scalability, and flexibility. Correct answers are A, B, and C."
         }
       ]
     },
