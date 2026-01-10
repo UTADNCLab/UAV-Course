@@ -512,11 +512,21 @@ function nextModule() {
             return;
         }
     }
-    // No next learning module - go back to first module
-    showNotification('All modules completed! Going back to Module 1.', 'success');
+    
+    // No next learning module - calculate completion and show appropriate message
+    const total = courseData.modules.filter(m => m.type !== 'certificate').length;
+    const completed = Array.from(completedModules).filter(i => courseData.modules[i]?.type !== 'certificate').length;
+    const remaining = total - completed;
+    
+    if (remaining > 0) {
+        showNotification(`${completed}/${total} modules completed. ${remaining} remaining. Going back to Module 1.`, 'info');
+    } else {
+        showNotification('All modules completed! Click the certificate in the sidebar to view your achievements.', 'success');
+    }
+    
     setTimeout(() => {
         loadModule(getDefaultModuleIndex());
-    }, 1000);
+    }, 1500);
 }
 
 // ===================================
