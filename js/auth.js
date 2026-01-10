@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkLoginStatus();
     setupAuthListeners();
     
-    // Require login for course page (index.html)
-    if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
+    // Require login for course page (course.html)
+    if (window.location.pathname.includes('course.html')) {
         if (!currentUser) {
             showAuthModal();
         }
