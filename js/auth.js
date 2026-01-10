@@ -19,7 +19,7 @@ function userKey(base) {
 // IMPORTANT: Replace these with your actual values after setup
 const GOOGLE_SHEETS_CONFIG = {
     // Get this from Google Apps Script deployment
-    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbydIxbmfk7UIZVRsdDocnECUJByx8VWExiE2aRmYrnQ5-Hetn4H3oF0vriBZe0dj_i9Mg/exec',
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec',
     // Your spreadsheet ID (from the URL)
     SPREADSHEET_ID: '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc'
 };
