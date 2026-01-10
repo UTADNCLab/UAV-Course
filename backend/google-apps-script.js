@@ -1,404 +1,197 @@
 // ===================================
-// GOOGLE APPS SCRIPT - BACKEND
+// UAV COURSE - CLEAN GOOGLE APPS SCRIPT
+// (No last-login timestamps, no best-qualifying column)
 // ===================================
-// This file should be deployed as a Google Apps Script Web App
-// Instructions in BACKEND_SETUP.md
 
-// ===================================
-// CONFIGURATION
-// ===================================
-const SPREADSHEET_ID = '18YsuCvF3w6wUm1XL24eST1SMUh4WVBeR3nAvsXDdhB0'; // Replace with your Google Sheets ID
+const SPREADSHEET_ID = '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc';
 
-// ===================================
-// MAIN FUNCTION - HANDLES ALL REQUESTS 18YsuCvF3w6wUm1XL24eST1SMUh4WVBeR3nAvsXDdhB0
-// ===================================
 function doPost(e) {
   try {
-    // Check if e and e.postData exist
-    if (!e || !e.postData || !e.postData.contents) {
-      Logger.log('Error: Invalid request - no postData');
-      return ContentService.createTextOutput(JSON.stringify({
-        status: 'error',
-        message: 'Invalid request format'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    const data = JSON.parse(e.postData.contents);
-    const action = data.action;
-    
-    Logger.log('Received action: ' + action);
-    
-    switch(action) {
-      case 'register':
-        return handleRegistration(data.data);
-      case 'login':
-        return handleLogin(data.data);
-      case 'progress':
-        return handleProgress(data.data);
-      default:
-        return ContentService.createTextOutput(JSON.stringify({
-          status: 'error',
-          message: 'Unknown action: ' + action
-        })).setMimeType(ContentService.MimeType.JSON);
-    }
-  } catch(error) {
-    Logger.log('Error in doPost: ' + error.toString());
-    Logger.log('Error stack: ' + error.stack);
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'error',
-      message: error.toString(),
-      details: error.stack
-    })).setMimeType(ContentService.MimeType.JSON);
+    const payload = JSON.parse(e.postData.contents);
+    const action = payload.action;
+    const data = payload.data || {};
+
+    if (action === 'register') return handleRegister(data);
+    if (action === 'login') return handleLogin(data);     // optional, does nothing now
+    if (action === 'progress') return handleProgress(data);
+
+    return json({ status: 'error', message: 'Unknown action' });
+
+  } catch (err) {
+    Logger.log('Error: ' + err.toString());
+    return json({ status: 'error', message: err.toString() });
   }
 }
 
-// ===================================
-// HANDLE USER REGISTRATION
-// ===================================
-function handleRegistration(userData) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet = ss.getSheetByName('Users');
-  
-  // Create Users sheet if it doesn't exist
-  if (!sheet) {
-    sheet = ss.insertSheet('Users');
-    sheet.appendRow(['Name', 'Email', 'Registered Date', 'Last Login', 'Status']);
-  }
-  
-  // Check if user already exists
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === userData.email) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: 'error',
-        message: 'User already exists'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  
-  // Add new user
-  sheet.appendRow([
-    userData.name,
-    userData.email,
-    userData.registeredDate,
-    userData.lastLogin,
-    'Active'
-  ]);
-  
-  return ContentService.createTextOutput(JSON.stringify({
-    status: 'success',
-    message: 'User registered successfully'
-  })).setMimeType(ContentService.MimeType.JSON);
+// -------------------------------
+// Helpers
+// -------------------------------
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ===================================
-// HANDLE USER LOGIN
-// ===================================
-function handleLogin(userData) {
+function openSheet(name, headers) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('Users');
-  
-  if (!sheet) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'error',
-      message: 'No users found'
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  // Update last login time
-  const data = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === userData.email) {
-      sheet.getRange(i + 1, 4).setValue(userData.lastLogin);
-      break;
-    }
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({
-    status: 'success',
-    message: 'Login recorded'
-  })).setMimeType(ContentService.MimeType.JSON);
-}
+  let sheet = ss.getSheetByName(name);
 
-// ===================================
-// HANDLE PROGRESS UPDATES
-// ===================================
-function handleProgress(progressData) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet = ss.getSheetByName('Progress');
-  
-  // Create Progress sheet if it doesn't exist
   if (!sheet) {
-    sheet = ss.insertSheet('Progress');
-    const headers = [
-      'Email',
-      'Name',
-      'Completion %',
-      'Completed Modules',
-      'Total Modules',
-      'Quizzes Taken',
-      'Average Quiz Score',
-      'Quiz 1 Score',
-      'Quiz 2 Score',
-      'Quiz 3 Score',
-      'Quiz 4 Score',
-      'Time Spent (seconds)',
-      'Last Updated',
-      'Quiz Attempts',
-      'Best Qualifying Scores',
-      'Certificates Eligible'
-    ];
+    sheet = ss.insertSheet(name);
     sheet.appendRow(headers);
-    
-    // Format header row
-    const headerRange = sheet.getRange(1, 1, 1, headers.length);
-    headerRange.setFontWeight('bold');
-    headerRange.setBackground('#0064A4');
-    headerRange.setFontColor('#FFFFFF');
-  }
-  
-  // Extract quiz scores and attempts (using string keys: 'quiz-1', 'quiz-2', etc.)
-  const quizScores = progressData.quizScores || {};
-  const quiz1 = quizScores['quiz-1'] && quizScores['quiz-1'].percentage >= 80 ? quizScores['quiz-1'].percentage + '%' : 'Not taken';
-  const quiz2 = quizScores['quiz-2'] && quizScores['quiz-2'].percentage >= 80 ? quizScores['quiz-2'].percentage + '%' : 'Not taken';
-  const quiz3 = quizScores['quiz-3'] && quizScores['quiz-3'].percentage >= 80 ? quizScores['quiz-3'].percentage + '%' : 'Not taken';
-  const quiz4 = quizScores['quiz-4'] && quizScores['quiz-4'].percentage >= 80 ? quizScores['quiz-4'].percentage + '%' : 'Not taken';
-  
-  // Track quiz attempts (all attempts, not just latest)
-  const quizAttempts = progressData.quizAttempts || buildQuizAttemptsString(quizScores);
-  
-  // Calculate best qualifying scores (80%+)
-  const bestQualifyingScores = calculateBestQualifyingScores(quizScores);
-  
-  // Check certificate eligibility (per module - each module with 80%+ gets a certificate)
-  const certificatesEligible = checkModuleCertificates(quizScores);
-  
-  // Check if user already has a progress row
-  const data = sheet.getDataRange().getValues();
-  let userRow = -1;
-  
-  for (let i = 1; i < data.length; i++) {
-    if (data[i][0] === progressData.email) {
-      userRow = i + 1;
-      break;
+  } else {
+    // Ensure header row exists (optional safeguard)
+    const firstRow = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
+    if (firstRow.join('') === '') {
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     }
   }
-  
-  const rowData = [
-    progressData.email,
-    progressData.name,
-    progressData.completionPercentage + '%',
-    progressData.completedModules,
-    progressData.totalModules,
-    progressData.quizzesTaken,
-    progressData.averageQuizScore + '%',
-    quiz1,
-    quiz2,
-    quiz3,
-    quiz4,
-    progressData.timeSpent,
-    progressData.lastUpdated,
-    quizAttempts,
-    bestQualifyingScores,
-    certificatesEligible
-  ];
-  
-  if (userRow > 0) {
-    // Update existing row
-    sheet.getRange(userRow, 1, 1, rowData.length).setValues([rowData]);
+  return sheet;
+}
+
+function findRowByEmail(sheet, email) {
+  const values = sheet.getDataRange().getValues();
+  for (let i = 1; i < values.length; i++) {
+    if ((values[i][1] || '').toString().trim() === email.trim()) {
+      return i + 1; // sheet row number
+    }
+  }
+  return -1;
+}
+
+function buildFullName(obj) {
+  // Prefer firstName + lastName if provided
+  const first = (obj.firstName || '').trim();
+  const last = (obj.lastName || '').trim();
+
+  if (first || last) return `${first} ${last}`.trim();
+
+  // Otherwise fall back to name field
+  return (obj.name || '').trim();
+}
+
+// ===================================
+// REGISTER USER (Users sheet)
+// ===================================
+function handleRegister(userData) {
+  const headers = ['Full Name', 'Email'];
+  const sheet = openSheet('Users', headers);
+
+  const fullName = buildFullName(userData) || 'Student';
+  const email = (userData.email || '').trim();
+
+  if (!email) return json({ status: 'error', message: 'Missing email' });
+
+  const row = findRowByEmail(sheet, email);
+
+  const rowData = [fullName, email];
+
+  if (row > 0) {
+    sheet.getRange(row, 1, 1, rowData.length).setValues([rowData]);
   } else {
-    // Add new row
     sheet.appendRow(rowData);
   }
-  
-  // Remove any background colors from data rows
-  if (userRow > 0) {
-    sheet.getRange(userRow, 1, 1, rowData.length).setBackground(null);
-  }
-  
-  // Also log to Activity sheet for history
-  logActivity(ss, progressData);
-  
-  return ContentService.createTextOutput(JSON.stringify({
-    status: 'success',
-    message: 'Progress updated'
-  })).setMimeType(ContentService.MimeType.JSON);
+
+  return json({ status: 'success', message: 'User registered/updated' });
 }
 
 // ===================================
-// LOG ACTIVITY (HISTORY)
+// LOGIN (optional: keep for compatibility)
+// Now it just returns success and does not store timestamps.
 // ===================================
-function logActivity(ss, progressData) {
-  let activitySheet = ss.getSheetByName('Activity Log');
-  
-  if (!activitySheet) {
-    activitySheet = ss.insertSheet('Activity Log');
-    activitySheet.appendRow([
-      'Timestamp',
-      'Email',
-      'Name',
-      'Event Type',
-      'Completion %',
-      'Quiz Score',
-      'Details'
-    ]);
-  }
-  
-  activitySheet.appendRow([
-    new Date().toISOString(),
-    progressData.email,
-    progressData.name,
-    progressData.eventType,
-    progressData.completionPercentage + '%',
-    progressData.averageQuizScore + '%',
-    JSON.stringify(progressData.quizScores)
-  ]);
+function handleLogin(userData) {
+  return json({ status: 'success', message: 'Login recorded (no timestamp stored)' });
 }
 
 // ===================================
-// GET FUNCTION (FOR TESTING)
+// PROGRESS UPDATE (Progress sheet)
 // ===================================
-function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({
-    status: 'success',
-    message: 'UAV Course Backend is running!'
-  })).setMimeType(ContentService.MimeType.JSON);
-}
+function handleProgress(progressData) {
+  const headers = [
+    'Full Name',
+    'Email',
+    'Completion %',
+    'Modules Completed',
+    'Total Modules',
+    'Average Quiz Score',
+    'Quiz 1 Score',
+    'Quiz 2 Score',
+    'Quiz 3 Score',
+    'Quiz 4 Score',
+    'Quiz Attempts',
+    'Certificates Eligible'
+  ];
 
-// ===================================
-// UTILITY: GET ALL STUDENTS DATA
-// ===================================
-function getAllStudentsData() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const progressSheet = ss.getSheetByName('Progress');
-  
-  if (!progressSheet) {
-    return [];
-  }
-  
-  const data = progressSheet.getDataRange().getValues();
-  const headers = data[0];
-  const students = [];
-  
-  for (let i = 1; i < data.length; i++) {
-    const student = {};
-    for (let j = 0; j < headers.length; j++) {
-      student[headers[j]] = data[i][j];
-    }
-    students.push(student);
-  }
-  
-  return students;
-}
+  const sheet = openSheet('Progress', headers);
 
-// ===================================
-// HELPER: BUILD QUIZ ATTEMPTS STRING
-// ===================================
-function buildQuizAttemptsString(quizScores) {
-  const attempts = [];
-  
-  for (const [quizId, scoreData] of Object.entries(quizScores)) {
-    const quizNum = Math.floor(parseInt(quizId) / 2);
-    const percentage = scoreData.percentage || 0;
-    attempts.push(`Q${quizNum}: ${percentage}%`);
-  }
-  
-  return attempts.join(' | ') || 'No attempts';
-}
+  const fullName = buildFullName(progressData) || 'Student';
+  const email = (progressData.email || '').trim();
 
-// ===================================
-// HELPER: CALCULATE BEST QUALIFYING SCORES
-// ===================================
-function calculateBestQualifyingScores(quizScores) {
-  const qualifyingScores = [];
-  
-  for (const [quizId, scoreData] of Object.entries(quizScores)) {
-    const quizNum = Math.floor(parseInt(quizId) / 2);
-    const percentage = scoreData.percentage || 0;
-    
-    if (percentage >= 80) {
-      qualifyingScores.push(`Q${quizNum}: ${percentage}%`);
-    }
-  }
-  
-  return qualifyingScores.length > 0 ? qualifyingScores.join(' | ') : 'None';
-}
+  if (!email) return json({ status: 'error', message: 'Missing email' });
 
-// ===================================
-// HELPER: CHECK MODULE CERTIFICATES
-// ===================================
-function checkModuleCertificates(quizScores) {
-  const moduleNames = {
-    'quiz-1': 'Module 1: Open Airborne Computing Platforms',
-    'quiz-2': 'Module 2: UAV Communications and Networking',
-    'quiz-3': 'Module 3: Networked Control and Co-Design',
-    'quiz-4': 'Module 4: Airborne Computing and AI'
-  };
-  
+  // quizScores coming from frontend: usually { "quiz-1": {...}, "quiz-2": {...} }
+  const quizScores = progressData.quizScores || {};
+
+  // Read quiz % safely (support both string keys like "quiz-1" and numeric)
+  function getQuizPercentage(key) {
+    const q = quizScores[key];
+    return (q && typeof q.percentage === 'number') ? q.percentage : null;
+  }
+
+  const q1 = getQuizPercentage('quiz-1');
+  const q2 = getQuizPercentage('quiz-2');
+  const q3 = getQuizPercentage('quiz-3');
+  const q4 = getQuizPercentage('quiz-4');
+
+  // Calculate average of taken quizzes
+  const scores = [q1, q2, q3, q4].filter(s => s !== null);
+  const avgScore = scores.length > 0
+    ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
+    : 'N/A';
+
+  // Format quiz scores for display
+  const formatScore = (score) => score !== null ? `${score}%` : 'Not taken';
+
+  // Check certificate eligibility (80%+ on quiz)
   const eligibleModules = [];
-  
-  // Check each quiz using string keys
-  if (quizScores['quiz-1'] && quizScores['quiz-1'].percentage >= 80) {
-    eligibleModules.push(moduleNames['quiz-1']);
-  }
-  if (quizScores['quiz-2'] && quizScores['quiz-2'].percentage >= 80) {
-    eligibleModules.push(moduleNames['quiz-2']);
-  }
-  if (quizScores['quiz-3'] && quizScores['quiz-3'].percentage >= 80) {
-    eligibleModules.push(moduleNames['quiz-3']);
-  }
-  if (quizScores['quiz-4'] && quizScores['quiz-4'].percentage >= 80) {
-    eligibleModules.push(moduleNames['quiz-4']);
-  }
-  
-  if (eligibleModules.length === 0) {
-    return 'None';
-  } else if (eligibleModules.length === 4) {
-    return 'All Modules (Full Course Certificate)';
+  if (q1 !== null && q1 >= 80) eligibleModules.push('Module 1: Open Airborne Computing Platforms');
+  if (q2 !== null && q2 >= 80) eligibleModules.push('Module 2: UAV Communications and Networking');
+  if (q3 !== null && q3 >= 80) eligibleModules.push('Module 3: Networked Control and Co-Design');
+  if (q4 !== null && q4 >= 80) eligibleModules.push('Module 4: Airborne Computing and AI');
+
+  const certificatesEligible = eligibleModules.length > 0
+    ? eligibleModules.join(' | ')
+    : 'None';
+
+  // Count total quiz attempts
+  const quizAttempts = Object.keys(quizScores).length;
+
+  const completionPercent = progressData.completionPercentage || 0;
+  const modulesCompleted = progressData.modulesCompleted || 0;
+  const totalModules = progressData.totalModules || 8;
+
+  const rowData = [
+    fullName,
+    email,
+    `${completionPercent}%`,
+    modulesCompleted,
+    totalModules,
+    avgScore,
+    formatScore(q1),
+    formatScore(q2),
+    formatScore(q3),
+    formatScore(q4),
+    quizAttempts,
+    certificatesEligible
+  ];
+
+  const row = findRowByEmail(sheet, email);
+
+  if (row > 0) {
+    sheet.getRange(row, 1, 1, rowData.length).setValues([rowData]);
   } else {
-    return eligibleModules.join(' | ');
+    sheet.appendRow(rowData);
   }
-}
 
-// ===================================
-// UTILITY: REMOVE ALL COLUMN HIGHLIGHTING
-// ===================================
-function removeAllColumnHighlighting() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('Progress');
-  
-  if (!sheet) {
-    return 'No Progress sheet found';
-  }
-  
-  // Remove all background colors except header
-  const maxRows = sheet.getMaxRows();
-  const maxCols = sheet.getMaxColumns();
-  
-  if (maxRows > 1) {
-    sheet.getRange(2, 1, maxRows - 1, maxCols).setBackground(null);
-  }
-  
-  return 'Column highlighting removed successfully';
-}
-
-// ===================================
-// UTILITY: EXPORT TO CSV
-// ===================================
-function exportProgressToCSV() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName('Progress');
-  
-  if (!sheet) {
-    return 'No progress data found';
-  }
-  
-  const data = sheet.getDataRange().getValues();
-  let csv = '';
-  
-  data.forEach(row => {
-    csv += row.join(',') + '\n';
-  });
-  
-  return csv;
+  return json({ status: 'success', message: 'Progress updated' });
 }
