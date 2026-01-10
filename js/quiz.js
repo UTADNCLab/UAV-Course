@@ -173,6 +173,14 @@ function showQuizResults() {
     if (passed) {
         // Mark quiz as complete
         completedModules.add(currentModuleIndex);
+        
+        // Also mark the previous video module as complete (if not already)
+        // Video modules are at even indices (0, 2, 4, 6), quizzes at odd indices (1, 3, 5, 7)
+        if (currentModuleIndex > 0 && currentModuleIndex % 2 === 1) {
+            const videoModuleIndex = currentModuleIndex - 1;
+            completedModules.add(videoModuleIndex);
+        }
+        
         saveProgress();
         updateProgress();
         loadModulesList();
