@@ -249,19 +249,10 @@ function completeQuiz() {
     const allModulesCompleted = completedCount === totalModules;
     
     if (allModulesCompleted) {
-        // All modules completed - check if certificate module exists
-        const certificateModuleIndex = courseData.modules.findIndex(m => m.type === 'certificate');
-        
-        if (certificateModuleIndex !== -1) {
-            // Show notification and open certificate
-            showNotification('🎉 Congratulations! All modules completed! Opening certificate...', 'success');
-            setTimeout(() => {
-                loadModule(certificateModuleIndex);
-            }, 1500);
-        } else {
-            // No certificate module, just show congrats
-            showCongratsModal();
-        }
+        // All modules completed - show notification but DON'T auto-open certificate
+        showNotification('🎉 Congratulations! All modules completed! Click the certificate module to view your certificate.', 'success');
+        // Return to course page
+        nextModule();
     } else {
         // Not all modules completed - go back to course page (next module)
         showNotification(`Great job! ${totalModules - completedCount} module${totalModules - completedCount > 1 ? 's' : ''} remaining.`, 'success');
