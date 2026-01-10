@@ -45,85 +45,116 @@
     {
       "id": 2,
       "title": "Quiz 1: Open Airborne Computing Platforms",
-      "description": "Test your understanding of UAV hardware and modular platform design.",
+      "description": "Test your understanding of UAV hardware, regulations, and Single Board Computers.",
       "type": "quiz",
       "questions": [
         {
-          "question": "What is the primary advantage of an Open Airborne Computing Platform?",
+          "question": "The maximum flight height for a drone is:",
           "options": [
-            "It makes drones fly faster",
-            "It allows easy testing, upgrading, and integration of new technologies",
-            "It reduces the cost of drones to zero",
-            "It eliminates the need for sensors"
+            "100 feet",
+            "400 feet",
+            "800 feet",
+            "1000 feet"
           ],
           "correctAnswer": 1,
-          "explanation": "Open platforms provide modularity, making it easier to test new components, upgrade systems, and integrate emerging technologies without redesigning the entire UAV."
+          "explanation": "Under FAA regulations, the maximum altitude for recreational and commercial drone operations is 400 feet above ground level."
         },
         {
-          "question": "Which component is responsible for stabilizing the drone during flight?",
+          "question": "The open aerial computing platform is to:",
           "options": [
-            "GPS module",
-            "Battery",
-            "Flight controller",
-            "Camera"
+            "Develop a 'flying smartphone'",
+            "Develop low cost drone",
+            "Design a drone specifically for taking selfies",
+            "Develop a portable computer"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The open aerial computing platform aims to create affordable, modular drone systems that can be easily customized and upgraded."
+        },
+        {
+          "question": "The safety for drone operation includes:",
+          "options": [
+            "Drone safety",
+            "Operator safety",
+            "Space safety",
+            "All the above"
+          ],
+          "correctAnswer": 3,
+          "explanation": "Comprehensive drone safety encompasses the physical safety of the drone itself, the operator, and the airspace/environment where it operates."
+        },
+        {
+          "question": "Under current FAA regulations, can we fly a drone beyond visual line of sight?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Current FAA regulations generally require drones to remain within visual line of sight (VLOS) unless special waivers are obtained."
+        },
+        {
+          "question": "Which is NOT another name for drones?",
+          "options": [
+            "Quadrotor",
+            "UAV",
+            "eVTOL",
+            "Helicopter"
+          ],
+          "correctAnswer": 3,
+          "explanation": "While quadrotors, UAVs, and eVTOLs are all types of unmanned aerial vehicles, a traditional helicopter is a manned aircraft."
+        },
+        {
+          "question": "What is a Single Board Computer (SBC)?",
+          "options": [
+            "A processor chip used in PCs",
+            "A complete computer on one circuit board",
+            "A display module for smartphones",
+            "A wireless communication module"
+          ],
+          "correctAnswer": 1,
+          "explanation": "An SBC integrates all computer components (CPU, memory, I/O) onto a single circuit board, making it compact and suitable for embedded applications."
+        },
+        {
+          "question": "Which of the following is an example of an SBC?",
+          "options": [
+            "Intel Core i7",
+            "Dell XPS 13",
+            "Raspberry Pi 4",
+            "NVIDIA GeForce RTX"
           ],
           "correctAnswer": 2,
-          "explanation": "The flight controller processes sensor data and adjusts motor speeds to maintain stable flight and execute commands."
+          "explanation": "Raspberry Pi 4 is a popular single board computer that includes CPU, RAM, and I/O ports on one board."
         },
         {
-          "question": "What type of UAV design is most common for hovering and vertical takeoff?",
+          "question": "What distinguishes an SBC from a traditional PC?",
           "options": [
-            "Fixed-wing",
-            "Quadrotor (multirotor)",
-            "Helicopter",
-            "Glider"
+            "SBCs cannot run any operating system",
+            "SBCs are larger and more expensive",
+            "SBCs integrate CPU, memory, and I/O on a single board",
+            "SBCs require external graphics cards"
           ],
-          "correctAnswer": 1,
-          "explanation": "Quadrotors use multiple rotors to achieve stable hovering and vertical takeoff/landing, making them ideal for many applications."
+          "correctAnswer": 2,
+          "explanation": "SBCs are distinguished by their integration of all essential computer components on a single compact board."
         },
         {
-          "question": "Which sensor is essential for autonomous navigation and positioning?",
+          "question": "Which OS is commonly used with SBCs like Raspberry Pi?",
           "options": [
-            "Temperature sensor",
-            "GPS/GNSS",
-            "Microphone",
-            "Light sensor"
+            "iOS",
+            "Chrome OS",
+            "Raspberry Pi OS (Linux based)",
+            "Windows XP"
           ],
-          "correctAnswer": 1,
-          "explanation": "GPS/GNSS provides accurate positioning data that enables autonomous navigation and waypoint following."
+          "correctAnswer": 2,
+          "explanation": "Raspberry Pi OS, based on Linux, is specifically optimized for Raspberry Pi single board computers."
         },
         {
-          "question": "What does CPS stand for in UAV design?",
+          "question": "What is the typical application of an SBC?",
           "options": [
-            "Computer Processing System",
-            "Cyber-Physical Systems",
-            "Control and Power Supply",
-            "Central Positioning Sensor"
+            "Managing airplane flight controls",
+            "Training large-scale AI models",
+            "Running compact home servers or robotics projects",
+            "Mining cryptocurrency in datacenters"
           ],
-          "correctAnswer": 1,
-          "explanation": "CPS stands for Cyber-Physical Systems, which integrates computation, networking, and physical processes in UAV design."
-        },
-        {
-          "question": "What is the main purpose of redundancy in UAV systems?",
-          "options": [
-            "To make the drone heavier",
-            "To increase system reliability and safety",
-            "To consume more power",
-            "To make the system more complex"
-          ],
-          "correctAnswer": 1,
-          "explanation": "Redundancy in critical systems (sensors, motors, controllers) ensures the UAV can continue operating safely even if one component fails."
-        },
-        {
-          "question": "Which communication protocol is commonly used for UAV ground control?",
-          "options": [
-            "Bluetooth only",
-            "MAVLink",
-            "HTTP",
-            "FTP"
-          ],
-          "correctAnswer": 1,
-          "explanation": "MAVLink (Micro Air Vehicle Link) is a lightweight messaging protocol designed specifically for communicating with drones and ground control stations."
+          "correctAnswer": 2,
+          "explanation": "SBCs are ideal for compact applications like home servers, IoT devices, and robotics due to their small size and low power consumption."
         }
       ]
     },
@@ -138,85 +169,74 @@
     {
       "id": 4,
       "title": "Quiz 2: UAV Communications and Networking",
-      "description": "Assess your knowledge of UAV communication systems and networking protocols.",
+      "description": "Assess your knowledge of UAV communication modes, applications, and design guidelines.",
       "type": "quiz",
       "questions": [
         {
-          "question": "What is the main difference between air-to-air and air-to-ground communication?",
+          "question": "According to the video, which of the following modes belong to UAV communications?",
           "options": [
-            "Air-to-air uses satellites, air-to-ground uses cables",
-            "Air-to-air is between drones, air-to-ground is between drone and ground station",
-            "There is no difference",
-            "Air-to-air is slower than air-to-ground"
+            "Air-to-air",
+            "Air-to-ground",
+            "Air-to-satellite",
+            "Ground-to-satellite"
           ],
-          "correctAnswer": 1,
-          "explanation": "Air-to-air communication occurs between UAVs in a swarm, while air-to-ground links connect drones to ground control stations or base stations."
+          "correctAnswer": 0,
+          "explanation": "UAV communications include air-to-air (between drones), air-to-ground (drone to ground station), and air-to-satellite modes. Note: This is a multiple-answer question - correct answers are options 1, 2, and 3."
         },
         {
-          "question": "Which technology offers the highest bandwidth for UAV communication?",
+          "question": "According to the video, what is the main role of UAV in 3GPP release 17?",
           "options": [
-            "2G cellular",
-            "Wi-Fi",
-            "5G/6G cellular",
-            "Bluetooth"
+            "User equipment",
+            "Base station",
+            "Relay station",
+            "Surveillance station"
           ],
-          "correctAnswer": 2,
-          "explanation": "5G/6G cellular networks provide high bandwidth, low latency, and wide coverage, making them ideal for data-intensive UAV applications."
+          "correctAnswer": 0,
+          "explanation": "In 3GPP Release 17, UAVs are primarily considered as user equipment (UE) in cellular networks."
         },
         {
-          "question": "What role can a UAV play in extending network coverage?",
+          "question": "According to the video, which of the following are possible applications of airborne computing for communications and networking?",
           "options": [
-            "Power generator",
-            "Relay or flying base station",
-            "Weather monitor only",
-            "None, UAVs cannot help with networks"
+            "Controlling the trajectory of a UAV-enabled base station",
+            "Recording videos on a UAV",
+            "Sending videos from a UAV to a control center",
+            "Identifying a vehicle on a UAV and then using directional antenna to communicate with the vehicle"
           ],
-          "correctAnswer": 1,
-          "explanation": "UAVs can act as aerial relays or temporary base stations to extend network coverage in remote or disaster-affected areas."
+          "correctAnswer": 0,
+          "explanation": "Airborne computing enables trajectory control for UAV base stations and intelligent directional antenna alignment. Note: Correct answers are options 1 and 4."
         },
         {
-          "question": "What is a key challenge in UAV networking?",
+          "question": "According to the video, what are the main challenges in the design and deployment of airborne computing for communications and networking?",
           "options": [
-            "Drones are too heavy",
-            "Limited battery life and energy constraints",
-            "Drones cannot fly at night",
-            "Communication is always perfect"
+            "Diverse application requirements",
+            "Limitations of UAV platform",
+            "Regulation of frequency allocation",
+            "Patent of technology"
           ],
-          "correctAnswer": 1,
-          "explanation": "Energy constraints limit flight time and communication range, requiring efficient power management and protocol design."
+          "correctAnswer": 0,
+          "explanation": "The main challenges include diverse application requirements and UAV platform limitations. Note: Correct answers are options 1 and 2."
         },
         {
-          "question": "What is the purpose of MIMO technology in UAV communications?",
+          "question": "According to the video, what are design guidelines for using airborne computing to enhance communications and networking?",
           "options": [
-            "To make drones smaller",
-            "To improve data rates and reliability using multiple antennas",
-            "To reduce power consumption only",
-            "To change drone colors"
+            "Identifying the computing needs",
+            "Clarifying the system model",
+            "Specifying the computing model",
+            "Understanding the relevant factors"
           ],
-          "correctAnswer": 1,
-          "explanation": "MIMO (Multiple-Input Multiple-Output) uses multiple antennas to increase data throughput and improve link reliability in challenging environments."
+          "correctAnswer": 0,
+          "explanation": "All listed items are important design guidelines. Note: This includes all options plus 'Optimizing the system performance'."
         },
         {
-          "question": "Which layer of the OSI model is most critical for UAV real-time control?",
+          "question": "According to the video, what are the desired features of enabling technologies for using airborne computing to enhance communications and networking?",
           "options": [
-            "Application Layer",
-            "Transport Layer",
-            "Physical Layer",
-            "Presentation Layer"
+            "Improving the capabilities of UAV",
+            "Improving the scalability",
+            "Providing flexibility",
+            "Reducing the cost of UAV"
           ],
-          "correctAnswer": 1,
-          "explanation": "The Transport Layer is critical for ensuring reliable, low-latency delivery of control commands and telemetry data in real-time UAV operations."
-        },
-        {
-          "question": "What is spectrum sharing in UAV communications?",
-          "options": [
-            "Drones sharing physical space",
-            "Multiple UAVs using the same frequency bands efficiently",
-            "Sharing battery power",
-            "Sharing the same flight path"
-          ],
-          "correctAnswer": 1,
-          "explanation": "Spectrum sharing allows multiple UAVs to efficiently use limited frequency resources through techniques like dynamic spectrum access and cognitive radio."
+          "correctAnswer": 0,
+          "explanation": "Desired features include improving UAV capabilities, scalability, and flexibility. Note: Correct answers are options 1, 2, and 3."
         }
       ]
     },
@@ -231,85 +251,96 @@
     {
       "id": 6,
       "title": "Quiz 3: Networked Control and Co-Design",
-      "description": "Evaluate your understanding of control-communication co-design and swarm coordination.",
+      "description": "Evaluate your understanding of networked UAV systems, directional antennas, and co-design principles.",
       "type": "quiz",
       "questions": [
         {
-          "question": "What is the purpose of co-designing communication and control systems?",
+          "question": "What is the primary goal of a networked UAV system?",
           "options": [
-            "To make drones look better",
-            "To ensure both systems work together efficiently for safe and reliable operation",
-            "To reduce the number of sensors needed",
-            "To eliminate the need for pilots"
+            "To enhance UAV battery endurance",
+            "To enable multiple UAVs to communicate, coordinate, and perform complex missions",
+            "To improve UAV image stabilization",
+            "To replace ground-based controllers entirely"
           ],
           "correctAnswer": 1,
-          "explanation": "Co-design ensures that communication and control systems are optimized together, improving overall system performance, safety, and reliability."
+          "explanation": "Networked UAV systems enable multiple drones to work together through communication and coordination to accomplish complex missions."
         },
         {
-          "question": "How can reinforcement learning help in UAV antenna alignment?",
+          "question": "What is the main advantage of using directional antennas on UAVs?",
           "options": [
-            "It cannot help at all",
-            "It learns optimal alignment strategies through trial and error",
-            "It replaces the antenna",
-            "It only works on the ground"
-          ],
-          "correctAnswer": 1,
-          "explanation": "Reinforcement learning algorithms can learn to dynamically adjust antenna orientation to maintain strong communication links as UAVs move."
-        },
-        {
-          "question": "What is swarm coordination in UAV systems?",
-          "options": [
-            "Multiple drones working together with distributed control",
-            "A single drone flying in circles",
-            "Drones that never communicate",
-            "Ground-based control only"
+            "They provide long-range, high-bandwidth communication without ground infrastructure",
+            "They improve GPS positioning accuracy",
+            "They reduce UAV power consumption",
+            "They simplify UAV hardware wiring"
           ],
           "correctAnswer": 0,
-          "explanation": "Swarm coordination involves multiple UAVs working together, sharing information and making distributed decisions to accomplish complex tasks."
+          "explanation": "Directional antennas focus signal energy in specific directions, enabling long-range, high-bandwidth communication."
         },
         {
-          "question": "Which technique helps prevent collisions in multi-UAV systems?",
+          "question": "When GPS signals are unavailable, which signal can be used to aid antenna alignment?",
           "options": [
-            "Flying only one drone at a time",
-            "Distributed control algorithms and collision avoidance protocols",
-            "Painting drones bright colors",
-            "Flying very slowly"
+            "IMU sensor data",
+            "RSSI (Received Signal Strength Indicator)",
+            "Compass heading",
+            "Barometric pressure"
           ],
           "correctAnswer": 1,
-          "explanation": "Distributed control algorithms enable UAVs to sense nearby drones and adjust their paths to avoid collisions while maintaining mission objectives."
+          "explanation": "RSSI provides signal strength information that can be used to optimize antenna alignment when GPS is unavailable."
         },
         {
-          "question": "What is consensus in multi-agent UAV systems?",
+          "question": "In a co-design framework, what best describes the relationship between communication and control?",
           "options": [
-            "All drones must be the same color",
-            "Agreement on shared state information among UAVs",
-            "Only one drone makes decisions",
-            "Drones never agree on anything"
+            "Communication supports control, but not vice versa",
+            "Control helps communication, and communication helps control",
+            "Communication replaces control under uncertainty",
+            "The two functions operate independently"
           ],
           "correctAnswer": 1,
-          "explanation": "Consensus algorithms enable multiple UAVs to agree on shared information (like formation shape or target location) through distributed communication."
+          "explanation": "In co-design, communication and control are interdependent - each supports and enhances the other."
         },
         {
-          "question": "What is the role of a Kalman filter in UAV control?",
+          "question": "Which learning method can adaptively estimate parameters in a UAV communication model?",
           "options": [
-            "To filter air particles",
-            "To estimate system states from noisy sensor measurements",
-            "To clean the camera lens",
-            "To filter radio frequencies"
+            "Supervised learning",
+            "Reinforcement learning",
+            "Genetic algorithms",
+            "Fuzzy inference systems"
           ],
           "correctAnswer": 1,
-          "explanation": "Kalman filters combine multiple noisy sensor measurements to produce optimal estimates of UAV position, velocity, and orientation."
+          "explanation": "Reinforcement learning can adaptively learn and estimate communication parameters through interaction with the environment."
         },
         {
-          "question": "What does MPC stand for in UAV control?",
+          "question": "What happens when both GPS and RSSI are combined for antenna alignment?",
           "options": [
-            "Multi-Purpose Computer",
-            "Model Predictive Control",
-            "Maximum Power Consumption",
-            "Manual Pilot Control"
+            "Alignment accuracy improves significantly",
+            "Signal interference increases",
+            "Bandwidth decreases",
+            "No change in performance is observed"
+          ],
+          "correctAnswer": 0,
+          "explanation": "Combining GPS position data with RSSI signal strength information provides more robust and accurate antenna alignment."
+        },
+        {
+          "question": "What is the main purpose of random mobility models in UAV network design?",
+          "options": [
+            "To reduce communication cost",
+            "To represent unpredictable UAV movement for analysis",
+            "To improve motor efficiency",
+            "To control altitude variation"
           ],
           "correctAnswer": 1,
-          "explanation": "Model Predictive Control (MPC) uses a model of the UAV to predict future behavior and optimize control actions over a time horizon."
+          "explanation": "Random mobility models help analyze and design UAV networks by representing realistic, unpredictable movement patterns."
+        },
+        {
+          "question": "Which factor increases the safety of UAV airspace?",
+          "options": [
+            "Shorter sensing distance between UAVs",
+            "More random flight trajectories",
+            "Longer flight times and smoother movement patterns",
+            "Lower communication range"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Longer flight times and smoother, more predictable movement patterns enhance safety by reducing collision risks."
         }
       ]
     },
@@ -324,85 +355,118 @@
     {
       "id": 8,
       "title": "Quiz 4: UAV AI Applications",
-      "description": "Test your knowledge of AI, edge computing, and distributed intelligence in UAV systems.",
+      "description": "Test your knowledge of onboard computing, virtualization, and distributed computing for UAVs.",
       "type": "quiz",
       "questions": [
         {
-          "question": "What is the advantage of onboard AI processing on UAVs?",
+          "question": "Why is doing computation onboard a UAV often better than offloading to the ground?",
           "options": [
-            "It makes drones heavier",
-            "It enables real-time decision-making without relying on ground stations",
-            "It increases communication delays",
-            "It has no advantages"
+            "Reduces vibration",
+            "Avoids bandwidth limits and transmission delays",
+            "Onboard storage is always larger",
+            "Required by regulations"
           ],
           "correctAnswer": 1,
-          "explanation": "Onboard AI allows UAVs to process data and make decisions in real-time, reducing latency and dependence on communication links."
+          "explanation": "Onboard computation avoids bandwidth limitations and transmission delays, enabling real-time processing for time-critical tasks."
         },
         {
-          "question": "Which computing platform is commonly used for AI processing on UAVs?",
+          "question": "In the three-layer architecture, what does the virtualization infrastructure layer do?",
           "options": [
-            "Arduino Uno",
-            "NVIDIA Jetson",
-            "Raspberry Pi Pico",
-            "Basic calculator"
+            "Holds the physical CPU/GPU",
+            "Virtualizes hardware so resources can be allocated flexibly",
+            "Shows user interfaces",
+            "Stores only mission logs"
           ],
           "correctAnswer": 1,
-          "explanation": "NVIDIA Jetson boards provide powerful GPU acceleration for AI workloads while being compact and energy-efficient for UAV applications."
+          "explanation": "The virtualization layer abstracts physical hardware resources, allowing flexible allocation to different applications."
         },
         {
-          "question": "What is the purpose of using Docker containers on UAVs?",
+          "question": "Which was not a key criterion for choosing a UAV single-board computer?",
           "options": [
-            "To make drones waterproof",
-            "To provide isolated, portable environments for running applications",
-            "To increase flight speed",
-            "To replace the battery"
+            "Lightweight/compact",
+            "Efficient power use",
+            "High mass for stability",
+            "Strong CPU/GPU and enough memory/storage"
           ],
-          "correctAnswer": 1,
-          "explanation": "Docker containers enable flexible deployment of applications, easy updates, and isolation between different software components on UAVs."
+          "correctAnswer": 2,
+          "explanation": "Low weight is desired for UAVs; high mass would reduce flight time and maneuverability."
         },
         {
-          "question": "What is federated learning in the context of UAV swarms?",
+          "question": "Which statement is correct about KVM vs Docker?",
           "options": [
-            "Each drone learns independently without sharing knowledge",
-            "Drones collaboratively train AI models while keeping data local",
-            "Only ground stations can learn",
-            "Learning is not possible on drones"
+            "KVM provides stronger isolation and security than Docker and requires fewer system resources",
+            "They perform identically in terms of overhead and isolation",
+            "Docker provides stronger isolation and security than KVM",
+            "Docker containers are lighter and faster to start than KVM virtual machines but have weaker isolation"
           ],
-          "correctAnswer": 1,
-          "explanation": "Federated learning allows UAVs to collaboratively improve AI models by sharing model updates rather than raw data, preserving privacy and reducing bandwidth."
+          "correctAnswer": 3,
+          "explanation": "Docker containers are more lightweight but provide weaker isolation compared to KVM virtual machines."
         },
         {
-          "question": "What is edge computing in UAV applications?",
+          "question": "What's the main security/performance trade-off mentioned?",
           "options": [
-            "Computing only at the edges of the drone",
-            "Processing data close to the source (on the UAV) rather than in the cloud",
-            "Computing while flying at the edge of restricted airspace",
-            "Using only edge detection algorithms"
+            "VMs = lower overhead, weaker isolation",
+            "Containers = higher overhead, stronger isolation",
+            "VMs = stronger isolation but higher overhead",
+            "Containers = most secure and most resource-hungry"
           ],
-          "correctAnswer": 1,
-          "explanation": "Edge computing processes data on or near the UAV, reducing latency, bandwidth usage, and dependence on cloud connectivity."
+          "correctAnswer": 2,
+          "explanation": "Virtual machines provide stronger security isolation but consume more system resources than containers."
         },
         {
-          "question": "Which deep learning framework is commonly used for UAV vision tasks?",
+          "question": "Which is a listed benefit of virtualization for UAVs?",
           "options": [
-            "Microsoft Word",
-            "TensorFlow or PyTorch",
-            "Excel",
-            "PowerPoint"
+            "Infinite battery life",
+            "Run multiple apps concurrently on one UAV",
+            "No networking needed",
+            "Replaces flight controller firmware"
           ],
           "correctAnswer": 1,
-          "explanation": "TensorFlow and PyTorch are popular deep learning frameworks that provide tools for training and deploying computer vision models on UAVs."
+          "explanation": "Virtualization enables running multiple applications simultaneously with resource isolation and management."
         },
         {
-          "question": "What is SLAM in UAV navigation?",
+          "question": "In coded distributed computing with two workers on A1 and A2, adding a third worker computing (A1 + A2)X lets the master:",
           "options": [
-            "Slow Landing and Maneuvering",
-            "Simultaneous Localization and Mapping",
-            "System Load and Management",
-            "Speed Limit and Monitoring"
+            "Finish only after all three respond",
+            "Finish after any two results arrive",
+            "Use zero memory",
+            "Skip encoding"
           ],
           "correctAnswer": 1,
-          "explanation": "SLAM (Simultaneous Localization and Mapping) enables UAVs to build maps of unknown environments while tracking their own location within those maps."
+          "explanation": "Coded computing adds redundancy, allowing the master to complete computation once any two workers respond."
+        },
+        {
+          "question": "What's the key idea of BPCC?",
+          "options": [
+            "Compress inputs",
+            "Let workers send partial batch results early for approximate solutions",
+            "Wait until all workers finish",
+            "Use encryption instead of encoding"
+          ],
+          "correctAnswer": 1,
+          "explanation": "Batched and Packed Coded Computing (BPCC) allows workers to send partial results early, reducing overall completion time."
+        },
+        {
+          "question": "In BPCC encoding, the matrix H should be chosen so that:",
+          "options": [
+            "It's diagonal with ones",
+            "Any R rows are full-rank",
+            "It's all zeros",
+            "It depends only on input size"
+          ],
+          "correctAnswer": 1,
+          "explanation": "The encoding matrix H must have any R rows be full-rank to enable reconstruction from any R worker responses."
+        },
+        {
+          "question": "For dynamic BPCC with a master and N workers doing matrix–vector tasks, how many worker failures can be tolerated?",
+          "options": [
+            "0",
+            "1",
+            "N-1",
+            "N"
+          ],
+          "correctAnswer": 2,
+          "explanation": "Dynamic BPCC can tolerate up to N-1 worker failures, completing as long as at least one worker (or the master) functions."
         }
       ]
     },
