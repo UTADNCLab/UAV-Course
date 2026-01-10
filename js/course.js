@@ -516,12 +516,14 @@ function nextModule() {
     // No next learning module - calculate completion and show appropriate message
     const total = courseData.modules.filter(m => m.type !== 'certificate').length;
     const completed = Array.from(completedModules).filter(i => courseData.modules[i]?.type !== 'certificate').length;
+    const percentage = Math.round((completed / total) * 100);
     const remaining = total - completed;
     
-    if (remaining > 0) {
-        showNotification(`${completed}/${total} modules completed. ${remaining} remaining. Going back to Module 1.`, 'info');
+    // Check if 100% complete
+    if (percentage === 100) {
+        showNotification('🎉 All modules completed! Click the certificate in the sidebar to view your achievements.', 'success');
     } else {
-        showNotification('All modules completed! Click the certificate in the sidebar to view your achievements.', 'success');
+        showNotification(`${completed}/${total} modules completed (${percentage}%). ${remaining} remaining. Going back to Module 1.`, 'info');
     }
     
     setTimeout(() => {
