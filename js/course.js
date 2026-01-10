@@ -352,7 +352,16 @@ function loadVideoModule(module) {
     if (videoDuration) videoDuration.textContent = module.duration;
     if (moduleNumber) moduleNumber.textContent = (Math.floor(currentModuleIndex / 2) + 1);
     if (videoDescription) videoDescription.textContent = module.description;
-    if (videoPlayer) videoPlayer.src = module.videoUrl;
+    if (videoPlayer) {
+        videoPlayer.src = module.videoUrl;
+        
+        // Add event listener for when video ends
+        videoPlayer.onended = function() {
+            if (!completedModules.has(currentModuleIndex)) {
+                markComplete();
+            }
+        };
+    }
 
     // Update buttons
     const prevBtn = document.getElementById('prevBtn');
