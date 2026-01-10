@@ -444,8 +444,10 @@ function nextModule() {
 // PROGRESS
 // ===================================
 function updateProgress() {
-    const total = courseData.modules.length;
-    const completed = completedModules.size;
+    // Exclude certificate module from progress calculation
+    const total = courseData.modules.filter(m => m.type !== 'certificate').length;
+    const completed = Array.from(completedModules).filter(i => courseData.modules[i]?.type !== 'certificate').length;
+    
     const percentage = Math.round((completed / total) * 100);
 
     document.getElementById('progressBar').style.width = percentage + '%';

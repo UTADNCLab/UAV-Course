@@ -157,12 +157,12 @@ function handleProgress(progressData) {
     headerRange.setFontColor('#FFFFFF');
   }
   
-  // Extract quiz scores and attempts
+  // Extract quiz scores and attempts (using string keys: 'quiz-1', 'quiz-2', etc.)
   const quizScores = progressData.quizScores || {};
-  const quiz1 = quizScores['2'] ? quizScores['2'].percentage + '%' : 'Not taken';
-  const quiz2 = quizScores['4'] ? quizScores['4'].percentage + '%' : 'Not taken';
-  const quiz3 = quizScores['6'] ? quizScores['6'].percentage + '%' : 'Not taken';
-  const quiz4 = quizScores['8'] ? quizScores['8'].percentage + '%' : 'Not taken';
+  const quiz1 = quizScores['quiz-1'] && quizScores['quiz-1'].percentage >= 80 ? quizScores['quiz-1'].percentage + '%' : 'Not taken';
+  const quiz2 = quizScores['quiz-2'] && quizScores['quiz-2'].percentage >= 80 ? quizScores['quiz-2'].percentage + '%' : 'Not taken';
+  const quiz3 = quizScores['quiz-3'] && quizScores['quiz-3'].percentage >= 80 ? quizScores['quiz-3'].percentage + '%' : 'Not taken';
+  const quiz4 = quizScores['quiz-4'] && quizScores['quiz-4'].percentage >= 80 ? quizScores['quiz-4'].percentage + '%' : 'Not taken';
   
   // Track quiz attempts (all attempts, not just latest)
   const quizAttempts = progressData.quizAttempts || buildQuizAttemptsString(quizScores);
@@ -329,21 +329,26 @@ function calculateBestQualifyingScores(quizScores) {
 // ===================================
 function checkModuleCertificates(quizScores) {
   const moduleNames = {
-    1: 'Open Airborne Computing Platforms',
-    2: 'UAV Communications and Networking',
-    3: 'Networked Control and Co-Design',
-    4: 'Airborne Computing and AI'
+    'quiz-1': 'Module 1: Open Airborne Computing Platforms',
+    'quiz-2': 'Module 2: UAV Communications and Networking',
+    'quiz-3': 'Module 3: Networked Control and Co-Design',
+    'quiz-4': 'Module 4: Airborne Computing and AI'
   };
   
   const eligibleModules = [];
   
-  for (const [quizId, scoreData] of Object.entries(quizScores)) {
-    const quizNum = Math.floor(parseInt(quizId) / 2);
-    const percentage = scoreData.percentage || 0;
-    
-    if (percentage >= 80 && moduleNames[quizNum]) {
-      eligibleModules.push(moduleNames[quizNum]);
-    }
+  // Check each quiz using string keys
+  if (quizScores['quiz-1'] && quizScores['quiz-1'].percentage >= 80) {
+    eligibleModules.push(moduleNames['quiz-1']);
+  }
+  if (quizScores['quiz-2'] && quizScores['quiz-2'].percentage >= 80) {
+    eligibleModules.push(moduleNames['quiz-2']);
+  }
+  if (quizScores['quiz-3'] && quizScores['quiz-3'].percentage >= 80) {
+    eligibleModules.push(moduleNames['quiz-3']);
+  }
+  if (quizScores['quiz-4'] && quizScores['quiz-4'].percentage >= 80) {
+    eligibleModules.push(moduleNames['quiz-4']);
   }
   
   if (eligibleModules.length === 0) {

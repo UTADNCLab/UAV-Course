@@ -290,11 +290,11 @@ async function sendToGoogleSheets(action, data) {
     }
     
     try {
+        // Use text/plain to avoid CORS preflight
         const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'text/plain;charset=utf-8',
             },
             body: JSON.stringify({
                 action: action,
@@ -303,7 +303,7 @@ async function sendToGoogleSheets(action, data) {
             })
         });
         
-        console.log('Data sent to Google Sheets');
+        console.log('Data sent to Google Sheets successfully');
     } catch (error) {
         console.error('Error sending to Google Sheets:', error);
     }
