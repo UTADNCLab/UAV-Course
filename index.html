@@ -80,17 +80,6 @@
                 <p class="progress-text"><span id="completedCount">0</span> / 8 completed</p>
             </div>
 
-            <!-- Certificate Section -->
-            <div class="certificate-section" id="certificateSection" style="display: none;">
-                <div class="certificate-card">
-                    <i class="fas fa-certificate"></i>
-                    <h4>Certificates Available</h4>
-                    <p id="certificateModules">Complete quizzes with 80%+ to earn certificates</p>
-                    <button class="btn-certificate" onclick="downloadCertificate()">
-                        <i class="fas fa-download"></i> Download Certificates
-                    </button>
-                </div>
-            </div>
 
             <div class="modules-list" id="modulesList">
                 <!-- Modules will be loaded here by JavaScript -->
@@ -206,6 +195,68 @@
                     <i class="fas fa-envelope"></i> Ask Questions
                 </button>
                 <button class="btn-secondary" onclick="closeCongrats()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructor Section (Below Main Content) -->
+    <div class="instructor-section">
+        <div class="container">
+            <h3><i class="fas fa-chalkboard-teacher"></i> Your Instructors</h3>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Have questions? Contact our expert faculty members</p>
+            <div class="instructors-grid">
+                <div class="instructor-card">
+                    <div class="instructor-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="instructor-info">
+                        <h4>Dr. Yan Wan</h4>
+                        <p class="instructor-title">Professor of Electrical Engineering</p>
+                        <p class="instructor-bio">Specializes in cyber-physical systems, networked control systems, and multi-agent coordination. Research focuses on intelligent UAV systems for disaster response and infrastructure monitoring.</p>
+                        <button class="btn-contact" onclick="showContactFormWithProfessor('dr-yan-wan')">
+                            <i class="fas fa-envelope"></i> Contact
+                        </button>
+                    </div>
+                </div>
+                <div class="instructor-card">
+                    <div class="instructor-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="instructor-info">
+                        <h4>Dr. Junfei Xie</h4>
+                        <p class="instructor-title">Professor of Computer Science</p>
+                        <p class="instructor-bio">Expertise in machine learning, computer vision, and AI applications for autonomous systems. Pioneered work in edge computing and real-time object detection for UAV platforms.</p>
+                        <button class="btn-contact" onclick="showContactFormWithProfessor('dr-junfei-xie')">
+                            <i class="fas fa-envelope"></i> Contact
+                        </button>
+                    </div>
+                </div>
+                <div class="instructor-card">
+                    <div class="instructor-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="instructor-info">
+                        <h4>Dr. Kejie Lu</h4>
+                        <p class="instructor-title">Professor of Electrical Engineering</p>
+                        <p class="instructor-bio">Focuses on wireless communications, network optimization, and 5G/6G technologies for UAV systems. Enables reliable high-speed communication links for drone swarms and aerial networks.</p>
+                        <button class="btn-contact" onclick="showContactFormWithProfessor('dr-kejie-lu')">
+                            <i class="fas fa-envelope"></i> Contact
+                        </button>
+                    </div>
+                </div>
+                <div class="instructor-card">
+                    <div class="instructor-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="instructor-info">
+                        <h4>Dr. Shengli Fu</h4>
+                        <p class="instructor-title">Professor of Computer Engineering</p>
+                        <p class="instructor-bio">Specializes in embedded systems, IoT architectures, and distributed computing for UAVs. Work on containerization and virtualization has advanced AI deployment on aerial platforms.</p>
+                        <button class="btn-contact" onclick="showContactFormWithProfessor('dr-shengli-fu')">
+                            <i class="fas fa-envelope"></i> Contact
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

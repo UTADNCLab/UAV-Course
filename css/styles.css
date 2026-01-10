@@ -662,6 +662,45 @@ body.quiz-active .video-section {
     font-size: 0.85rem;
     line-height: 1.5;
     text-align: left;
+    margin-bottom: 15px;
+}
+
+.btn-contact {
+    padding: 8px 16px;
+    background: #0064A4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-contact:hover {
+    background: #003366;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 100, 164, 0.3);
+}
+
+.instructor-section {
+    background: #f9f9f9;
+    padding: 60px 20px;
+    margin-top: 40px;
+}
+
+.instructor-section .container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.instructor-section h3 {
+    text-align: center;
+    font-size: 2rem;
+    color: #0064A4;
+    margin-bottom: 10px;
 }
 
 /* Modal */

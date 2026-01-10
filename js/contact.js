@@ -65,6 +65,23 @@ function closeContactForm() {
 }
 
 // ===================================
+// SHOW CONTACT FORM WITH PROFESSOR PRE-SELECTED
+// ===================================
+function showContactFormWithProfessor(professorId) {
+    showContactForm();
+    
+    // Wait for modal to be visible, then select professor
+    setTimeout(() => {
+        const professorSelect = document.getElementById('professorSelect');
+        if (professorSelect) {
+            professorSelect.value = professorId;
+            // Trigger change event to show professor info
+            updateProfessorInfo();
+        }
+    }, 100);
+}
+
+// ===================================
 // UPDATE PROFESSOR INFO
 // ===================================
 function updateProfessorInfo() {

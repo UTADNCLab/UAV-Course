@@ -101,9 +101,13 @@ async function handleRegister(event) {
         
         // Check if user already exists
         if (allUsers[email]) {
-            showNotification('User already exists. Please login instead.', 'error');
+            showNotification('An account with this email already exists. Please login instead.', 'error');
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
+            
+            // Switch to login form
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
             return;
         }
         

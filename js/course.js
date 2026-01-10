@@ -455,9 +455,6 @@ function loadProgress() {
         completedModules = new Set(JSON.parse(saved));
         updateProgress();
     }
-    
-    // Update certificate section
-    updateCertificateSection();
 }
 
 // ===================================
@@ -486,82 +483,6 @@ function closeCongrats() {
 }
 
 
-// ===================================
-// CERTIFICATE MANAGEMENT
-// ===================================
-function updateCertificateSection() {
-    const certificateSection = document.getElementById('certificateSection');
-    const certificateModules = document.getElementById('certificateModules');
-    
-    if (!certificateSection || !certificateModules) return;
-    
-    // Get quiz scores from localStorage
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-    const eligibleModules = [];
-    
-    // Check each quiz (indices 1, 3, 5, 7)
-    const moduleNames = [
-        'Open Airborne Computing Platforms',
-        'UAV Communications and Networking',
-        'Networked Control and Co-Design',
-        'Airborne Computing and AI'
-    ];
-    
-    // Check quiz scores using quiz IDs (quiz-1, quiz-2, quiz-3, quiz-4)
-    const quizIds = ['quiz-1', 'quiz-2', 'quiz-3', 'quiz-4'];
-    quizIds.forEach((quizId, i) => {
-        if (quizScores[quizId] && quizScores[quizId].percentage >= 80) {
-            eligibleModules.push(moduleNames[i]);
-        }
-    });
-    
-    if (eligibleModules.length > 0) {
-        certificateSection.style.display = 'block';
-        if (eligibleModules.length === 4) {
-            certificateModules.textContent = 'Full Course Certificate Available! 🎉';
-        } else {
-            certificateModules.textContent = `Certificates for: ${eligibleModules.join(', ')}`;
-        }
-    } else {
-        certificateSection.style.display = 'none';
-    }
-}
-
-function downloadCertificate() {
-    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
-    const name = user ? user.name : 'Student';
-    
-    const quizScores = JSON.parse(localStorage.getItem('uav_course_quiz_scores') || '{}');
-    const eligibleModules = [];
-    
-    const moduleNames = [
-        'Open Airborne Computing Platforms',
-        'UAV Communications and Networking',
-        'Networked Control and Co-Design',
-        'Airborne Computing and AI'
-    ];
-    
-    // Check quiz scores using quiz IDs (quiz-1, quiz-2, quiz-3, quiz-4)
-    const quizIds = ['quiz-1', 'quiz-2', 'quiz-3', 'quiz-4'];
-    quizIds.forEach((quizId, i) => {
-        if (quizScores[quizId] && quizScores[quizId].percentage >= 80) {
-            eligibleModules.push(moduleNames[i]);
-        }
-    });
-    
-    if (eligibleModules.length === 0) {
-        showNotification('Complete quizzes with 80%+ to earn certificates', 'info');
-        return;
-    }
-    
-    let message = `Certificate(s) for ${name}:\n\n`;
-    eligibleModules.forEach(module => {
-        message += `✓ ${module}\n`;
-    });
-    message += '\n(Certificate generation feature coming soon!)';
-    
-    alert(message);
-}
 
 // ===================================
 // NOTIFICATIONS
