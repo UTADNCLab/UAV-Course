@@ -514,6 +514,18 @@ function loadProgress() {
     const user = window.authFunctions ? window.authFunctions.currentUser() : null;
     if (!user) return;
     
+    // MIGRATION: Remove old global progress data (one-time cleanup)
+    const oldGlobalProgress = localStorage.getItem('uav_course_progress');
+    const oldGlobalQuizScores = localStorage.getItem('uav_course_quiz_scores');
+    
+    if (oldGlobalProgress || oldGlobalQuizScores) {
+        console.warn('⚠️ Found old global data - cleaning up...');
+        localStorage.removeItem('uav_course_progress');
+        localStorage.removeItem('uav_course_quiz_scores');
+        localStorage.removeItem('uav_course_total_modules');
+        console.log('✅ Old global data removed');
+    }
+    
     // Load progress for this specific user (use lowercase email)
     const userProgressKey = `uav_course_progress_${user.email.toLowerCase()}`;
     const saved = localStorage.getItem(userProgressKey);
