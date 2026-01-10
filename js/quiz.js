@@ -1,3 +1,4 @@
+
 // ===================================
 // QUIZ VARIABLES
 // ===================================
@@ -241,8 +242,31 @@ function saveQuizScore(quizIndex, percentage, score, total) {
 // COMPLETE QUIZ
 // ===================================
 function completeQuiz() {
-    // Move to next module
-    nextModule();
+    // Check if ALL modules are completed (excluding certificate module)
+    const totalModules = courseData.modules.filter(m => m.type !== 'certificate').length;
+    const completedCount = Array.from(completedModules).filter(i => courseData.modules[i]?.type !== 'certificate').length;
+    
+    const allModulesCompleted = completedCount === totalModules;
+    
+    if (allModulesCompleted) {
+        // All modules completed - check if certificate module exists
+        const certificateModuleIndex = courseData.modules.findIndex(m => m.type === 'certificate');
+        
+        if (certificateModuleIndex !== -1) {
+            // Show notification and open certificate
+            showNotification('🎉 Congratulations! All modules completed! Opening certificate...', 'success');
+            setTimeout(() => {
+                loadModule(certificateModuleIndex);
+            }, 1500);
+        } else {
+            // No certificate module, just show congrats
+            showCongratsModal();
+        }
+    } else {
+        // Not all modules completed - go back to course page (next module)
+        showNotification(`Great job! ${totalModules - completedCount} module${totalModules - completedCount > 1 ? 's' : ''} remaining.`, 'success');
+        nextModule();
+    }
 }
 
 // ===================================
