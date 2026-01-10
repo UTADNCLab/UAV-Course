@@ -173,7 +173,7 @@
       "type": "quiz",
       "questions": [
         {
-          "question": "According to the video, which of the following modes belong to UAV communications?\n\nA. Air-to-air\nB. Air-to-ground\nC. Air-to-satellite\nD. Ground-to-satellite",
+          "question": "According to the video, which of the following modes belong to UAV communications?\n\nA. Air-to-air\n\nB. Air-to-ground\n\nC. Air-to-satellite\n\nD. Ground-to-satellite",
           "options": [
             "Only D",
             "A, B, D",
@@ -184,18 +184,18 @@
           "explanation": "UAV communications include air-to-air (between drones), air-to-ground (drone to ground station), and air-to-satellite modes. Correct answer: A, B, C."
         },
         {
-          "question": "According to the video, what is the main role of UAV in 3GPP release 17?\n\nA. User equipment\nB. Base station\nC. Relay station\nD. Surveillance station",
+          "question": "According to the video, what is the main role of UAV in 3GPP release 17?",
           "options": [
-            "Only A",
-            "Only B",
-            "Only C",
-            "Only D"
+            "User equipment",
+            "Base station",
+            "Relay station",
+            "Surveillance station"
           ],
           "correctAnswer": 0,
-          "explanation": "In 3GPP Release 17, UAVs are primarily considered as user equipment (UE) in cellular networks. Correct answer: A."
+          "explanation": "In 3GPP Release 17, UAVs are primarily considered as user equipment (UE) in cellular networks."
         },
         {
-          "question": "According to the video, which of the following are possible applications of airborne computing for communications and networking?\n\nA. Controlling the trajectory of a UAV-enabled base station\nB. Recording videos on a UAV\nC. Sending videos from a UAV to a control center\nD. Identifying a vehicle on a UAV and then using directional antenna to communicate with the vehicle",
+          "question": "According to the video, which of the following are possible applications of airborne computing for communications and networking?\n\nA. Controlling the trajectory of a UAV-enabled base station\n\nB. Recording videos on a UAV\n\nC. Sending videos from a UAV to a control center\n\nD. Identifying a vehicle on a UAV and then using directional antenna to communicate with the vehicle",
           "options": [
             "A, D",
             "B, C",
@@ -206,7 +206,7 @@
           "explanation": "Airborne computing enables trajectory control for UAV base stations and intelligent directional antenna alignment. Correct answer: A, D."
         },
         {
-          "question": "According to the video, what are the main challenges in the design and deployment of airborne computing for communications and networking?\n\nA. Diverse application requirements\nB. Limitations of UAV platform\nC. Regulation of frequency allocation\nD. Patent of technology",
+          "question": "According to the video, what are the main challenges in the design and deployment of airborne computing for communications and networking?\n\nA. Diverse application requirements\n\nB. Limitations of UAV platform\n\nC. Regulation of frequency allocation\n\nD. Patent of technology",
           "options": [
             "A, B",
             "C, D",
@@ -217,7 +217,7 @@
           "explanation": "The main challenges include diverse application requirements and UAV platform limitations. Correct answer: A, B."
         },
         {
-          "question": "According to the video, what are design guidelines for using airborne computing to enhance communications and networking?\n\nA. Identifying the computing needs\nB. Clarifying the system model\nC. Specifying the computing model\nD. Understanding the relevant factors",
+          "question": "According to the video, what are design guidelines for using airborne computing to enhance communications and networking?\n\nA. Identifying the computing needs\n\nB. Clarifying the system model\n\nC. Specifying the computing model\n\nD. Understanding the relevant factors",
           "options": [
             "A, B, C, D (All of the above)",
             "Only A, B",
@@ -228,7 +228,7 @@
           "explanation": "All listed items are important design guidelines: identifying computing needs, clarifying the system model, specifying the computing model, understanding relevant factors, and optimizing system performance. Correct answer: A, B, C, D."
         },
         {
-          "question": "According to the video, what are the desired features of enabling technologies for using airborne computing to enhance communications and networking?\n\nA. Improving the capabilities of UAV\nB. Improving the scalability\nC. Providing flexibility\nD. Reducing the cost of UAV",
+          "question": "According to the video, what are the desired features of enabling technologies for using airborne computing to enhance communications and networking?\n\nA. Improving the capabilities of UAV\n\nB. Improving the scalability\n\nC. Providing flexibility\n\nD. Reducing the cost of UAV",
           "options": [
             "A, B, C",
             "B, C, D",
