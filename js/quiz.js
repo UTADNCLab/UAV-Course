@@ -251,12 +251,18 @@ function completeQuiz() {
     if (allModulesCompleted) {
         // All modules completed - show notification but DON'T auto-open certificate
         showNotification('🎉 Congratulations! All modules completed! Click the certificate module to view your certificate.', 'success');
-        // Return to course page
-        nextModule();
+        // Go back to first module instead of next (which might be certificate)
+        loadModule(0);
     } else {
-        // Not all modules completed - go back to course page (next module)
-        showNotification(`Great job! ${totalModules - completedCount} module${totalModules - completedCount > 1 ? 's' : ''} remaining.`, 'success');
-        nextModule();
+        // Not all modules completed - go to next module BUT skip certificate if it's next
+        const nextIndex = currentModuleIndex + 1;
+        if (nextIndex < courseData.modules.length && courseData.modules[nextIndex].type === 'certificate') {
+            // Next is certificate, go to first module instead
+            loadModule(0);
+        } else {
+            // Safe to go to next module
+            nextModule();
+        }
     }
 }
 

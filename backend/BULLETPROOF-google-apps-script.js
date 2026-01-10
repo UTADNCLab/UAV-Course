@@ -216,15 +216,15 @@ function handleProgress(progressData) {
       name.firstName || 'Student',
       name.lastName || '',
       email,
-      `${completionPercent}%`,
-      Number(modulesCompleted), // Ensure it's a number, not a string
-      Number(totalModules),
-      formatPct(q1),
-      formatPct(q2),
-      formatPct(q3),
-      formatPct(q4),
-      Number(quizAttempts),
-      eligibleYesNo
+      `${completionPercent}%`,           // Column D: "75%" (with %)
+      Number(modulesCompleted),           // Column E: 6 (just number, NO %)
+      Number(totalModules),               // Column F: 8 (just number, NO %)
+      formatPct(q1),                      // Column G: "100%" or "Not taken"
+      formatPct(q2),                      // Column H: "100%" or "Not taken"
+      formatPct(q3),                      // Column I: "Not taken"
+      formatPct(q4),                      // Column J: "Not taken"
+      Number(quizAttempts),               // Column K: 2 (just number)
+      eligibleYesNo                       // Column L: "YES" or "NO"
     ];
 
     if (row > 0) {
