@@ -454,14 +454,34 @@ function updateProgress() {
 }
 
 function saveProgress() {
+    // Get current user
+    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+    if (!user) return;
+    
+    // Save progress per user
+    const userProgressKey = `uav_course_progress_${user.email}`;
+    localStorage.setItem(userProgressKey, JSON.stringify(Array.from(completedModules)));
+    
+    // Also save to generic key for backward compatibility
     localStorage.setItem('uav_course_progress', JSON.stringify(Array.from(completedModules)));
+    
     updateProgress();
+    
+    console.log(`Progress saved for ${user.email}:`, Array.from(completedModules));
 }
 
 function loadProgress() {
-    const saved = localStorage.getItem('uav_course_progress');
+    // Get current user
+    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+    if (!user) return;
+    
+    // Load progress for this specific user
+    const userProgressKey = `uav_course_progress_${user.email}`;
+    const saved = localStorage.getItem(userProgressKey);
+    
     if (saved) {
         completedModules = new Set(JSON.parse(saved));
+        console.log(`Progress loaded for ${user.email}:`, Array.from(completedModules));
     }
     
     // Sync with quiz scores - mark quizzes complete if passed with 80%+
@@ -482,13 +502,16 @@ function loadProgress() {
                 // Mark quiz as complete
                 completedModules.add(quizIndex);
                 progressChanged = true;
+                console.log(`Auto-marking quiz ${quizIndex} as complete (score: ${score.percentage}%)`);
             }
         }
     });
     
-    // Save to localStorage if quiz sync added new completions
-    if (progressChanged) {
+    // ALWAYS save progress after loading to ensure it persists
+    if (progressChanged || completedModules.size > 0) {
+        localStorage.setItem(userProgressKey, JSON.stringify(Array.from(completedModules)));
         localStorage.setItem('uav_course_progress', JSON.stringify(Array.from(completedModules)));
+        console.log(`Progress persisted for ${user.email}`);
     }
     
     // Update progress display
