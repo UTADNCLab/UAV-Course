@@ -30,7 +30,7 @@ const PROFESSOR_CONTACTS = {
     }
 };
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzs7oApM-gF5Eb_AaGHPxaFSeyzXhfcuGPWLzyOyEalyXKgiVkHkPqXwZASGjmOGe8w/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec';
 
 // ===================================
 // SHOW CONTACT FORM (with specific professor)
