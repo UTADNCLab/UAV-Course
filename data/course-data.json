@@ -37,8 +37,8 @@
     {
       "id": 1,
       "title": "Module 1: Open Airborne Computing Platforms",
-      "description": "Learn how modern drones are designed as modular systems that combine control, communication, and onboard computing. This lecture covers UAV hardware basics — from frames and motors to controllers and sensors — and explains how open airborne platforms make it easier to test, upgrade, and integrate new technologies for real-world applications.",
-      "videoUrl": "https://drive.google.com/file/d/1rc_u7-PfAhxZ7_1cDShCsj1NRFTvO8u3/preview",
+      "description": "Learn how modern drones are designed as modular systems that combine control, communication, and onboard computing. This lecture covers UAV hardware basics from frames and motors to controllers and sensors and explains how open airborne platforms make it easier to test, upgrade, and integrate new technologies for real-world applications.",
+      "videoUrl": "https://drive.google.com/file/d/1GFbVMbXLZ5uQfOMlRtGs3zMcwfb8afSP/preview",
       "duration": "45 min",
       "type": "video"
     },
@@ -162,7 +162,7 @@
       "id": 3,
       "title": "Module 2: UAV Communications and Networking",
       "description": "Discover how UAVs communicate and form flying networks. You'll explore air-to-air and air-to-ground links, the use of Wi-Fi, cellular, and 5G/6G systems, and how drones can serve as relays, base stations, or connected nodes. This session also introduces networking challenges and modern solutions like SDN, NFV, and multi-access edge computing.",
-      "videoUrl": "https://drive.google.com/file/d/186tTwsa7B04GPIIsWL1QQC4susftAlza/preview",
+      "videoUrl": "https://drive.google.com/file/d/1C5maYg1TSjfZb9bNs6aL8qWczecmY6Kt/preview",
       "duration": "50 min",
       "type": "video"
     },
@@ -244,7 +244,7 @@
       "id": 5,
       "title": "Module 3: Networked Control and Co-Design",
       "description": "This section brings communication and control together. You'll see how drones keep their antennas aligned using reinforcement learning, how they share information while moving, and how swarm coordination works when many UAVs fly together. We'll introduce models that explain how drones move randomly in real airspaces, and how safe integration is managed when multiple UAVs share the sky. You'll also learn about game theory and distributed control tools that help drones cooperate without collisions. By the end, you'll know how control and communication must be co-designed to make UAV systems safe, reliable, and scalable.",
-      "videoUrl": "https://drive.google.com/file/d/1I7kKu20xixFpPHSttA3_GGQETctyKLrx/preview",
+      "videoUrl": "https://drive.google.com/file/d/1QVMhNRvWOygkVyc2d0Fa8PPwfw1iGv-j/preview",
       "duration": "55 min",
       "type": "video"
     },
@@ -346,9 +346,9 @@
     },
     {
       "id": 7,
-      "title": "Module 4: UAV AI Applications",
+      "title": "Module 4: Power of Airborne Computing in UAV System",
       "description": "Explore how drones act as flying computers. This lecture focuses on onboard AI processing, comparison of computing boards like Jetson and Intel, and virtualization tools such as Docker and KVM. You'll also learn how UAVs share workloads through distributed and federated computing, enabling smarter, faster, and more resilient swarm operations.",
-      "videoUrl": "https://drive.google.com/file/d/1k5XyoV7DU6b25GbNaD7Gfnd9HULW-vlT/preview",
+      "videoUrl": "https://drive.google.com/file/d/1ab5twRVurxzilGWQU9Oi6MhqXq615a_Y/preview",
       "duration": "60 min",
       "type": "video"
     },
