@@ -38,7 +38,7 @@
       "id": 1,
       "title": "Module 1: Open Airborne Computing Platforms",
       "description": "Learn how modern drones are designed as modular systems that combine control, communication, and onboard computing. This lecture covers UAV hardware basics from frames and motors to controllers and sensors and explains how open airborne platforms make it easier to test, upgrade, and integrate new technologies for real-world applications.",
-      "videoUrl": "https://drive.google.com/file/d/1nm0FmVxDSGZ-9YzX33BZnMw2owYAnfmf/preview",
+      "videoUrl": "https://drive.google.com/file/d/1GFbVMbXLZ5uQfOMlRtGs3zMcwfb8afSP/preview",
       "duration": "45 min",
       "type": "video"
     },
@@ -244,7 +244,7 @@
       "id": 5,
       "title": "Module 3: Networked Control and Co-Design",
       "description": "This section brings communication and control together. You'll see how drones keep their antennas aligned using reinforcement learning, how they share information while moving, and how swarm coordination works when many UAVs fly together. We'll introduce models that explain how drones move randomly in real airspaces, and how safe integration is managed when multiple UAVs share the sky. You'll also learn about game theory and distributed control tools that help drones cooperate without collisions. By the end, you'll know how control and communication must be co-designed to make UAV systems safe, reliable, and scalable.",
-      "videoUrl": "https://drive.google.com/file/d/1QVMhNRvWOygkVyc2d0Fa8PPwfw1iGv-j/preview",
+      "videoUrl": "https://drive.google.com/file/d/1nm0FmVxDSGZ-9YzX33BZnMw2owYAnfmf/preview",
       "duration": "55 min",
       "type": "video"
     },
