@@ -82,6 +82,7 @@ function closeContactForm() {
 
 // ===================================
 // HANDLE CONTACT FORM SUBMISSION
+// Opens Gmail with pre-filled professor email
 // ===================================
 async function handleContactSubmit(event) {
     event.preventDefault();
@@ -108,55 +109,43 @@ async function handleContactSubmit(event) {
         return;
     }
     
-    // Show loading
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    submitBtn.disabled = true;
-    
     try {
         const professor = PROFESSOR_CONTACTS[professorKey];
         
-        // Create email data
-        const emailData = {
-            action: 'sendProfessorEmail',
-            data: {
-                studentName: user.name,
-                studentEmail: user.email,
-                professorEmail: professor.email,
-                professorName: professor.name,
-                subject: subject,
-                question: question
-            }
-        };
+        // Create email body with user info
+        const emailBody = `From: ${user.name} (${user.email})%0D%0A%0D%0AQuestion:%0D%0A${encodeURIComponent(question)}%0D%0A%0D%0A---%0D%0ASent via UAV Course Platform`;
         
-        // Send to backend
-        await fetch(BACKEND_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(emailData)
+        // Create mailto link to professor
+        const mailtoLink = `mailto:${professor.email}?subject=${encodeURIComponent(`[UAV Course] ${subject}`)}&body=${emailBody}`;
+        
+        // Open user's email client
+        window.location.href = mailtoLink;
+        
+        // Show notification
+        showNotification(`Opening email to ${professor.name}... Please send from your email client.`, 'success');
+        
+        // Store in localStorage for reference
+        const sentQuestions = JSON.parse(localStorage.getItem('uav_course_sent_questions') || '[]');
+        sentQuestions.push({
+            professorName: professor.name,
+            professorEmail: professor.email,
+            subject: subject,
+            message: question,
+            from: user.email,
+            timestamp: new Date().toISOString(),
+            status: 'opened_in_client'
         });
+        localStorage.setItem('uav_course_sent_questions', JSON.stringify(sentQuestions));
         
-        // Show success message
-        showNotification(`Question sent to ${professor.name} successfully!`, 'success');
-        
-        // Reset form
-        event.target.reset();
-        
-        // Close modal
-        closeContactForm();
+        // Reset form after delay
+        setTimeout(() => {
+            event.target.reset();
+            closeContactForm();
+        }, 1000);
         
     } catch (error) {
         console.error('Contact form error:', error);
-        showNotification('Question sent! The professor will receive your message.', 'success');
-        event.target.reset();
-        closeContactForm();
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        showNotification('Failed to open email client. Please try again.', 'error');
     }
 }
 
