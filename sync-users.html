@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync Existing Users to Google Sheets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0064A4 0%, #003366 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #003366;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0064A4;
+        }
+        
+        .info-box h3 {
+            color: #0064A4;
+            margin-bottom: 10px;
+        }
+        
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .user-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .user-item {
+            padding: 10px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+        
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #003366;
+        }
+        
+        .user-email {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background: #218838;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Sync Existing Users</h1>
+        <p class="subtitle">Migrate localStorage users to Google Sheets</p>
+        
+        <div class="info-box">
+            <h3>📋 What This Does:</h3>
+            <p>This tool will find all users stored in your browser's localStorage and sync them to your Google Sheets Users tab.</p>
+        </div>
+        
+        <div id="usersList"></div>
+        
+        <button id="syncBtn" class="btn" onclick="syncUsers()">
+            <span id="btnText">Sync Users to Google Sheets</span>
+        </button>
+        
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        const GOOGLE_SHEETS_CONFIG = {
+            WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec',
+            SPREADSHEET_ID: '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc'
+        };
+
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(36);
+        }
+
+        // Display existing users
+        window.addEventListener('DOMContentLoaded', () => {
+            const allUsers = JSON.parse(localStorage.getItem('uav_course_users') || '{}');
+            const userEmails = Object.keys(allUsers);
+            
+            const usersList = document.getElementById('usersList');
+            
+            if (userEmails.length === 0) {
+                usersList.innerHTML = `
+                    <div class="info-box">
+                        <h3>⚠️ No Users Found</h3>
+                        <p>No users found in localStorage. This means either:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>No one has registered yet</li>
+                            <li>Users are already synced</li>
+                            <li>Browser data was cleared</li>
+                        </ul>
+                    </div>
+                `;
+                document.getElementById('syncBtn').disabled = true;
+            } else {
+                usersList.innerHTML = `
+                    <h3 style="margin-bottom: 15px; color: #003366;">Found ${userEmails.length} User(s):</h3>
+                    <div class="user-list">
+                        ${userEmails.map(email => {
+                            const user = allUsers[email];
+                            return `
+                                <div class="user-item">
+                                    <div class="user-name">${user.name || user.firstName + ' ' + user.lastName || 'Unknown'}</div>
+                                    <div class="user-email">${email}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+        });
+
+        async function syncUsers() {
+            const btn = document.getElementById('syncBtn');
+            const btnText = document.getElementById('btnText');
+            const status = document.getElementById('status');
+            
+            // Disable button
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Syncing...';
+            
+            try {
+                const allUsers = JSON.parse(localStorage.getItem('uav_course_users') || '{}');
+                const userEmails = Object.keys(allUsers);
+                
+                if (userEmails.length === 0) {
+                    status.className = 'status error';
+                    status.textContent = '❌ No users found to sync!';
+                    btn.disabled = false;
+                    btnText.textContent = 'Sync Users to Google Sheets';
+                    return;
+                }
+                
+                status.className = 'status info';
+                status.textContent = `🔄 Syncing ${userEmails.length} user(s)...`;
+                
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const email of userEmails) {
+                    const user = allUsers[email];
+                    
+                    try {
+                        const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                action: 'register',
+                                data: {
+                                    firstName: user.firstName || user.name?.split(' ')[0] || 'Student',
+                                    lastName: user.lastName || user.name?.split(' ').slice(1).join(' ') || '',
+                                    email: email,
+                                    passwordHash: user.passwordHash || user.password || ''
+                                },
+                                timestamp: new Date().toISOString()
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.status === 'success') {
+                            successCount++;
+                            console.log(`✅ Synced: ${email}`);
+                        } else {
+                            errorCount++;
+                            console.error(`❌ Failed: ${email}`, result);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        console.error(`❌ Error syncing ${email}:`, error);
+                    }
+                }
+                
+                // Show final status
+                if (errorCount === 0) {
+                    status.className = 'status success';
+                    status.innerHTML = `
+                        <strong>✅ Success!</strong><br>
+                        ${successCount} user(s) synced to Google Sheets.<br>
+                        <a href="https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}" target="_blank" style="color: #155724; text-decoration: underline;">View Spreadsheet</a>
+                    `;
+                } else {
+                    status.className = 'status error';
+                    status.innerHTML = `
+                        <strong>⚠️ Partial Success</strong><br>
+                        ${successCount} succeeded, ${errorCount} failed.<br>
+                        Check console for details.
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Sync error:', error);
+                status.className = 'status error';
+                status.textContent = `❌ Error: ${error.message}`;
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Sync Again';
+            }
+        }
+    </script>
+</body>
+</html>
