@@ -323,9 +323,9 @@ function handleLogout() {
         showLoggedOutState();
         showNotification('Logged out successfully', 'info');
         
-        // Redirect to landing page
+        // Redirect to main page
         setTimeout(() => {
-            window.location.href = 'landing.html';
+            window.location.href = 'index.html';
         }, 1000);
     }
 }
