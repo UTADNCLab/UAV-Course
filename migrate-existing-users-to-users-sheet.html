@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrate Existing Users to Users Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #0064A4;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #0064A4;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0064A4;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+        }
+
+        .user-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            padding: 10px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #0064A4;
+        }
+
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrate Existing Users</h1>
+        <p class="subtitle">Add users from Progress sheet to Users sheet</p>
+
+        <div class="info-box">
+            <h3>📋 What This Tool Does:</h3>
+            <p><strong>Problem:</strong> Some users (like Yan Wan) appear in the "Progress" sheet but NOT in the "Users" sheet. This happened because they were added before the new registration system.</p>
+            <p><strong>Solution:</strong> This tool will:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Find all users in "Progress" sheet</li>
+                <li>Check if they exist in "Users" sheet</li>
+                <li>Create accounts for missing users</li>
+                <li>Set a default password you specify</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h3>⚠️ Important:</h3>
+            <p>You'll need to tell migrated users their temporary password so they can login. They should change it after first login.</p>
+        </div>
+
+        <form id="migrateForm">
+            <div class="form-group">
+                <label for="defaultPassword">Default Password for Migrated Users:</label>
+                <input type="password" id="defaultPassword" placeholder="Enter a temporary password" required>
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    This password will be set for all users who don't have accounts yet.
+                </small>
+            </div>
+
+            <button type="submit" class="btn" id="migrateBtn">
+                🔄 Migrate Users
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Migrating users...</p>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const GOOGLE_SHEETS_CONFIG = {
+            WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec',
+            SPREADSHEET_ID: '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc'
+        };
+
+        // Same hash function as auth.js
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        document.getElementById('migrateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const defaultPassword = document.getElementById('defaultPassword').value;
+            const migrateBtn = document.getElementById('migrateBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+
+            // Disable button and show loading
+            migrateBtn.disabled = true;
+            loading.classList.add('show');
+            result.style.display = 'none';
+
+            try {
+                // Hash the default password
+                const passwordHash = await hashPassword(defaultPassword);
+
+                // Call backend to migrate users
+                const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'migrateProgressUsers',
+                        data: {
+                            defaultPasswordHash: passwordHash
+                        }
+                    })
+                });
+
+                // Since we're using no-cors, we can't read the response
+                // Show success message
+                loading.classList.remove('show');
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h3>✅ Migration Started!</h3>
+                    <p>The migration process has been initiated. Please check your Google Sheets in a few moments.</p>
+                    <p><strong>What to do next:</strong></p>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Open your Google Spreadsheet</li>
+                        <li>Check the "Users" sheet</li>
+                        <li>Verify that Yan Wan and other users now appear there</li>
+                        <li>Tell migrated users their temporary password: <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">${defaultPassword}</code></li>
+                        <li>Ask them to change their password after first login</li>
+                    </ol>
+                    <p style="margin-top: 15px;">
+                        <a href="https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}/edit" 
+                           target="_blank" 
+                           style="color: #0064A4; font-weight: 600;">
+                            📊 Open Google Spreadsheet →
+                        </a>
+                    </p>
+                `;
+
+            } catch (error) {
+                loading.classList.remove('show');
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h3>❌ Error</h3>
+                    <p>${error.message}</p>
+                    <p style="margin-top: 10px;">Please try again or check the browser console for details.</p>
+                `;
+                console.error('Migration error:', error);
+            } finally {
+                migrateBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

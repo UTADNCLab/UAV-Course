@@ -25,6 +25,7 @@ function doPost(e) {
       case "sendEmail": return handleSendEmail(data);
       case "sendProfessorEmail": return handleSendProfessorEmail(data);
       case "sendPasswordReset": return handleSendPasswordReset(data);  // NEW: Password reset email
+      case "migrateProgressUsers": return handleMigrateProgressUsers(data);  // NEW: Migrate existing users
       default: return json({ status: "error", message: "Unknown action" });
     }
   } catch (err) {
@@ -488,6 +489,88 @@ function handleSendPasswordReset(data) {
   } catch (err) {
     Logger.log("Password reset email error: " + err.toString());
     return json({ status: "error", message: "Failed to send password reset email: " + err.toString() });
+  }
+}
+
+// ===================================
+// MIGRATE PROGRESS USERS TO USERS SHEET
+// Finds users in Progress sheet who don't exist in Users sheet
+// and creates accounts for them with a default password
+// ===================================
+function handleMigrateProgressUsers(data) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+
+  try {
+    const usersSheet = getOrCreateSheet_("Users", USERS_HEADERS);
+    const progressSheet = getOrCreateSheet_("Progress", PROGRESS_HEADERS);
+    
+    const defaultPasswordHash = (data.defaultPasswordHash || "").toString().trim();
+    
+    if (!defaultPasswordHash) {
+      return json({ status: "error", message: "Missing defaultPasswordHash" });
+    }
+
+    const progressMap = headerIndexMap_(progressSheet);
+    const usersMap = headerIndexMap_(usersSheet);
+    
+    const progressLastRow = progressSheet.getLastRow();
+    if (progressLastRow < 2) {
+      return json({ status: "success", message: "No users in Progress sheet to migrate", migratedCount: 0 });
+    }
+
+    // Get all users from Progress sheet
+    const progressData = progressSheet.getRange(2, 1, progressLastRow - 1, progressSheet.getLastColumn()).getValues();
+    
+    const migratedUsers = [];
+    const skippedUsers = [];
+    const now = new Date().toISOString();
+
+    progressData.forEach((row, index) => {
+      const firstName = (row[progressMap["first name"] - 1] || "").toString().trim();
+      const lastName = (row[progressMap["last name"] - 1] || "").toString().trim();
+      const email = normalizeEmail_(row[progressMap["email"] - 1]);
+
+      if (!email) {
+        skippedUsers.push({ reason: "No email", row: index + 2 });
+        return;
+      }
+
+      // Check if user already exists in Users sheet
+      const existingUserRow = findRowByEmail_(usersSheet, email);
+      
+      if (existingUserRow > 0) {
+        skippedUsers.push({ email, reason: "Already exists in Users sheet" });
+        return;
+      }
+
+      // Add user to Users sheet
+      const rowData = [
+        firstName || "Student",
+        lastName || "",
+        email,
+        defaultPasswordHash,
+        now
+      ];
+      
+      usersSheet.appendRow(rowData);
+      migratedUsers.push({ firstName, lastName, email });
+    });
+
+    return json({
+      status: "success",
+      message: `Migration complete. ${migratedUsers.length} users migrated, ${skippedUsers.length} skipped.`,
+      migratedCount: migratedUsers.length,
+      skippedCount: skippedUsers.length,
+      migratedUsers: migratedUsers,
+      skippedUsers: skippedUsers
+    });
+
+  } catch (err) {
+    Logger.log("Migration error: " + err.toString());
+    return json({ status: "error", message: "Migration failed: " + err.toString() });
+  } finally {
+    lock.releaseLock();
   }
 }
 
