@@ -119,13 +119,13 @@ async function handleRegister(event) {
             return;
         }
         
-        // Create user object
+        // Create user object with passwordHash
         const user = {
             firstName: firstName,
             lastName: lastName,
             name: name,
             email: email,
-            password: hashPassword(password),
+            passwordHash: hashPassword(password),  // Store as passwordHash
             registeredDate: new Date().toISOString(),
             lastLogin: new Date().toISOString()
         };
@@ -191,7 +191,7 @@ async function handleLogin(event) {
         // FIRST: Check localStorage for existing user
         const allUsers = JSON.parse(localStorage.getItem('uav_course_users') || '{}');
         
-        if (allUsers[email] && allUsers[email].password === hashedPassword) {
+        if (allUsers[email] && allUsers[email].passwordHash === hashedPassword) {
             // User found in localStorage - login successful
             const user = allUsers[email];
             user.lastLogin = new Date().toISOString();
@@ -231,13 +231,13 @@ async function handleLogin(event) {
 
             const result = await response.json();
 
-            if (result.status === 'success' && result.user) {
+            if (result.status === 'success' && result.ok && result.userData) {
                 const user = {
-                    firstName: result.user.firstName || '',
-                    lastName: result.user.lastName || '',
-                    name: `${result.user.firstName || ''} ${result.user.lastName || ''}`.trim(),
-                    email: result.user.email || email,
-                    password: hashedPassword,
+                    firstName: result.userData.firstName || '',
+                    lastName: result.userData.lastName || '',
+                    name: `${result.userData.firstName || ''} ${result.userData.lastName || ''}`.trim(),
+                    email: result.userData.email || email,
+                    passwordHash: hashedPassword,
                     registeredDate: new Date().toISOString(),
                     lastLogin: new Date().toISOString()
                 };
