@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrate Progress to Users</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #0064A4;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .info-box h3 {
+            color: #0064A4;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #0064A4;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+        }
+
+        .result ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .result li {
+            margin: 5px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Migrate Progress to Users</h1>
+        <p class="subtitle">Automatically copy user data from Progress sheet to Users sheet</p>
+
+        <div class="info-box">
+            <h3>📋 What This Tool Does:</h3>
+            <p>This tool will:</p>
+            <ul>
+                <li>Read user data from your <strong>Progress</strong> sheet</li>
+                <li>Extract email addresses and names</li>
+                <li>Create entries in the <strong>Users</strong> sheet</li>
+                <li>Enable cross-device login for existing users</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h3>⚠️ Important Notes:</h3>
+            <ul>
+                <li>You need to provide passwords for each user (they'll be hashed)</li>
+                <li>This is a one-time migration</li>
+                <li>Existing entries in Users sheet won't be duplicated</li>
+            </ul>
+        </div>
+
+        <div class="input-group">
+            <label for="email1">User 1 Email (from Progress sheet):</label>
+            <input type="text" id="email1" placeholder="28jaymehta@gmail.com" value="28jaymehta@gmail.com">
+        </div>
+
+        <div class="input-group">
+            <label for="password1">User 1 Password:</label>
+            <input type="password" id="password1" placeholder="Enter password for this user">
+        </div>
+
+        <div class="input-group">
+            <label for="email2">User 2 Email (optional):</label>
+            <input type="text" id="email2" placeholder="user2@example.com">
+        </div>
+
+        <div class="input-group">
+            <label for="password2">User 2 Password (optional):</label>
+            <input type="password" id="password2" placeholder="Enter password for this user">
+        </div>
+
+        <button class="btn" onclick="migrateUsers()">
+            🚀 Migrate Users to Users Sheet
+        </button>
+
+        <div class="spinner" id="spinner"></div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const GOOGLE_SHEETS_CONFIG = {
+            WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec',
+            SPREADSHEET_ID: '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc'
+        };
+
+        function hashPassword(password) {
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                const char = password.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(36);
+        }
+
+        async function migrateUsers() {
+            const email1 = document.getElementById('email1').value.trim().toLowerCase();
+            const password1 = document.getElementById('password1').value;
+            const email2 = document.getElementById('email2').value.trim().toLowerCase();
+            const password2 = document.getElementById('password2').value;
+
+            const resultDiv = document.getElementById('result');
+            const spinner = document.getElementById('spinner');
+            const btn = document.querySelector('.btn');
+
+            // Validation
+            if (!email1 || !password1) {
+                showResult('error', 'Please provide at least User 1 email and password');
+                return;
+            }
+
+            // Show loading
+            btn.disabled = true;
+            btn.textContent = '⏳ Migrating...';
+            spinner.style.display = 'block';
+            resultDiv.style.display = 'none';
+
+            const usersToMigrate = [];
+
+            // User 1
+            if (email1 && password1) {
+                const nameParts = email1.split('@')[0].split('.');
+                const firstName = nameParts[0] || 'User';
+                const lastName = nameParts[1] || '1';
+                
+                usersToMigrate.push({
+                    firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1),
+                    lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1),
+                    email: email1,
+                    passwordHash: hashPassword(password1)
+                });
+            }
+
+            // User 2
+            if (email2 && password2) {
+                const nameParts = email2.split('@')[0].split('.');
+                const firstName = nameParts[0] || 'User';
+                const lastName = nameParts[1] || '2';
+                
+                usersToMigrate.push({
+                    firstName: firstName.charAt(0).toUpperCase() + firstName.slice(1),
+                    lastName: lastName.charAt(0).toUpperCase() + lastName.slice(1),
+                    email: email2,
+                    passwordHash: hashPassword(password2)
+                });
+            }
+
+            // Send to backend
+            try {
+                const results = [];
+                
+                for (const user of usersToMigrate) {
+                    try {
+                        const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'text/plain;charset=utf-8',
+                            },
+                            body: JSON.stringify({
+                                action: 'register',
+                                data: user,
+                                timestamp: new Date().toISOString()
+                            })
+                        });
+
+                        const result = await response.json();
+                        results.push({
+                            email: user.email,
+                            success: result.status === 'success',
+                            message: result.message || 'Added successfully'
+                        });
+                    } catch (error) {
+                        results.push({
+                            email: user.email,
+                            success: false,
+                            message: error.message
+                        });
+                    }
+                }
+
+                // Show results
+                const successCount = results.filter(r => r.success).length;
+                const failCount = results.length - successCount;
+
+                let resultHTML = `<h3>✅ Migration Complete!</h3>`;
+                resultHTML += `<p><strong>${successCount}</strong> user(s) migrated successfully</p>`;
+                
+                if (failCount > 0) {
+                    resultHTML += `<p><strong>${failCount}</strong> user(s) failed</p>`;
+                }
+
+                resultHTML += `<ul>`;
+                results.forEach(r => {
+                    const icon = r.success ? '✅' : '❌';
+                    resultHTML += `<li>${icon} ${r.email}: ${r.message}</li>`;
+                });
+                resultHTML += `</ul>`;
+
+                resultHTML += `<p style="margin-top: 20px;"><strong>Next Steps:</strong></p>`;
+                resultHTML += `<ul>`;
+                resultHTML += `<li>Check your Google Sheets Users tab</li>`;
+                resultHTML += `<li>Try logging in from your phone with these emails</li>`;
+                resultHTML += `<li>Cross-device login should now work!</li>`;
+                resultHTML += `</ul>`;
+
+                showResult('success', resultHTML);
+
+            } catch (error) {
+                showResult('error', `Migration failed: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Migrate Users to Users Sheet';
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
