@@ -138,8 +138,13 @@ async function handleRegister(event) {
         currentUser = user;
         localStorage.setItem('uav_course_current_user', JSON.stringify(user));
         
-        // Send to Google Sheets
-        await sendToGoogleSheets('register', user);
+        // Send to Google Sheets with passwordHash
+        await sendToGoogleSheets('register', {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            passwordHash: hashPassword(password)
+        });
         
         // Close modal and show success
         closeAuthModal();
@@ -213,56 +218,46 @@ async function handleLogin(event) {
             return;
         }
         
-        // SECOND: User not in localStorage - check backend (Google Sheets)
-        console.log('User not found in localStorage, checking backend...');
-        
+        // SECOND: User not in localStorage - verify with backend (cross-device login)
         try {
             const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({
-                    action: 'checkUser',
-                    data: { email: email }
+                    action: 'login',
+                    data: { email, passwordHash: hashedPassword }
                 })
             });
-            
+
             const result = await response.json();
-            
-            if (result.userExists && result.userData) {
-                // User exists in backend! Create local account with provided password
+
+            if (result.status === 'success' && result.user) {
                 const user = {
-                    firstName: result.userData.name.split(' ')[0] || '',
-                    lastName: result.userData.name.split(' ').slice(1).join(' ') || '',
-                    name: result.userData.name,
-                    email: result.userData.email,
+                    firstName: result.user.firstName || '',
+                    lastName: result.user.lastName || '',
+                    name: `${result.user.firstName || ''} ${result.user.lastName || ''}`.trim(),
+                    email: result.user.email || email,
                     password: hashedPassword,
                     registeredDate: new Date().toISOString(),
                     lastLogin: new Date().toISOString()
                 };
-                
-                // Save to localStorage for this device
+
+                // Save on this device so future logins are instant
                 allUsers[email] = user;
                 localStorage.setItem('uav_course_users', JSON.stringify(allUsers));
-                
-                // Set as current user
+
                 currentUser = user;
                 localStorage.setItem('uav_course_current_user', JSON.stringify(user));
-                
+
                 closeAuthModal();
                 showLoggedInState();
-                showNotification('Welcome back! Your account has been synced. 👋', 'success');
-                
-                // Reload the page to show course content
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
+                showNotification('Welcome back! 👋', 'success');
+                setTimeout(() => window.location.reload(), 500);
                 return;
             }
+
         } catch (backendError) {
-            console.error('Backend check error:', backendError);
-            // Continue to show error below
+            console.error('Backend login error:', backendError);
         }
         
         // User not found in localStorage or backend
