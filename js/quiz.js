@@ -144,7 +144,7 @@ function showQuizResults() {
 
     const totalQuestions = currentQuiz.questions.length;
     const percentage = Math.round((quizScore / totalQuestions) * 100);
-    const passed = percentage >= 70;
+    const passed = percentage >= 80;  // Changed from 70 to 80
     const certificateEligible = percentage >= 80;
 
     // Update results display
@@ -159,21 +159,27 @@ function showQuizResults() {
         if (certificateEligible) {
             scoreMessage.textContent = '🎓 Excellent! You earned a certificate for this module!';
             scoreMessage.className = 'score-message success';
-        } else if (passed) {
-            scoreMessage.textContent = '✓ Good job! Score 80%+ to earn a certificate.';
-            scoreMessage.className = 'score-message';
         } else {
-            scoreMessage.textContent = '📚 Keep practicing! You need 70%+ to pass.';
+            scoreMessage.textContent = '📚 Keep practicing! You need 80%+ to pass and earn a certificate.';
             scoreMessage.className = 'score-message retry';
         }
     }
 
-    // Save quiz score to localStorage
+    // Save quiz score to localStorage (always save the score)
     saveQuizScore(currentModuleIndex, percentage, quizScore, totalQuestions);
 
+    // Only mark quiz as complete if score is 80% or above
     if (passed) {
         // Mark quiz as complete
         completedModules.add(currentModuleIndex);
+        
+        // Save progress and update UI
+        saveProgress();
+        updateProgress();
+        loadModulesList();
+    } else {
+        // Remove from completed if it was there (in case of retry with lower score)
+        completedModules.delete(currentModuleIndex);
         
         // Save progress and update UI
         saveProgress();
@@ -192,10 +198,8 @@ function showQuizResults() {
     // Show notification
     if (certificateEligible) {
         showNotification('Quiz passed with 80%+! Certificate earned! 🎉', 'success');
-    } else if (passed) {
-        showNotification('Quiz passed! Score 80%+ to earn a certificate.', 'success');
     } else {
-        showNotification('Keep trying! Review the material and retry.', 'info');
+        showNotification(`Score: ${percentage}%. You need 80%+ to pass. Try again!`, 'info');
     }
 }
 
