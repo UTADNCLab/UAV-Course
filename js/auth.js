@@ -183,12 +183,11 @@ async function handleLogin(event) {
     try {
         const hashedPassword = hashPassword(password);
         
-        // Get all registered users
+        // FIRST: Check localStorage for existing user
         const allUsers = JSON.parse(localStorage.getItem('uav_course_users') || '{}');
         
-        // Check if user exists
         if (allUsers[email] && allUsers[email].password === hashedPassword) {
-            // Login successful
+            // User found in localStorage - login successful
             const user = allUsers[email];
             user.lastLogin = new Date().toISOString();
             
@@ -211,9 +210,63 @@ async function handleLogin(event) {
             setTimeout(() => {
                 window.location.reload();
             }, 500);
-        } else {
-            showNotification('Invalid email or password', 'error');
+            return;
         }
+        
+        // SECOND: User not in localStorage - check backend (Google Sheets)
+        console.log('User not found in localStorage, checking backend...');
+        
+        try {
+            const response = await fetch(GOOGLE_SHEETS_CONFIG.WEB_APP_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify({
+                    action: 'checkUser',
+                    data: { email: email }
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.userExists && result.userData) {
+                // User exists in backend! Create local account with provided password
+                const user = {
+                    firstName: result.userData.name.split(' ')[0] || '',
+                    lastName: result.userData.name.split(' ').slice(1).join(' ') || '',
+                    name: result.userData.name,
+                    email: result.userData.email,
+                    password: hashedPassword,
+                    registeredDate: new Date().toISOString(),
+                    lastLogin: new Date().toISOString()
+                };
+                
+                // Save to localStorage for this device
+                allUsers[email] = user;
+                localStorage.setItem('uav_course_users', JSON.stringify(allUsers));
+                
+                // Set as current user
+                currentUser = user;
+                localStorage.setItem('uav_course_current_user', JSON.stringify(user));
+                
+                closeAuthModal();
+                showLoggedInState();
+                showNotification('Welcome back! Your account has been synced. 👋', 'success');
+                
+                // Reload the page to show course content
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+                return;
+            }
+        } catch (backendError) {
+            console.error('Backend check error:', backendError);
+            // Continue to show error below
+        }
+        
+        // User not found in localStorage or backend
+        showNotification('Invalid email or password', 'error');
         
     } catch (error) {
         console.error('Login error:', error);
