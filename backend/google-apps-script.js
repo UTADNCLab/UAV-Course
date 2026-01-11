@@ -330,8 +330,24 @@ function handleProgress(progressData) {
 
     const quizAttempts = Number(progressData.totalQuizAttempts ?? Object.keys(quizScores).length ?? 0);
 
-    // YES if at least one quiz >= 80 (change rule if you want)
-    const eligible = [q1, q2, q3, q4].some(v => typeof v === "number" && v >= 80) ? "YES" : "NO";
+    // Get completed modules array from frontend
+    const completedModulesArray = progressData.completedModules || [];
+    
+    // Certificate eligible ONLY if at least one module has BOTH:
+    // 1. Video completed (even index: 0, 2, 4, 6)
+    // 2. Quiz score >= 80% (odd index: 1, 3, 5, 7)
+    const moduleChecks = [
+      { video: 0, quiz: 1, score: q1 },  // Module 1
+      { video: 2, quiz: 3, score: q2 },  // Module 2
+      { video: 4, quiz: 5, score: q3 },  // Module 3
+      { video: 6, quiz: 7, score: q4 }   // Module 4
+    ];
+    
+    const eligible = moduleChecks.some(m => {
+      const videoCompleted = Array.isArray(completedModulesArray) && completedModulesArray.includes(m.video);
+      const quizPassed = typeof m.score === "number" && m.score >= 80;
+      return videoCompleted && quizPassed;
+    }) ? "YES" : "NO";
 
     // Remove duplicates then upsert
     let row = dedupeEmail_(sh, email);

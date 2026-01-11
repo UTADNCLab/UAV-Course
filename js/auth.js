@@ -437,7 +437,8 @@ async function sendProgressUpdate(eventType = 'progress') {
         name: currentUser.name,
         eventType: eventType,
         completionPercentage: completionPercentage,
-        completedModules: completedModules.length,
+        completedModules: completedModules,  // Send the ARRAY of module indices
+        modulesCompleted: completedModules.length,  // Also send count for backward compatibility
         totalModules: totalModules,
         quizScores: quizScores,
         totalQuizAttempts: totalQuizAttempts,
