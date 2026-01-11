@@ -286,6 +286,7 @@ function handleCheckUser(data) {
 
 // ===================================
 // PROGRESS (upsert by email + correct formats)
+// UPDATED: Get First Name and Last Name from Users sheet
 // ===================================
 function handleProgress(progressData) {
   const lock = LockService.getScriptLock();
@@ -293,11 +294,26 @@ function handleProgress(progressData) {
 
   try {
     const sh = getOrCreateSheet_("Progress", PROGRESS_HEADERS);
+    const usersSheet = getOrCreateSheet_("Users", USERS_HEADERS);
 
     const email = normalizeEmail_(progressData.email);
     if (!email) return json({ status: "error", message: "Missing email" });
 
-    const name = splitName_(progressData);
+    // Get First Name and Last Name from Users sheet
+    let firstName = "Student";
+    let lastName = "";
+    
+    const userRow = findRowByEmail_(usersSheet, email);
+    if (userRow > 0) {
+      const usersMap = headerIndexMap_(usersSheet);
+      firstName = (usersSheet.getRange(userRow, usersMap["first name"], 1, 1).getValue() || "").toString().trim() || "Student";
+      lastName = (usersSheet.getRange(userRow, usersMap["last name"], 1, 1).getValue() || "").toString().trim();
+    } else {
+      // Fallback: use provided data if user not in Users sheet
+      const name = splitName_(progressData);
+      firstName = name.firstName || "Student";
+      lastName = name.lastName || "";
+    }
 
     const totalModules = Number(progressData.totalModules ?? 8);
     const modulesCompleted = Number(progressData.completedModules ?? progressData.modulesCompleted ?? 0);
@@ -321,8 +337,8 @@ function handleProgress(progressData) {
     let row = dedupeEmail_(sh, email);
 
     const rowData = [
-      name.firstName || "Student",
-      name.lastName || "",
+      firstName,
+      lastName,
       email,
       completionDecimal,
       modulesCompleted,
