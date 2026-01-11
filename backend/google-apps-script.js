@@ -1,389 +1,416 @@
 // ===================================
-// UAV COURSE - CLEAN GOOGLE APPS SCRIPT
-// (No last-login timestamps, no best-qualifying column)
+// UAV COURSE - STABLE GOOGLE APPS SCRIPT (FIXED)
+// - Stable Users/Progress schemas
+// - Header-based column detection (no hardcoded indices)
+// - Locking + upsert by Email (no duplicates)
+// - Fixes 600% issues via enforced formats
+// - Cross-device login supported by storing passwordHash
+// - Email sending (requires one-time authorization)
+// - UPDATED: Hides quiz scores below 80%
 // ===================================
 
 const SPREADSHEET_ID = '1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc';
 
 function doPost(e) {
   try {
-    const payload = JSON.parse(e.postData.contents);
+    const payload = JSON.parse(e.postData.contents || "{}");
     const action = payload.action;
     const data = payload.data || {};
 
-    if (action === 'register') return handleRegister(data);
-    if (action === 'login') return handleLogin(data);
-    if (action === 'checkUser') return handleCheckUser(data);  // NEW: Check if user exists
-    if (action === 'progress') return handleProgress(data);
-    if (action === 'sendEmail') return handleSendEmail(data);
-    if (action === 'sendProfessorEmail') return handleSendProfessorEmail(data);
-
-    return json({ status: 'error', message: 'Unknown action' });
-
+    switch (action) {
+      case "register": return handleRegister(data);
+      case "login": return handleLogin(data);               // verifies against Users sheet
+      case "checkUser": return handleCheckUser(data);       // used for cross-device user existence
+      case "progress": return handleProgress(data);
+      case "sendEmail": return handleSendEmail(data);
+      case "sendProfessorEmail": return handleSendProfessorEmail(data);
+      default: return json({ status: "error", message: "Unknown action" });
+    }
   } catch (err) {
-    Logger.log('Error: ' + err.toString());
-    return json({ status: 'error', message: err.toString() });
-  }
-}
-
-// ===================================
-// TEST FUNCTIONS (Run these manually to test)
-// ===================================
-
-/**
- * Test the email sending functionality
- * Run this function directly in Google Apps Script to test emails
- */
-function testEmailSystem() {
-  Logger.log('Testing email system...');
-  
-  // Test 1: Landing page contact form
-  const testContactEmail = {
-    name: 'Test User',
-    email: 'test@example.com',
-    message: 'This is a test message from the contact form.'
-  };
-  
-  Logger.log('Sending test contact email...');
-  const result1 = handleSendEmail(testContactEmail);
-  Logger.log('Contact email result: ' + JSON.stringify(result1));
-  
-  // Test 2: Professor question email
-  const testProfessorEmail = {
-    studentName: 'Test Student',
-    studentEmail: 'student@example.com',
-    professorEmail: 'yan.wan@uta.edu',
-    professorName: 'Dr. Yan Wan',
-    subject: 'Test Question',
-    question: 'This is a test question to the professor.'
-  };
-  
-  Logger.log('Sending test professor email...');
-  const result2 = handleSendProfessorEmail(testProfessorEmail);
-  Logger.log('Professor email result: ' + JSON.stringify(result2));
-  
-  Logger.log('Email tests completed! Check opencourse.uav@gmail.com inbox.');
-}
-
-/**
- * Simple test to verify email permissions
- * Run this first to grant email sending permissions
- */
-function testEmailPermissions() {
-  try {
-    MailApp.sendEmail({
-      to: 'opencourse.uav@gmail.com',
-      subject: 'Test Email - Permission Check',
-      body: 'This is a test email to verify that Google Apps Script has permission to send emails.\n\nIf you receive this, email permissions are working correctly!\n\nTimestamp: ' + new Date().toLocaleString()
-    });
-    Logger.log('✅ Email sent successfully! Check opencourse.uav@gmail.com inbox.');
-    return 'Success';
-  } catch (error) {
-    Logger.log('❌ Error sending email: ' + error.toString());
-    return 'Error: ' + error.toString();
+    Logger.log(err);
+    return json({ status: "error", message: String(err) });
   }
 }
 
 // -------------------------------
-// Helpers
+// JSON response
 // -------------------------------
 function json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
+  return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function openSheet(name, headers) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet = ss.getSheetByName(name);
+// -------------------------------
+// SCHEMAS (single source of truth)
+// -------------------------------
+const USERS_HEADERS = ["First Name", "Last Name", "Email", "Password Hash", "Registered At"];
+const PROGRESS_HEADERS = [
+  "First Name",
+  "Last Name",
+  "Email",
+  "Completion %",
+  "Modules Completed",
+  "Total Modules",
+  "Quiz 1 Score",
+  "Quiz 2 Score",
+  "Quiz 3 Score",
+  "Quiz 4 Score",
+  "Quiz Attempts",
+  "Certificates Eligible" // YES/NO
+];
 
-  if (!sheet) {
-    sheet = ss.insertSheet(name);
-    sheet.appendRow(headers);
-  } else {
-    // Ensure header row exists (optional safeguard)
-    const firstRow = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
-    if (firstRow.join('') === '') {
-      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-    }
+// -------------------------------
+// Sheet helpers
+// -------------------------------
+function getOrCreateSheet_(name, headers) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sh = ss.getSheetByName(name);
+  if (!sh) sh = ss.insertSheet(name);
+
+  // Ensure header row EXACTLY matches what we expect
+  const existing = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), headers.length)).getValues()[0];
+  const existingTrim = existing.map(x => (x || "").toString().trim());
+  const expectedTrim = headers.map(x => x.trim());
+
+  const matches = expectedTrim.every((h, i) => existingTrim[i] === h);
+  if (!matches) {
+    sh.clear();                 // IMPORTANT: wipe old mixed schemas
+    sh.appendRow(headers);
   }
-  return sheet;
+
+  return sh;
 }
 
-function findRowByEmail(sheet, email) {
-  const values = sheet.getDataRange().getValues();
-  for (let i = 1; i < values.length; i++) {
-    if ((values[i][1] || '').toString().trim() === email.trim()) {
-      return i + 1; // sheet row number
-    }
+function headerIndexMap_(sh) {
+  const headerRow = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  const map = {};
+  headerRow.forEach((h, i) => {
+    const key = (h || "").toString().trim().toLowerCase();
+    if (key) map[key] = i + 1; // 1-based
+  });
+  return map;
+}
+
+function normalizeEmail_(email) {
+  return (email || "").toString().trim().toLowerCase();
+}
+
+function findRowByEmail_(sh, email) {
+  const map = headerIndexMap_(sh);
+  const emailCol = map["email"];
+  if (!emailCol) return -1;
+
+  const target = normalizeEmail_(email);
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return -1;
+
+  const values = sh.getRange(2, emailCol, lastRow - 1, 1).getValues();
+  for (let r = 0; r < values.length; r++) {
+    if (normalizeEmail_(values[r][0]) === target) return r + 2; // actual sheet row
   }
   return -1;
 }
 
-function buildFullName(obj) {
-  // Prefer firstName + lastName if provided
-  const first = (obj.firstName || '').trim();
-  const last = (obj.lastName || '').trim();
+// Delete all duplicate rows for an email except the first encountered
+function dedupeEmail_(sh, email) {
+  const map = headerIndexMap_(sh);
+  const emailCol = map["email"];
+  if (!emailCol) return -1;
 
-  if (first || last) return `${first} ${last}`.trim();
+  const target = normalizeEmail_(email);
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return -1;
 
-  // Otherwise fall back to name field
-  return (obj.name || '').trim();
+  const values = sh.getRange(2, emailCol, lastRow - 1, 1).getValues().map(r => normalizeEmail_(r[0]));
+  const rows = [];
+  values.forEach((v, i) => { if (v === target) rows.push(i + 2); });
+
+  if (rows.length === 0) return -1;
+  if (rows.length === 1) return rows[0];
+
+  const keep = rows[0];
+  rows.slice(1).sort((a, b) => b - a).forEach(r => sh.deleteRow(r));
+  return keep;
+}
+
+function enforceProgressFormats_(sh) {
+  const map = headerIndexMap_(sh);
+  const lastRow = Math.max(sh.getLastRow(), 2);
+
+  // Completion % should be percent
+  if (map["completion %"]) sh.getRange(2, map["completion %"], lastRow - 1, 1).setNumberFormat("0%");
+
+  // Modules Completed, Total Modules, Quiz Attempts should be plain numbers
+  ["modules completed", "total modules", "quiz attempts"].forEach(k => {
+    if (map[k]) sh.getRange(2, map[k], lastRow - 1, 1).setNumberFormat("0");
+  });
+
+  // Quiz scores show like "100%" or "Not taken" -> we store TEXT, so force plain text
+  ["quiz 1 score", "quiz 2 score", "quiz 3 score", "quiz 4 score"].forEach(k => {
+    if (map[k]) sh.getRange(2, map[k], lastRow - 1, 1).setNumberFormat("@");
+  });
+
+  // Certificates Eligible is YES/NO (text)
+  if (map["certificates eligible"]) sh.getRange(2, map["certificates eligible"], lastRow - 1, 1).setNumberFormat("@");
+}
+
+function splitName_(obj) {
+  const first = (obj.firstName || "").toString().trim();
+  const last = (obj.lastName || "").toString().trim();
+  if (first || last) return { firstName: first, lastName: last };
+
+  const full = (obj.name || "").toString().trim();
+  if (!full) return { firstName: "", lastName: "" };
+  const parts = full.split(/\s+/);
+  return { firstName: parts[0] || "", lastName: parts.slice(1).join(" ") || "" };
+}
+
+function quizPct_(quizScores, key) {
+  const q = quizScores ? quizScores[key] : null;
+  const p = q && typeof q.percentage === "number" ? q.percentage : null;
+  return (typeof p === "number" && isFinite(p)) ? p : null;
 }
 
 // ===================================
-// REGISTER USER (Users sheet)
+// UPDATED: Hide scores below 80%
+// ===================================
+function formatQuiz_(p) {
+  if (typeof p !== "number") return "Not taken";
+  if (p >= 80) return `${Math.round(p)}%`;
+  return "Below 80%";  // Hide actual score if below threshold
+}
+
+// ===================================
+// REGISTER (stores passwordHash for cross-device login)
+// UPDATED: Check if email exists in Progress or Users sheet
+// If exists in Progress, copy First Name and Last Name from there
 // ===================================
 function handleRegister(userData) {
-  const headers = ['Full Name', 'Email'];
-  const sheet = openSheet('Users', headers);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
 
-  const fullName = buildFullName(userData) || 'Student';
-  const email = (userData.email || '').trim();
-
-  if (!email) return json({ status: 'error', message: 'Missing email' });
-
-  const row = findRowByEmail(sheet, email);
-
-  const rowData = [fullName, email];
-
-  if (row > 0) {
-    sheet.getRange(row, 1, 1, rowData.length).setValues([rowData]);
-  } else {
-    sheet.appendRow(rowData);
-  }
-
-  return json({ status: 'success', message: 'User registered/updated' });
-}
-
-// ===================================
-// CHECK IF USER EXISTS (for cross-device login)
-// ===================================
-function handleCheckUser(data) {
   try {
-    const email = (data.email || '').trim();
+    const usersSheet = getOrCreateSheet_("Users", USERS_HEADERS);
+    const progressSheet = getOrCreateSheet_("Progress", PROGRESS_HEADERS);
     
-    if (!email) {
-      return json({ status: 'error', message: 'Missing email' });
+    const email = normalizeEmail_(userData.email);
+    const passwordHash = (userData.passwordHash || "").toString().trim();
+
+    if (!email) return json({ status: "error", message: "Missing email" });
+    if (!passwordHash) return json({ status: "error", message: "Missing passwordHash" });
+
+    // Check if email already exists in Users sheet
+    const existingUserRow = findRowByEmail_(usersSheet, email);
+    if (existingUserRow > 0) {
+      return json({ status: "error", message: "Email already registered. Please login instead." });
     }
+
+    // Check if email exists in Progress sheet
+    const progressRow = findRowByEmail_(progressSheet, email);
+    let firstName, lastName;
     
-    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('Users');
-    
-    if (!sheet) {
-      return json({ status: 'error', message: 'Users sheet not found', userExists: false });
-    }
-    
-    const row = findRowByEmail(sheet, email);
-    
-    if (row > 0) {
-      // User exists - get their data
-      const rowData = sheet.getRange(row, 1, 1, 2).getValues()[0];
-      return json({ 
-        status: 'success', 
-        userExists: true,
-        userData: {
-          name: rowData[0],
-          email: rowData[1]
-        }
-      });
+    if (progressRow > 0) {
+      // Email exists in Progress - copy First Name and Last Name from there
+      const progressMap = headerIndexMap_(progressSheet);
+      firstName = (progressSheet.getRange(progressRow, progressMap["first name"], 1, 1).getValue() || "").toString().trim();
+      lastName = (progressSheet.getRange(progressRow, progressMap["last name"], 1, 1).getValue() || "").toString().trim();
     } else {
-      // User doesn't exist
-      return json({ 
-        status: 'success', 
-        userExists: false 
-      });
+      // Email not in Progress - use provided names or defaults
+      const name = splitName_(userData);
+      firstName = name.firstName || "Student";
+      lastName = name.lastName || "";
     }
-    
-  } catch (err) {
-    Logger.log('Check user error: ' + err.toString());
-    return json({ status: 'error', message: err.toString(), userExists: false });
+
+    const now = new Date().toISOString();
+
+    // Add to Users sheet
+    const rowData = [firstName, lastName, email, passwordHash, now];
+    usersSheet.appendRow(rowData);
+
+    return json({ status: "success", message: "User registered successfully" });
+  } finally {
+    lock.releaseLock();
   }
 }
 
 // ===================================
-// LOGIN (optional: keep for compatibility)
-// Now it just returns success and does not store timestamps.
+// LOGIN (verify passwordHash matches Users sheet)
 // ===================================
 function handleLogin(userData) {
-  return json({ status: 'success', message: 'Login recorded (no timestamp stored)' });
+  const sh = getOrCreateSheet_("Users", USERS_HEADERS);
+  const email = normalizeEmail_(userData.email);
+  const passwordHash = (userData.passwordHash || "").toString().trim();
+
+  if (!email || !passwordHash) return json({ status: "error", message: "Missing email or passwordHash" });
+
+  const row = findRowByEmail_(sh, email);
+  if (row < 0) return json({ status: "success", ok: false, message: "User not found" });
+
+  const map = headerIndexMap_(sh);
+  const storedHash = (sh.getRange(row, map["password hash"], 1, 1).getValue() || "").toString().trim();
+
+  if (storedHash && storedHash === passwordHash) {
+    const firstName = sh.getRange(row, map["first name"], 1, 1).getValue();
+    const lastName = sh.getRange(row, map["last name"], 1, 1).getValue();
+    return json({
+      status: "success",
+      ok: true,
+      userData: { firstName, lastName, email }
+    });
+  }
+  return json({ status: "success", ok: false, message: "Invalid password" });
 }
 
 // ===================================
-// PROGRESS UPDATE (Progress sheet)
+// CHECK USER (exists + return names, NOT password)
+// ===================================
+function handleCheckUser(data) {
+  const sh = getOrCreateSheet_("Users", USERS_HEADERS);
+  const email = normalizeEmail_(data.email);
+  if (!email) return json({ status: "error", message: "Missing email", userExists: false });
+
+  const row = findRowByEmail_(sh, email);
+  if (row < 0) return json({ status: "success", userExists: false });
+
+  const map = headerIndexMap_(sh);
+  return json({
+    status: "success",
+    userExists: true,
+    userData: {
+      firstName: sh.getRange(row, map["first name"], 1, 1).getValue(),
+      lastName: sh.getRange(row, map["last name"], 1, 1).getValue(),
+      email
+    }
+  });
+}
+
+// ===================================
+// PROGRESS (upsert by email + correct formats)
 // ===================================
 function handleProgress(progressData) {
-  const headers = [
-    'Full Name',
-    'Email',
-    'Completion %',
-    'Modules Completed',
-    'Total Modules',
-    'Average Quiz Score',
-    'Quiz 1 Score',
-    'Quiz 2 Score',
-    'Quiz 3 Score',
-    'Quiz 4 Score',
-    'Quiz Attempts',
-    'Certificates Eligible'
-  ];
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
 
-  const sheet = openSheet('Progress', headers);
+  try {
+    const sh = getOrCreateSheet_("Progress", PROGRESS_HEADERS);
 
-  const fullName = buildFullName(progressData) || 'Student';
-  const email = (progressData.email || '').trim();
+    const email = normalizeEmail_(progressData.email);
+    if (!email) return json({ status: "error", message: "Missing email" });
 
-  if (!email) return json({ status: 'error', message: 'Missing email' });
+    const name = splitName_(progressData);
 
-  // quizScores coming from frontend: usually { "quiz-1": {...}, "quiz-2": {...} }
-  const quizScores = progressData.quizScores || {};
+    const totalModules = Number(progressData.totalModules ?? 8);
+    const modulesCompleted = Number(progressData.completedModules ?? progressData.modulesCompleted ?? 0);
 
-  // Read quiz % safely (support both string keys like "quiz-1" and numeric)
-  function getQuizPercentage(key) {
-    const q = quizScores[key];
-    return (q && typeof q.percentage === 'number') ? q.percentage : null;
+    // IMPORTANT: completionPercentage should be 0..100 in frontend
+    const completionPct100 = Number(progressData.completionPercentage ?? 0);
+    const completionDecimal = isFinite(completionPct100) ? (completionPct100 / 100) : 0; // store as decimal for percent format
+
+    const quizScores = progressData.quizScores || {};
+    const q1 = quizPct_(quizScores, "quiz-1");
+    const q2 = quizPct_(quizScores, "quiz-2");
+    const q3 = quizPct_(quizScores, "quiz-3");
+    const q4 = quizPct_(quizScores, "quiz-4");
+
+    const quizAttempts = Number(progressData.totalQuizAttempts ?? Object.keys(quizScores).length ?? 0);
+
+    // YES if at least one quiz >= 80 (change rule if you want)
+    const eligible = [q1, q2, q3, q4].some(v => typeof v === "number" && v >= 80) ? "YES" : "NO";
+
+    // Remove duplicates then upsert
+    let row = dedupeEmail_(sh, email);
+
+    const rowData = [
+      name.firstName || "Student",
+      name.lastName || "",
+      email,
+      completionDecimal,
+      modulesCompleted,
+      totalModules,
+      formatQuiz_(q1),
+      formatQuiz_(q2),
+      formatQuiz_(q3),
+      formatQuiz_(q4),
+      quizAttempts,
+      eligible
+    ];
+
+    if (row > 0) sh.getRange(row, 1, 1, PROGRESS_HEADERS.length).setValues([rowData]);
+    else sh.appendRow(rowData);
+
+    enforceProgressFormats_(sh);
+
+    return json({ status: "success", message: "Progress updated" });
+  } finally {
+    lock.releaseLock();
   }
-
-  const q1 = getQuizPercentage('quiz-1');
-  const q2 = getQuizPercentage('quiz-2');
-  const q3 = getQuizPercentage('quiz-3');
-  const q4 = getQuizPercentage('quiz-4');
-
-  // Calculate average of taken quizzes
-  const scores = [q1, q2, q3, q4].filter(s => s !== null);
-  const avgScore = scores.length > 0
-    ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)
-    : 'N/A';
-
-  // Format quiz scores for display
-  const formatScore = (score) => score !== null ? `${score}%` : 'Not taken';
-
-  // Check certificate eligibility (80%+ on quiz)
-  const eligibleModules = [];
-  if (q1 !== null && q1 >= 80) eligibleModules.push('Module 1: Open Airborne Computing Platforms');
-  if (q2 !== null && q2 >= 80) eligibleModules.push('Module 2: UAV Communications and Networking');
-  if (q3 !== null && q3 >= 80) eligibleModules.push('Module 3: Networked Control and Co-Design');
-  if (q4 !== null && q4 >= 80) eligibleModules.push('Module 4: Airborne Computing and AI');
-
-  const certificatesEligible = eligibleModules.length > 0
-    ? eligibleModules.join(' | ')
-    : 'None';
-
-  // Count total quiz attempts (number of quizzes taken, not percentage)
-  const quizAttempts = Object.keys(quizScores).length;
-
-  const completionPercent = progressData.completionPercentage || 0;
-  const modulesCompleted = progressData.modulesCompleted || 0;
-  const totalModules = progressData.totalModules || 8;
-
-  const rowData = [
-    fullName,
-    email,
-    `${completionPercent}%`,
-    modulesCompleted,
-    totalModules,
-    avgScore,
-    formatScore(q1),
-    formatScore(q2),
-    formatScore(q3),
-    formatScore(q4),
-    quizAttempts,
-    certificatesEligible
-  ];
-
-  const row = findRowByEmail(sheet, email);
-
-  if (row > 0) {
-    sheet.getRange(row, 1, 1, rowData.length).setValues([rowData]);
-  } else {
-    sheet.appendRow(rowData);
-  }
-
-  return json({ status: 'success', message: 'Progress updated' });
 }
 
 // ===================================
-// SEND CONTACT FORM EMAIL
+// EMAIL SENDING (requires authorization by script owner)
 // ===================================
 function handleSendEmail(emailData) {
-  try {
-    const name = emailData.name || 'Anonymous';
-    const email = emailData.email || 'no-reply@example.com';
-    const message = emailData.message || '';
-    const attachment = emailData.attachment || null;
-    
-    const recipient = 'opencourse.uav@gmail.com';
-    const subject = `Contact Form: Message from ${name}`;
-    
-    let body = `You have received a new message from the UAV Course contact form.\n\n`;
-    body += `Name: ${name}\n`;
-    body += `Email: ${email}\n\n`;
-    body += `Message:\n${message}\n\n`;
-    body += `---\n`;
-    body += `Sent via UAV Course Platform\n`;
-    body += `${new Date().toLocaleString()}`;
-    
-    // Send email
-    MailApp.sendEmail({
-      to: recipient,
-      subject: subject,
-      body: body,
-      replyTo: email
-    });
-    
-    return json({ status: 'success', message: 'Email sent successfully' });
-    
-  } catch (err) {
-    Logger.log('Email error: ' + err.toString());
-    return json({ status: 'error', message: 'Failed to send email: ' + err.toString() });
-  }
+  const recipient = "opencourse.uav@gmail.com";
+  const fromName = emailData.name || "Anonymous";
+  const fromEmail = emailData.email || "no-reply@example.com";
+  const msg = emailData.message || "";
+
+  const subject = `Contact Form: Message from ${fromName}`;
+  const body =
+    `UAV Course contact form message\n\n` +
+    `Name: ${fromName}\n` +
+    `Email: ${fromEmail}\n\n` +
+    `Message:\n${msg}\n\n` +
+    `Sent: ${new Date().toLocaleString()}`;
+
+  MailApp.sendEmail({ to: recipient, subject, body, replyTo: fromEmail });
+  return json({ status: "success", message: "Email sent" });
+}
+
+function handleSendProfessorEmail(emailData) {
+  const studentName = emailData.studentName || "Anonymous";
+  const studentEmail = emailData.studentEmail || "no-reply@example.com";
+  const professorEmail = emailData.professorEmail || "";
+  const professorName = emailData.professorName || "Professor";
+  const subject = emailData.subject || "Question from UAV Course";
+  const question = emailData.question || "";
+
+  if (!professorEmail) return json({ status: "error", message: "Professor email required" });
+
+  const body =
+    `Dear ${professorName},\n\n` +
+    `You received a question from the UAV course platform.\n\n` +
+    `Student: ${studentName}\n` +
+    `Email: ${studentEmail}\n\n` +
+    `Subject: ${subject}\n\n` +
+    `Question:\n${question}\n\n` +
+    `Sent: ${new Date().toLocaleString()}`;
+
+  MailApp.sendEmail({ to: professorEmail, subject: `[UAV Course Question] ${subject}`, body, replyTo: studentEmail });
+  MailApp.sendEmail({ to: "opencourse.uav@gmail.com", subject: `[Copy] To ${professorName}: ${subject}`, body, replyTo: studentEmail });
+
+  return json({ status: "success", message: "Professor email sent" });
 }
 
 // ===================================
-// SEND PROFESSOR QUESTION EMAIL
+// ONE-TIME RESET (run manually in Apps Script editor)
+// This will wipe the sheets and recreate correct headers.
 // ===================================
-function handleSendProfessorEmail(emailData) {
-  try {
-    const studentName = emailData.studentName || 'Anonymous';
-    const studentEmail = emailData.studentEmail || 'no-reply@example.com';
-    const professorEmail = emailData.professorEmail || '';
-    const professorName = emailData.professorName || 'Professor';
-    const subject = emailData.subject || 'Question from UAV Course';
-    const question = emailData.question || '';
-    
-    if (!professorEmail) {
-      return json({ status: 'error', message: 'Professor email is required' });
-    }
-    
-    let body = `Dear ${professorName},\n\n`;
-    body += `You have received a question from a student in the UAV Course.\n\n`;
-    body += `Student Name: ${studentName}\n`;
-    body += `Student Email: ${studentEmail}\n\n`;
-    body += `Subject: ${subject}\n\n`;
-    body += `Question:\n${question}\n\n`;
-    body += `---\n`;
-    body += `Sent via UAV Course Platform\n`;
-    body += `${new Date().toLocaleString()}`;
-    
-    // Send email to professor
-    MailApp.sendEmail({
-      to: professorEmail,
-      subject: `[UAV Course Question] ${subject}`,
-      body: body,
-      replyTo: studentEmail
-    });
-    
-    // Also send a copy to the main course email
-    MailApp.sendEmail({
-      to: 'opencourse.uav@gmail.com',
-      subject: `[Copy] Question to ${professorName}: ${subject}`,
-      body: body,
-      replyTo: studentEmail
-    });
-    
-    return json({ status: 'success', message: 'Question sent successfully' });
-    
-  } catch (err) {
-    Logger.log('Professor email error: ' + err.toString());
-    return json({ status: 'error', message: 'Failed to send question: ' + err.toString() });
-  }
+function RESET_SHEETS_ONE_TIME() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  ["Users", "Progress"].forEach(name => {
+    const sh = ss.getSheetByName(name);
+    if (sh) ss.deleteSheet(sh);
+  });
+
+  const users = ss.insertSheet("Users");
+  users.appendRow(USERS_HEADERS);
+
+  const prog = ss.insertSheet("Progress");
+  prog.appendRow(PROGRESS_HEADERS);
+
+  enforceProgressFormats_(prog);
+
+  Logger.log("Reset complete: Users + Progress recreated.");
 }
