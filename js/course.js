@@ -606,15 +606,25 @@ function loadProgress() {
     };
     
     let progressChanged = false;
-    Object.keys(quizScores).forEach(quizId => {
+    
+    // Check ALL quiz indices
+    Object.entries(quizIdMap).forEach(([quizId, quizIndex]) => {
         const score = quizScores[quizId];
-        if (score.percentage >= 80) {
-            const quizIndex = quizIdMap[quizId];
-            if (quizIndex !== undefined && !completedModules.has(quizIndex)) {
-                // Mark quiz as complete
+        
+        if (score && score.percentage >= 80) {
+            // Score is 80%+ - should be marked complete
+            if (!completedModules.has(quizIndex)) {
                 completedModules.add(quizIndex);
                 progressChanged = true;
-                console.log(`Auto-marking quiz ${quizIndex} as complete (score: ${score.percentage}%)`);
+                console.log(`✅ Marking quiz ${quizIndex} as complete (score: ${score.percentage}%)`);
+            }
+        } else {
+            // No score OR score below 80% - should NOT be marked complete
+            if (completedModules.has(quizIndex)) {
+                completedModules.delete(quizIndex);
+                progressChanged = true;
+                const scoreText = score ? `${score.percentage}%` : 'no score';
+                console.log(`❌ Removing quiz ${quizIndex} completion (${scoreText})`);
             }
         }
     });
