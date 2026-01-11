@@ -316,7 +316,9 @@ function handleProgress(progressData) {
     }
 
     const totalModules = Number(progressData.totalModules ?? 8);
-    const modulesCompleted = Number(progressData.completedModules ?? progressData.modulesCompleted ?? 0);
+    // Handle both old format (number) and new format (array)
+    const modulesCompleted = Number(progressData.modulesCompleted ?? 
+                                    (Array.isArray(progressData.completedModules) ? progressData.completedModules.length : progressData.completedModules) ?? 0);
 
     // IMPORTANT: completionPercentage should be 0..100 in frontend
     const completionPct100 = Number(progressData.completionPercentage ?? 0);
