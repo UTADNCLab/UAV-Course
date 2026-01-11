@@ -46,9 +46,45 @@ function checkLoginStatus() {
     const savedUser = localStorage.getItem('uav_course_current_user');
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
+        
+        // MIGRATION: Convert old 'password' field to 'passwordHash'
+        if (currentUser.password && !currentUser.passwordHash) {
+            currentUser.passwordHash = currentUser.password;
+            delete currentUser.password;
+            localStorage.setItem('uav_course_current_user', JSON.stringify(currentUser));
+        }
+        
         showLoggedInState();
     } else {
         showLoggedOutState();
+    }
+    
+    // MIGRATION: Update all users in storage
+    migrateUserStorage();
+}
+
+// ===================================
+// MIGRATE OLD USER STORAGE
+// ===================================
+function migrateUserStorage() {
+    try {
+        const allUsers = JSON.parse(localStorage.getItem('uav_course_users') || '{}');
+        let needsUpdate = false;
+        
+        Object.keys(allUsers).forEach(email => {
+            if (allUsers[email].password && !allUsers[email].passwordHash) {
+                allUsers[email].passwordHash = allUsers[email].password;
+                delete allUsers[email].password;
+                needsUpdate = true;
+            }
+        });
+        
+        if (needsUpdate) {
+            localStorage.setItem('uav_course_users', JSON.stringify(allUsers));
+            console.log('✅ User storage migrated to passwordHash');
+        }
+    } catch (error) {
+        console.error('Migration error:', error);
     }
 }
 
