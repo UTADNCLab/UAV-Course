@@ -118,7 +118,7 @@ async function handleRegister(event) {
     
     const firstName = document.getElementById('registerFirstName').value.trim();
     const lastName = document.getElementById('registerLastName').value.trim();
-    const email = document.getElementById('registerEmail').value.trim();
+    const email = document.getElementById('registerEmail').value.trim().toLowerCase();
     const password = document.getElementById('registerPassword').value;
     
     if (!firstName || !lastName || !email || !password) {
@@ -207,7 +207,7 @@ async function handleRegister(event) {
 async function handleLogin(event) {
     event.preventDefault();
     
-    const email = document.getElementById('loginEmail').value.trim();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const password = document.getElementById('loginPassword').value;
     
     if (!email || !password) {
