@@ -18,20 +18,29 @@ The errors you're seeing in the console are **NOT actual code errors**. They are
 
 ## 🧹 Clear Browser Cache (Recommended)
 
-### Method 1: Hard Refresh
+### Method 1: Hard Refresh (Easiest!)
 1. Open your website
 2. Press **Ctrl + Shift + R** (Windows) or **Cmd + Shift + R** (Mac)
 3. This forces the browser to reload all files
 
-### Method 2: Clear Cache Completely
-1. Press **F12** to open Developer Tools
-2. Right-click the **Refresh** button (next to address bar)
-3. Select **"Empty Cache and Hard Reload"**
+### Method 2: Clear Cache from Settings (You're Here!)
+**You're already in the right place!** Follow these steps:
 
-### Method 3: Clear All Data
+1. Click on **"Clear browsing data"** (you can see it in your screenshot)
+2. In the popup that appears:
+   - Time range: Select **"All time"**
+   - Check these boxes:
+     ✅ **Cached images and files**
+     ✅ **Cookies and other site data** (optional but recommended)
+   - Uncheck: Browsing history, Download history (unless you want to clear those too)
+3. Click **"Clear now"** button
+4. Close settings
+5. Go to your website and refresh (F5)
+
+### Method 3: Quick Keyboard Shortcut
 1. Press **Ctrl + Shift + Delete**
 2. Select "Cached images and files"
-3. Click "Clear data"
+3. Click "Clear now"
 4. Reload the page
 
 ---
