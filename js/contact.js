@@ -2,55 +2,63 @@
 // CONTACT/QUESTION FORM SYSTEM
 // ===================================
 
-// Professor contact information (placeholder emails - replace with actual)
+// Professor contact information with actual emails
 const PROFESSOR_CONTACTS = {
     'dr-yan-wan': {
         name: 'Dr. Yan Wan',
         title: 'Professor of Electrical Engineering',
-        email: 'yan.wan@university.edu',
+        email: 'yan.wan@uta.edu',
         expertise: 'Cyber-physical systems, networked control systems, multi-agent coordination'
     },
     'dr-junfei-xie': {
         name: 'Dr. Junfei Xie',
         title: 'Professor of Computer Science',
-        email: 'junfei.xie@university.edu',
+        email: 'jxie4@sdsu.edu',
         expertise: 'Machine learning, computer vision, AI applications'
     },
     'dr-kejie-lu': {
         name: 'Dr. Kejie Lu',
         title: 'Professor of Electrical Engineering',
-        email: 'kejie.lu@university.edu',
+        email: 'kejie.lu@upr.edu',
         expertise: 'Wireless communications, network optimization, 5G/6G technologies'
     },
     'dr-shengli-fu': {
         name: 'Dr. Shengli Fu',
         title: 'Professor of Computer Engineering',
-        email: 'shengli.fu@university.edu',
+        email: 'Shengli.Fu@unt.edu',
         expertise: 'Embedded systems, IoT architectures, distributed computing'
     }
 };
 
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzs7oApM-gF5Eb_AaGHPxaFSeyzXhfcuGPWLzyOyEalyXKgiVkHkPqXwZASGjmOGe8w/exec';
+
 // ===================================
-// SHOW CONTACT FORM
+// SHOW CONTACT FORM (with specific professor)
 // ===================================
-function showContactForm() {
+function showContactForm(professorKey = null) {
     const modal = document.getElementById('contactModal');
     if (modal) {
         modal.classList.add('show');
         
-        // Populate professor dropdown
-        const professorSelect = document.getElementById('professorSelect');
-        if (professorSelect && professorSelect.options.length === 1) {
-            Object.entries(PROFESSOR_CONTACTS).forEach(([key, prof]) => {
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = `${prof.name} - ${prof.title}`;
-                professorSelect.appendChild(option);
-            });
+        // If professor key is provided, set it
+        if (professorKey && PROFESSOR_CONTACTS[professorKey]) {
+            // Store the professor key for form submission
+            modal.dataset.professorKey = professorKey;
+            
+            // Show professor info
+            const professor = PROFESSOR_CONTACTS[professorKey];
+            const professorInfo = document.getElementById('professorInfo');
+            if (professorInfo) {
+                professorInfo.style.display = 'block';
+                professorInfo.innerHTML = `
+                    <div style="padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0064A4;">
+                        <h4 style="margin: 0 0 8px 0; color: #0064A4;">${professor.name}</h4>
+                        <p style="margin: 0 0 5px 0; font-size: 14px; color: #666;">${professor.title}</p>
+                        <p style="margin: 0; font-size: 13px; color: #888;"><strong>Expertise:</strong> ${professor.expertise}</p>
+                    </div>
+                `;
+            }
         }
-        
-        // Update professor info when selection changes
-        professorSelect.addEventListener('change', updateProfessorInfo);
     }
 }
 
@@ -64,51 +72,10 @@ function closeContactForm() {
     }
 }
 
-// ===================================
-// SHOW CONTACT FORM WITH PROFESSOR PRE-SELECTED
-// ===================================
-function showContactFormWithProfessor(professorId) {
-    showContactForm();
-    
-    // Wait for modal to be visible, then select professor
-    setTimeout(() => {
-        const professorSelect = document.getElementById('professorSelect');
-        if (professorSelect) {
-            professorSelect.value = professorId;
-            // Trigger change event to show professor info
-            updateProfessorInfo();
-        }
-    }, 100);
-}
-
-// ===================================
-// UPDATE PROFESSOR INFO
-// ===================================
-function updateProfessorInfo() {
-    const professorSelect = document.getElementById('professorSelect');
-    const professorInfo = document.getElementById('professorInfo');
-    
-    if (!professorSelect || !professorInfo) return;
-    
-    const selectedKey = professorSelect.value;
-    
-    if (selectedKey && PROFESSOR_CONTACTS[selectedKey]) {
-        const prof = PROFESSOR_CONTACTS[selectedKey];
-        professorInfo.style.display = 'block';
-        professorInfo.innerHTML = `
-            <div style="padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0064A4;">
-                <h4 style="margin: 0 0 8px 0; color: #0064A4;">${prof.name}</h4>
-                <p style="margin: 0 0 5px 0; font-size: 14px; color: #666;">${prof.title}</p>
-                <p style="margin: 0; font-size: 13px; color: #888;"><strong>Expertise:</strong> ${prof.expertise}</p>
-            </div>
-        `;
-    } else {
-        professorInfo.style.display = 'none';
-    }
-}
 
 // ===================================
 // HANDLE CONTACT FORM SUBMISSION
+// Opens Gmail with pre-filled professor email
 // ===================================
 async function handleContactSubmit(event) {
     event.preventDefault();
@@ -133,76 +100,44 @@ async function handleContactSubmit(event) {
         return;
     }
     
-    // Show loading
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    submitBtn.disabled = true;
-    
     try {
         const professor = PROFESSOR_CONTACTS[professorKey];
         
-        // Create email data
-        const emailData = {
-            to: professor.email,
-            from: user.email,
-            fromName: user.name,
-            subject: `[UAV Course Question] ${subject}`,
-            message: message,
-            timestamp: new Date().toISOString()
-        };
+        // Create email body with user info
+        const emailBody = `From: ${user.name} (${user.email})%0D%0A%0D%0AQuestion:%0D%0A${encodeURIComponent(message)}%0D%0A%0D%0A---%0D%0ASent via UAV Course Platform`;
         
-        // In a real application, this would send to your backend
-        // For now, we'll show the email details to copy
-        console.log('%c📧 EMAIL TO SEND', 'color: #0064A4; font-size: 16px; font-weight: bold;');
-        console.log('To:', professor.email);
-        console.log('From:', `${user.name} <${user.email}>`);
-        console.log('Subject:', emailData.subject);
-        console.log('Message:', message);
-        console.log('\n--- Copy this information to send manually ---');
+        // Create mailto link to professor
+        const mailtoLink = `mailto:${professor.email}?subject=${encodeURIComponent(`[UAV Course] ${subject}`)}&body=${emailBody}`;
         
-        // Show success message with email details
-        const emailContent = `
-TO: ${professor.name} (${professor.email})
-FROM: ${user.name} (${user.email})
-SUBJECT: ${emailData.subject}
-
-MESSAGE:
-${message}
-
----
-Sent via UAV Course Platform
-${new Date().toLocaleString()}
-        `.trim();
+        // Open user's email client
+        window.location.href = mailtoLink;
+        
+        // Show notification
+        showNotification(`Opening email to ${professor.name}... Please send from your email client.`, 'success');
         
         // Store in localStorage for reference
         const sentQuestions = JSON.parse(localStorage.getItem('uav_course_sent_questions') || '[]');
         sentQuestions.push({
-            ...emailData,
             professorName: professor.name,
-            status: 'pending'
+            professorEmail: professor.email,
+            subject: subject,
+            message: message,
+            from: user.email,
+            timestamp: new Date().toISOString(),
+            status: 'opened_in_client'
         });
         localStorage.setItem('uav_course_sent_questions', JSON.stringify(sentQuestions));
         
-        // Show success with copy option
-        showNotification('Question prepared! Check console for email details.', 'success');
-        
-        // Show modal with email content
-        alert(`Your question has been prepared!\n\nEmail Details (also in console):\n\n${emailContent}\n\nNote: In production, this would be sent automatically via email service.`);
-        
-        // Reset form
-        event.target.reset();
-        document.getElementById('professorInfo').style.display = 'none';
-        
-        // Close modal
-        closeContactForm();
+        // Reset form after delay
+        setTimeout(() => {
+            event.target.reset();
+            document.getElementById('professorInfo').style.display = 'none';
+            closeContactForm();
+        }, 1000);
         
     } catch (error) {
         console.error('Contact form error:', error);
-        showNotification('Failed to send question. Please try again.', 'error');
-    } finally {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
+        showNotification('Failed to open email client. Please try again.', 'error');
     }
 }
 

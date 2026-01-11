@@ -1,8 +1,7 @@
 // ===================================
 // LANDING PAGE CONTACT FORM HANDLER
+// Opens Gmail directly with pre-filled information
 // ===================================
-
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
@@ -21,61 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Handle form submission
+    // Handle form submission - Open Gmail with pre-filled data
     if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
+        contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('contactSubmitBtn');
-            const originalText = submitBtn.innerHTML;
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
             
-            // Show loading state
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            submitBtn.disabled = true;
+            // Create email body
+            const emailBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${encodeURIComponent(message)}`;
             
-            try {
-                const name = document.getElementById('contactName').value;
-                const email = document.getElementById('contactEmail').value;
-                const message = document.getElementById('contactMessage').value;
-                const attachment = fileInput.files[0];
-                
-                // Prepare email data
-                const emailData = {
-                    action: 'sendEmail',
-                    data: {
-                        name: name,
-                        email: email,
-                        message: message,
-                        attachment: attachment ? attachment.name : null
-                    }
-                };
-                
-                // Send to backend
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(emailData)
-                });
-                
-                // Show success message (no-cors mode doesn't return response)
-                showContactNotification('Message sent successfully! We will get back to you soon.', 'success');
-                
-                // Reset form
+            // Create mailto link
+            const mailtoLink = `mailto:opencourse.uav@gmail.com?subject=UAV Course Contact Form&body=${emailBody}`;
+            
+            // Open user's email client
+            window.location.href = mailtoLink;
+            
+            // Show notification
+            showContactNotification('Opening your email client... Please send the email from there.', 'info');
+            
+            // Reset form after a delay
+            setTimeout(() => {
                 contactForm.reset();
                 fileName.textContent = '';
-                
-            } catch (error) {
-                console.error('Error sending message:', error);
-                showContactNotification('Message sent! If you don\'t hear back, please email opencourse.uav@gmail.com', 'success');
-                contactForm.reset();
-                fileName.textContent = '';
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
+            }, 1000);
         });
     }
 });
