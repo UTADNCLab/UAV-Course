@@ -24,6 +24,7 @@ function doPost(e) {
       case "progress": return handleProgress(data);
       case "sendEmail": return handleSendEmail(data);
       case "sendProfessorEmail": return handleSendProfessorEmail(data);
+      case "sendPasswordReset": return handleSendPasswordReset(data);  // NEW: Password reset email
       default: return json({ status: "error", message: "Unknown action" });
     }
   } catch (err) {
@@ -424,6 +425,70 @@ function handleSendProfessorEmail(emailData) {
   MailApp.sendEmail({ to: "opencourse.uav@gmail.com", subject: `[Copy] To ${professorName}: ${subject}`, body, replyTo: studentEmail });
 
   return json({ status: "success", message: "Professor email sent" });
+}
+
+// ===================================
+// SEND PASSWORD RESET EMAIL
+// ===================================
+function handleSendPasswordReset(data) {
+  try {
+    const email = normalizeEmail_(data.email);
+    const resetLink = data.resetLink || "";
+    const resetToken = data.resetToken || "";
+    
+    if (!email) return json({ status: "error", message: "Email is required" });
+    if (!resetLink) return json({ status: "error", message: "Reset link is required" });
+    
+    // Check if user exists in Users sheet
+    const usersSheet = getOrCreateSheet_("Users", USERS_HEADERS);
+    const userRow = findRowByEmail_(usersSheet, email);
+    
+    if (userRow < 0) {
+      return json({ status: "error", message: "No account found with this email address" });
+    }
+    
+    // Get user's name
+    const usersMap = headerIndexMap_(usersSheet);
+    const firstName = (usersSheet.getRange(userRow, usersMap["first name"], 1, 1).getValue() || "").toString().trim() || "Student";
+    const lastName = (usersSheet.getRange(userRow, usersMap["last name"], 1, 1).getValue() || "").toString().trim();
+    const fullName = `${firstName} ${lastName}`.trim();
+    
+    // Compose email
+    const subject = "Password Reset - UAV Course";
+    const body = 
+      `Hello ${fullName},\n\n` +
+      `You requested a password reset for your UAV Course account.\n\n` +
+      `Click the link below to reset your password:\n` +
+      `${resetLink}\n\n` +
+      `This link will expire in 1 hour.\n\n` +
+      `If you didn't request this password reset, please ignore this email. Your password will remain unchanged.\n\n` +
+      `Best regards,\n` +
+      `UAV Course Team\n\n` +
+      `---\n` +
+      `Sent: ${new Date().toLocaleString()}`;
+    
+    // Send email
+    MailApp.sendEmail({
+      to: email,
+      subject: subject,
+      body: body,
+      replyTo: "opencourse.uav@gmail.com"
+    });
+    
+    // Also send a copy to admin email for tracking
+    MailApp.sendEmail({
+      to: "opencourse.uav@gmail.com",
+      subject: `[Password Reset] ${email}`,
+      body: `Password reset requested for: ${email}\n\nReset link sent at: ${new Date().toLocaleString()}`,
+      replyTo: "opencourse.uav@gmail.com"
+    });
+    
+    return json({ status: "success", message: "Password reset email sent successfully" });
+    
+  } catch (err) {
+    Logger.log("Password reset email error: " + err.toString());
+    return json({ status: "error", message: "Failed to send password reset email: " + err.toString() });
+  }
 }
 
 // ===================================
