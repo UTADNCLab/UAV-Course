@@ -144,7 +144,7 @@ function showQuizResults() {
 
     const totalQuestions = currentQuiz.questions.length;
     const percentage = Math.round((quizScore / totalQuestions) * 100);
-    const passed = percentage >= 80;  // Changed from 70 to 80
+    const passed = percentage >= 80;
     const certificateEligible = percentage >= 80;
 
     // Update results display
@@ -168,20 +168,21 @@ function showQuizResults() {
     // Save quiz score to localStorage (always save the score)
     saveQuizScore(currentModuleIndex, percentage, quizScore, totalQuestions);
 
+    // Display quiz history
+    const historyHTML = displayQuizHistory();
+    const quizHistoryContainer = document.getElementById('quizHistoryContainer');
+    if (quizHistoryContainer) {
+        quizHistoryContainer.innerHTML = historyHTML;
+    }
+
     // Only mark quiz as complete if score is 80% or above
     if (passed) {
-        // Mark quiz as complete
         completedModules.add(currentModuleIndex);
-        
-        // Save progress and update UI
         saveProgress();
         updateProgress();
         loadModulesList();
     } else {
-        // Remove from completed if it was there (in case of retry with lower score)
         completedModules.delete(currentModuleIndex);
-        
-        // Save progress and update UI
         saveProgress();
         updateProgress();
         loadModulesList();
@@ -204,16 +205,18 @@ function showQuizResults() {
 }
 
 // ===================================
-// SAVE QUIZ SCORE
+// SAVE QUIZ SCORE WITH HISTORY
 // ===================================
 function saveQuizScore(quizIndex, percentage, score, total) {
     // Get current user for per-user storage
     const user = window.authFunctions ? window.authFunctions.currentUser() : null;
     const key = user?.email ? `uav_course_quiz_scores_${user.email.toLowerCase()}` : 'uav_course_quiz_scores_guest';
+    const historyKey = user?.email ? `uav_course_quiz_history_${user.email.toLowerCase()}` : 'uav_course_quiz_history_guest';
+    
     const quizScores = JSON.parse(localStorage.getItem(key) || '{}');
+    const quizHistory = JSON.parse(localStorage.getItem(historyKey) || '{}');
     
     // Map module indices to quiz IDs for backend compatibility
-    // Module indices: 1, 3, 5, 7 -> Quiz IDs: quiz-1, quiz-2, quiz-3, quiz-4
     const quizIdMap = {
         1: 'quiz-1',
         3: 'quiz-2',
@@ -223,23 +226,139 @@ function saveQuizScore(quizIndex, percentage, score, total) {
     
     const quizId = quizIdMap[quizIndex] || `quiz-${quizIndex}`;
     
-    // Store the score with quiz ID as key
-    quizScores[quizId] = {
-        quizId: quizId,
+    // Store the BEST score (for progress tracking)
+    if (!quizScores[quizId] || percentage > quizScores[quizId].percentage) {
+        quizScores[quizId] = {
+            quizId: quizId,
+            percentage: percentage,
+            score: score,
+            total: total,
+            date: new Date().toISOString()
+        };
+        localStorage.setItem(key, JSON.stringify(quizScores));
+    }
+    
+    // Store ALL attempts in history
+    if (!quizHistory[quizId]) {
+        quizHistory[quizId] = [];
+    }
+    
+    quizHistory[quizId].push({
+        attemptNumber: quizHistory[quizId].length + 1,
         percentage: percentage,
         score: score,
         total: total,
-        date: new Date().toISOString()
-    };
+        date: new Date().toISOString(),
+        passed: percentage >= 80
+    });
     
-    localStorage.setItem(key, JSON.stringify(quizScores));
+    localStorage.setItem(historyKey, JSON.stringify(quizHistory));
     
-    console.log(`Quiz score saved for ${user?.email || 'guest'}: ${quizId} = ${percentage}%`);
+    console.log(`Quiz score saved for ${user?.email || 'guest'}: ${quizId} = ${percentage}% (Attempt #${quizHistory[quizId].length})`);
     
     // Also trigger progress update to backend
     if (window.authFunctions && window.authFunctions.currentUser()) {
         window.authFunctions.sendProgressUpdate('quiz_complete');
     }
+}
+
+// ===================================
+// GET QUIZ HISTORY
+// ===================================
+function getQuizHistory(quizIndex) {
+    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+    const historyKey = user?.email ? `uav_course_quiz_history_${user.email.toLowerCase()}` : 'uav_course_quiz_history_guest';
+    const quizHistory = JSON.parse(localStorage.getItem(historyKey) || '{}');
+    
+    const quizIdMap = {
+        1: 'quiz-1',
+        3: 'quiz-2',
+        5: 'quiz-3',
+        7: 'quiz-4'
+    };
+    
+    const quizId = quizIdMap[quizIndex] || `quiz-${quizIndex}`;
+    return quizHistory[quizId] || [];
+}
+
+// ===================================
+// DISPLAY QUIZ HISTORY
+// ===================================
+function displayQuizHistory() {
+    const history = getQuizHistory(currentModuleIndex);
+    
+    if (history.length === 0) {
+        return ''; // No history to display
+    }
+    
+    // Find best score
+    const bestScore = Math.max(...history.map(h => h.percentage));
+    
+    let historyHTML = `
+        <div class="quiz-history-section">
+            <h3><i class="fas fa-history"></i> Your Quiz History</h3>
+            <p class="history-subtitle">Track your progress across all attempts</p>
+            <div class="quiz-history-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Attempt</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+    
+    // Display attempts in reverse order (newest first)
+    history.slice().reverse().forEach((attempt) => {
+        const isBest = attempt.percentage === bestScore;
+        const statusIcon = attempt.passed ? '✓' : '✗';
+        const statusClass = attempt.passed ? 'passed' : 'failed';
+        const bestBadge = isBest ? '<span class="best-badge">🏆 Best</span>' : '';
+        const date = new Date(attempt.date).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        historyHTML += `
+            <tr class="${isBest ? 'best-attempt' : ''}">
+                <td><strong>#${attempt.attemptNumber}</strong> ${bestBadge}</td>
+                <td>${attempt.score}/${attempt.total}</td>
+                <td><strong>${attempt.percentage}%</strong></td>
+                <td class="status-${statusClass}">${statusIcon} ${attempt.passed ? 'Passed' : 'Failed'}</td>
+                <td>${date}</td>
+            </tr>
+        `;
+    });
+    
+    historyHTML += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="history-stats">
+                <div class="stat-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Total Attempts: <strong>${history.length}</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Best Score: <strong>${bestScore}%</strong></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Passed: <strong>${history.filter(h => h.passed).length}</strong></span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return historyHTML;
 }
 
 // ===================================
