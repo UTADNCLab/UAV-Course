@@ -358,6 +358,28 @@ function getDefaultModuleIndex() {
 }
 
 // ===================================
+// PAUSE CURRENT VIDEO
+// ===================================
+function pauseCurrentVideo() {
+    const videoPlayer = document.getElementById('videoPlayer');
+    if (videoPlayer && videoPlayer.contentWindow) {
+        try {
+            // Pause YouTube iframe videos
+            videoPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            // Pause Vimeo iframe videos
+            videoPlayer.contentWindow.postMessage('{"method":"pause"}', '*');
+        } catch (e) {
+            console.log('Could not pause iframe video');
+        }
+    }
+    
+    // Also try to pause if it's a regular HTML5 video
+    if (videoPlayer && typeof videoPlayer.pause === 'function') {
+        videoPlayer.pause();
+    }
+}
+
+// ===================================
 // LOAD MODULE
 // ===================================
 function loadModule(index) {
@@ -367,6 +389,9 @@ function loadModule(index) {
     
     // CRITICAL: Certificate can ONLY be opened via explicit click
     if (isCertificateModule(module)) {
+        // Pause any playing video before showing certificate
+        pauseCurrentVideo();
+        
         // Generate and show certificate
         if (typeof generateCumulativeCertificate === 'function') {
             generateCumulativeCertificate();
@@ -375,6 +400,9 @@ function loadModule(index) {
         }
         return; // Don't update currentModuleIndex or UI
     }
+
+    // IMPORTANT: Pause any currently playing video when switching modules
+    pauseCurrentVideo();
 
     // Safe to load non-certificate module
     currentModuleIndex = index;
