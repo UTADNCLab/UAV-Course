@@ -57,11 +57,11 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules grid - two columns for better landscape layout
+    // Create modules list - single column, one below the other
     const modulesGridHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 50px; margin: 15px auto 0; max-width: 850px;">
+        <div style="margin: 20px auto 0; max-width: 700px;">
             ${completedModules.map(m => `
-                <div style="text-align: center;">
+                <div style="text-align: center; margin: 6px 0;">
                     <span style="font-size: 14px; color: #333;">✓ ${m.name}</span>
                 </div>
             `).join('')}
