@@ -484,65 +484,19 @@ function loadVideoModule(module) {
         // Remove subtitle controls by modifying Google Drive URLs
         let videoUrl = module.videoUrl;
         
-        // For Google Drive videos, add parameters to minimize controls
+        // For Google Drive videos, force captions OFF
         if (videoUrl.includes('drive.google.com')) {
             // Remove any existing parameters
             videoUrl = videoUrl.split('?')[0].split('#')[0];
             
-            // Add parameters to disable subtitle features
-            videoUrl += '?cc_load_policy=3&cc_lang_pref=none&hl=en&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3';
+            // CRITICAL: cc_load_policy=0 forces captions OFF by default
+            // This prevents auto-opening of captions
+            videoUrl += '?cc_load_policy=0&hl=en&modestbranding=1&rel=0&showinfo=0';
         }
         
         videoPlayer.src = videoUrl;
         
-        // Add CSS to hide subtitle controls via iframe wrapper
-        const videoPlayerWrapper = videoPlayer.parentElement;
-        if (videoPlayerWrapper && !document.getElementById('hide-subtitles-style')) {
-            const style = document.createElement('style');
-            style.id = 'hide-subtitles-style';
-            style.textContent = `
-                /* Hide subtitle button area in Google Drive player */
-                .video-player {
-                    position: relative;
-                    overflow: hidden;
-                }
-                
-                .video-player::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 8px;
-                    right: 50px;
-                    width: 40px;
-                    height: 40px;
-                    background: rgba(0, 0, 0, 0.8);
-                    pointer-events: none;
-                    z-index: 10;
-                    border-radius: 4px;
-                }
-                
-                /* Additional overlay to block subtitle button clicks */
-                .subtitle-blocker {
-                    position: absolute;
-                    bottom: 0;
-                    right: 40px;
-                    width: 50px;
-                    height: 50px;
-                    z-index: 999;
-                    pointer-events: auto;
-                    cursor: default;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Add physical blocker element
-            const blocker = document.createElement('div');
-            blocker.className = 'subtitle-blocker';
-            blocker.title = 'Subtitles disabled for this course';
-            videoPlayerWrapper.style.position = 'relative';
-            videoPlayerWrapper.appendChild(blocker);
-            
-            console.log('✅ Subtitle controls blocked with overlay');
-        }
+        console.log('✅ Video loaded with captions disabled by default');
         
         // Add event listener for when video ends
         videoPlayer.onended = function() {

@@ -182,22 +182,19 @@ function generateCumulativeCertificate() {
                     line-height: 1.4;
                 }
                 
-                .score-banner {
-                    background: #4CAF50;
-                    color: white;
-                    padding: 12px 30px;
-                    border-radius: 30px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    display: inline-block;
-                    margin: 20px 0;
+                .score-info {
+                    font-size: 16px;
+                    color: #333;
+                    margin: 15px 0;
+                    font-weight: 500;
                 }
                 
                 .signatures-container {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    gap: 40px;
-                    margin-top: 40px;
+                    gap: 20px;
+                    margin-top: 30px;
+                    padding: 0 40px;
                 }
                 
                 .signature-block {
@@ -205,30 +202,30 @@ function generateCumulativeCertificate() {
                 }
                 
                 .signature-line {
-                    width: 180px;
-                    border-top: 2px solid #000;
-                    margin: 0 auto 8px;
+                    width: 140px;
+                    border-top: 1.5px solid #000;
+                    margin: 0 auto 5px;
                 }
                 
                 .signature-name {
-                    font-size: 14px;
+                    font-size: 11px;
                     font-weight: bold;
                     color: #000;
-                    margin-bottom: 3px;
+                    margin-bottom: 2px;
                 }
                 
                 .signature-title {
-                    font-size: 12px;
+                    font-size: 9px;
                     color: #666;
-                    line-height: 1.3;
+                    line-height: 1.2;
                 }
                 
                 .nsf-logo {
                     position: absolute;
-                    bottom: 50px;
-                    left: 50px;
-                    width: 80px;
-                    height: 80px;
+                    bottom: 30px;
+                    right: 50px;
+                    width: 60px;
+                    height: 60px;
                 }
                 
                 .cert-date {
@@ -347,9 +344,9 @@ function generateCumulativeCertificate() {
                         
                         ${modulesGridHTML}
                         
-                        <div class="score-banner">
-                            🏆 Average Score: ${averageScore}% | ${completedModules.length} of 4 Modules
-                        </div>
+                        <p class="score-info">
+                            Average Score: ${averageScore}% • ${completedModules.length} of 4 Modules Completed
+                        </p>
                     </div>
                     
                     <div class="signatures-container">
