@@ -74,18 +74,29 @@ function generateCumulativeCertificate() {
         </div>
     `).join('');
 
-    // Create certificate HTML
+    // Create modules grid HTML - 2x2 layout
+    const modulesGridHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 700px; margin: 20px auto;">
+            ${completedModules.map(m => `
+                <div style="text-align: center; padding: 12px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 14px; color: #333; margin-bottom: 5px;">✓ ${m.name}</div>
+                    <div style="font-size: 16px; color: #0064A4; font-weight: bold;">${m.score}%</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Create certificate HTML - matching physical certificate design
     const certificateHTML = `
         <!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Certificate of Completion - UAV Course</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+            <title>Certificate of Completion</title>
             <style>
                 @page {
-                    size: A4 landscape;
+                    size: A4 portrait;
                     margin: 0;
                 }
                 
@@ -96,8 +107,8 @@ function generateCumulativeCertificate() {
                 }
                 
                 body {
-                    font-family: 'Georgia', serif;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    font-family: Arial, sans-serif;
+                    background: #f5f5f5;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -106,33 +117,22 @@ function generateCumulativeCertificate() {
                 }
                 
                 .certificate-container {
-                    width: 297mm;
-                    height: 210mm;
+                    width: 210mm;
+                    height: 297mm;
                     background: white;
-                    padding: 40px 60px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    padding: 50px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
                     position: relative;
-                    overflow: hidden;
                 }
                 
                 .certificate-border {
                     position: absolute;
-                    top: 20px;
-                    left: 20px;
-                    right: 20px;
-                    bottom: 20px;
-                    border: 3px solid #0064A4;
+                    top: 30px;
+                    left: 30px;
+                    right: 30px;
+                    bottom: 30px;
+                    border: 4px solid #B8860B;
                     pointer-events: none;
-                }
-                
-                .certificate-border::before {
-                    content: '';
-                    position: absolute;
-                    top: 10px;
-                    left: 10px;
-                    right: 10px;
-                    bottom: 10px;
-                    border: 1px solid #F47E3C;
                 }
                 
                 .certificate-content {
@@ -143,140 +143,109 @@ function generateCumulativeCertificate() {
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
+                    padding: 20px;
                 }
                 
-                .certificate-header {
-                    margin-top: 10px;
-                }
-                
-                .certificate-logo {
-                    font-size: 40px;
-                    color: #0064A4;
-                    margin-bottom: 5px;
-                }
-                
-                .certificate-title {
-                    font-size: 42px;
-                    color: #0064A4;
+                .cert-title {
+                    font-size: 48px;
                     font-weight: bold;
-                    margin-bottom: 5px;
-                    text-transform: uppercase;
-                    letter-spacing: 3px;
+                    color: #000;
+                    margin: 20px 0 10px 0;
+                    letter-spacing: 2px;
                 }
                 
-                .certificate-subtitle {
+                .cert-subtitle {
                     font-size: 20px;
-                    color: #666;
-                    margin-bottom: 15px;
+                    color: #333;
+                    margin-bottom: 30px;
                 }
                 
-                .certificate-body {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    padding: 20px 0;
-                }
-                
-                .certificate-text {
+                .cert-text {
                     font-size: 16px;
                     color: #333;
-                    margin-bottom: 12px;
-                    line-height: 1.5;
-                }
-                
-                .recipient-name {
-                    font-size: 48px;
-                    color: #0064A4;
-                    font-weight: bold;
-                    margin: 15px 0;
-                    font-family: 'Brush Script MT', cursive;
-                    text-decoration: underline;
-                    text-decoration-color: #F47E3C;
-                    text-underline-offset: 8px;
-                }
-                
-                .course-name {
-                    font-size: 24px;
-                    color: #F47E3C;
-                    font-weight: bold;
-                    margin: 12px 0;
-                    line-height: 1.3;
-                }
-                
-                .achievement-text {
-                    font-size: 15px;
-                    color: #666;
                     margin: 10px 0;
                 }
                 
-                .score-badge {
-                    display: inline-block;
-                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                    color: white;
-                    padding: 8px 24px;
-                    border-radius: 50px;
-                    font-size: 16px;
+                .recipient-name {
+                    font-size: 42px;
                     font-weight: bold;
-                    margin: 12px 0;
-                    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                    color: #000;
+                    margin: 20px 0;
+                    text-transform: uppercase;
                 }
                 
-                .certificate-footer {
-                    display: flex;
-                    justify-content: space-around;
-                    align-items: flex-end;
+                .course-title {
+                    font-size: 22px;
+                    font-weight: bold;
+                    color: #000;
+                    margin: 15px 0;
+                    line-height: 1.4;
+                }
+                
+                .score-banner {
+                    background: #4CAF50;
+                    color: white;
+                    padding: 12px 30px;
+                    border-radius: 30px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin: 20px 0;
+                }
+                
+                .signatures-container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 40px;
                     margin-top: 40px;
-                    padding-top: 20px;
                 }
                 
                 .signature-block {
                     text-align: center;
-                    flex: 1;
                 }
                 
                 .signature-line {
-                    width: 200px;
-                    border-top: 2px solid #333;
-                    margin: 0 auto 10px;
+                    width: 180px;
+                    border-top: 2px solid #000;
+                    margin: 0 auto 8px;
                 }
                 
                 .signature-name {
-                    font-size: 16px;
+                    font-size: 14px;
                     font-weight: bold;
-                    color: #333;
-                    margin-bottom: 5px;
+                    color: #000;
+                    margin-bottom: 3px;
                 }
                 
                 .signature-title {
+                    font-size: 12px;
+                    color: #666;
+                    line-height: 1.3;
+                }
+                
+                .nsf-logo {
+                    position: absolute;
+                    bottom: 50px;
+                    left: 50px;
+                    width: 80px;
+                    height: 80px;
+                }
+                
+                .cert-date {
+                    position: absolute;
+                    top: 50px;
+                    left: 50px;
                     font-size: 14px;
                     color: #666;
                 }
                 
-                .certificate-date {
-                    font-size: 16px;
-                    color: #666;
-                    margin-top: 10px;
-                }
-                
-                .certificate-id {
+                .uav-icon {
                     position: absolute;
-                    bottom: 30px;
-                    right: 60px;
-                    font-size: 12px;
-                    color: #999;
-                }
-                
-                .watermark {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%) rotate(-45deg);
-                    font-size: 120px;
-                    color: rgba(0, 100, 164, 0.03);
-                    font-weight: bold;
-                    pointer-events: none;
-                    z-index: 0;
+                    top: 50px;
+                    right: 50px;
+                    font-size: 60px;
+                    color: #B8860B;
+                    opacity: 0.3;
                 }
                 
                 @media print {
@@ -320,7 +289,6 @@ function generateCumulativeCertificate() {
                 .print-btn:hover {
                     background: #003366;
                     transform: translateY(-2px);
-                    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
                 }
                 
                 .print-btn.secondary {
@@ -329,6 +297,21 @@ function generateCumulativeCertificate() {
                 
                 .print-btn.secondary:hover {
                     background: #d66a2a;
+                }
+                
+                @media print {
+                    body {
+                        background: white;
+                        padding: 0;
+                    }
+                    
+                    .certificate-container {
+                        box-shadow: none;
+                    }
+                    
+                    .no-print {
+                        display: none !important;
+                    }
                 }
             </style>
         </head>
@@ -344,67 +327,64 @@ function generateCumulativeCertificate() {
             
             <div class="certificate-container">
                 <div class="certificate-border"></div>
-                <div class="watermark">UAV COURSE</div>
+                
+                <!-- Date (top left) -->
+                <div class="cert-date">Date Issued: ${currentDate}</div>
+                
+                <!-- UAV Icon (top right) -->
+                <div class="uav-icon">✈</div>
                 
                 <div class="certificate-content">
-                    <div class="certificate-header">
-                        <div class="certificate-logo">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h1 class="certificate-title">Certificate</h1>
-                        <p class="certificate-subtitle">of Completion</p>
-                    </div>
-                    
-                    <div class="certificate-body">
-                        <p class="certificate-text">This is to certify that</p>
+                    <div>
+                        <h1 class="cert-title">CERTIFICATE OF COMPLETION</h1>
+                        <p class="cert-subtitle">This Award Certifies That</p>
                         
                         <h2 class="recipient-name">${userName}</h2>
                         
-                        <p class="certificate-text">has successfully completed the following modules in</p>
+                        <p class="cert-text">Has Successfully Completed Training On</p>
                         
-                        <h3 class="course-name">UAV Design: Foundations of Cyber-Physical Systems</h3>
+                        <h3 class="course-title">UNMANNED AERIAL SYSTEM CYBER INFRASTRUCTURE</h3>
                         
-                        <p class="certificate-text" style="margin: 12px 0 8px 0; font-weight: 600;">Modules Completed with Excellence:</p>
+                        ${modulesGridHTML}
                         
-                        <div style="max-width: 600px; margin: 0 auto; text-align: left;">
-                            ${modulesListHTML}
+                        <div class="score-banner">
+                            🏆 Average Score: ${averageScore}% | ${completedModules.length} of 4 Modules
                         </div>
-                        
-                        <div class="score-badge" style="margin-top: 15px;">
-                            <i class="fas fa-trophy"></i> Average Score: ${averageScore}% | ${completedModules.length} of 4 Modules
-                        </div>
-                        
-                        <p class="achievement-text">
-                            Demonstrating proficiency in UAV computing, networking, and autonomous systems
-                        </p>
                     </div>
                     
-                    <div class="certificate-footer">
+                    <div class="signatures-container">
                         <div class="signature-block">
                             <div class="signature-line"></div>
-                            <p class="signature-name">Dr. Yan Wan</p>
-                            <p class="signature-title">Course Director</p>
-                            <p class="signature-title">Professor of Electrical Engineering</p>
+                            <p class="signature-name">Yan Wan</p>
+                            <p class="signature-title">Distinguished University Professor<br>Electrical Engineering, UTA</p>
                         </div>
                         
                         <div class="signature-block">
                             <div class="signature-line"></div>
-                            <p class="signature-name">Dr. Kejie Lu</p>
-                            <p class="signature-title">Course Instructor</p>
-                            <p class="signature-title">Professor of Electrical Engineering</p>
+                            <p class="signature-name">Junfei Xie</p>
+                            <p class="signature-title">Professor<br>Electrical & Computer Engineering, SDSU</p>
                         </div>
                         
                         <div class="signature-block">
-                            <p class="certificate-date">
-                                <i class="fas fa-calendar"></i><br>
-                                ${currentDate}
-                            </p>
+                            <div class="signature-line"></div>
+                            <p class="signature-name">Kejie Lu</p>
+                            <p class="signature-title">Professor<br>Computer Science & Engineering, UPRM</p>
+                        </div>
+                        
+                        <div class="signature-block">
+                            <div class="signature-line"></div>
+                            <p class="signature-name">Shengli Fu</p>
+                            <p class="signature-title">Professor<br>Electrical Engineering, UNT</p>
                         </div>
                     </div>
-                    
-                    <div class="certificate-id">
-                        Certificate ID: UAV-${Date.now()}-CUMULATIVE
-                    </div>
+                </div>
+                
+                <!-- NSF Logo (bottom left) -->
+                <div class="nsf-logo">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" fill="#003f87" stroke="#003f87" stroke-width="2"/>
+                        <text x="50" y="60" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white" text-anchor="middle">NSF</text>
+                    </svg>
                 </div>
             </div>
         </body>
