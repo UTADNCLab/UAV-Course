@@ -358,60 +358,44 @@ function getDefaultModuleIndex() {
 }
 
 // ===================================
-// PAUSE CURRENT VIDEO
+// PAUSE CURRENT VIDEO - AGGRESSIVE APPROACH
 // ===================================
 function pauseCurrentVideo() {
     const videoPlayer = document.getElementById('videoPlayer');
     if (!videoPlayer) return;
     
     try {
-        // For Google Drive videos - stop by clearing and resetting src
-        if (videoPlayer.src && videoPlayer.src.includes('drive.google.com')) {
-            const currentSrc = videoPlayer.src;
-            videoPlayer.src = 'about:blank';
-            // Store the src to reload later if needed
-            videoPlayer.setAttribute('data-paused-src', currentSrc);
-            console.log('Google Drive video stopped');
-            return;
-        }
+        // NUCLEAR OPTION: Completely destroy and recreate the iframe
+        // This is the most reliable way to stop ANY video
+        const parent = videoPlayer.parentNode;
+        const oldSrc = videoPlayer.src;
         
-        // For YouTube videos
-        if (videoPlayer.src && videoPlayer.src.includes('youtube.com')) {
-            videoPlayer.contentWindow.postMessage(JSON.stringify({
-                event: 'command',
-                func: 'pauseVideo',
-                args: ''
-            }), '*');
-            console.log('YouTube video paused');
-            return;
-        }
+        // Remove the old iframe completely
+        parent.removeChild(videoPlayer);
         
-        // For Vimeo videos
-        if (videoPlayer.src && videoPlayer.src.includes('vimeo.com')) {
-            videoPlayer.contentWindow.postMessage(JSON.stringify({
-                method: 'pause'
-            }), '*');
-            console.log('Vimeo video paused');
-            return;
-        }
+        // Create a brand new iframe (completely fresh, no video playing)
+        const newIframe = document.createElement('iframe');
+        newIframe.id = 'videoPlayer';
+        newIframe.frameBorder = '0';
+        newIframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
+        newIframe.allowFullscreen = true;
+        newIframe.webkitallowfullscreen = true;
+        newIframe.mozallowfullscreen = true;
+        newIframe.src = ''; // Empty src - no video
         
-        // For HTML5 video elements
-        if (videoPlayer.tagName === 'VIDEO' && typeof videoPlayer.pause === 'function') {
-            videoPlayer.pause();
-            console.log('HTML5 video paused');
-            return;
-        }
+        // Add it back to the DOM
+        parent.appendChild(newIframe);
         
-        // Generic fallback for any iframe
-        if (videoPlayer.tagName === 'IFRAME') {
-            const currentSrc = videoPlayer.src;
-            videoPlayer.src = 'about:blank';
-            videoPlayer.setAttribute('data-paused-src', currentSrc);
-            console.log('Generic iframe video stopped');
-        }
+        console.log('✅ Video iframe destroyed and recreated - video forcefully stopped');
         
     } catch (e) {
-        console.log('Error pausing video:', e);
+        console.log('Error stopping video:', e);
+        // Fallback: just clear the src
+        try {
+            videoPlayer.src = '';
+        } catch (err) {
+            console.log('Fallback also failed:', err);
+        }
     }
 }
 
@@ -497,7 +481,20 @@ function loadVideoModule(module) {
     if (moduleNumber) moduleNumber.textContent = (Math.floor(currentModuleIndex / 2) + 1);
     if (videoDescription) videoDescription.textContent = module.description;
     if (videoPlayer) {
-        videoPlayer.src = module.videoUrl;
+        // Remove subtitle controls by adding cc_load_policy=0 to Google Drive URLs
+        let videoUrl = module.videoUrl;
+        
+        // For Google Drive videos, ensure subtitles are disabled
+        if (videoUrl.includes('drive.google.com')) {
+            // Add parameter to disable captions
+            if (videoUrl.includes('?')) {
+                videoUrl += '&cc_load_policy=0&controls=1';
+            } else {
+                videoUrl += '?cc_load_policy=0&controls=1';
+            }
+        }
+        
+        videoPlayer.src = videoUrl;
         
         // Add event listener for when video ends
         videoPlayer.onended = function() {
