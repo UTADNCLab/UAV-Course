@@ -484,45 +484,65 @@ function loadVideoModule(module) {
         // Remove subtitle controls by modifying Google Drive URLs
         let videoUrl = module.videoUrl;
         
-        // For Google Drive videos, ensure subtitles are completely disabled
+        // For Google Drive videos, add parameters to minimize controls
         if (videoUrl.includes('drive.google.com')) {
-            // Remove any existing subtitle parameters
+            // Remove any existing parameters
             videoUrl = videoUrl.split('?')[0].split('#')[0];
             
-            // Add parameters to disable ALL subtitle features
+            // Add parameters to disable subtitle features
             videoUrl += '?cc_load_policy=3&cc_lang_pref=none&hl=en&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3';
         }
         
         videoPlayer.src = videoUrl;
         
-        // CRITICAL: Hide subtitle button with CSS after iframe loads
-        videoPlayer.onload = function() {
-            try {
-                // Inject CSS to hide subtitle controls
-                const style = document.createElement('style');
-                style.textContent = `
-                    iframe#videoPlayer {
-                        pointer-events: auto;
-                    }
-                    /* Hide subtitle button in Google Drive player */
-                    .ytp-subtitles-button,
-                    .ytp-subtitles-button-icon,
-                    button[aria-label*="Subtitle"],
-                    button[aria-label*="Caption"],
-                    .captions-button,
-                    [class*="subtitle"],
-                    [class*="caption"] {
-                        display: none !important;
-                        visibility: hidden !important;
-                        opacity: 0 !important;
-                    }
-                `;
-                document.head.appendChild(style);
-                console.log('✅ Subtitle button hidden via CSS');
-            } catch (e) {
-                console.log('Could not inject CSS:', e);
-            }
-        };
+        // Add CSS to hide subtitle controls via iframe wrapper
+        const videoPlayerWrapper = videoPlayer.parentElement;
+        if (videoPlayerWrapper && !document.getElementById('hide-subtitles-style')) {
+            const style = document.createElement('style');
+            style.id = 'hide-subtitles-style';
+            style.textContent = `
+                /* Hide subtitle button area in Google Drive player */
+                .video-player {
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .video-player::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 8px;
+                    right: 50px;
+                    width: 40px;
+                    height: 40px;
+                    background: rgba(0, 0, 0, 0.8);
+                    pointer-events: none;
+                    z-index: 10;
+                    border-radius: 4px;
+                }
+                
+                /* Additional overlay to block subtitle button clicks */
+                .subtitle-blocker {
+                    position: absolute;
+                    bottom: 0;
+                    right: 40px;
+                    width: 50px;
+                    height: 50px;
+                    z-index: 999;
+                    pointer-events: auto;
+                    cursor: default;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add physical blocker element
+            const blocker = document.createElement('div');
+            blocker.className = 'subtitle-blocker';
+            blocker.title = 'Subtitles disabled for this course';
+            videoPlayerWrapper.style.position = 'relative';
+            videoPlayerWrapper.appendChild(blocker);
+            
+            console.log('✅ Subtitle controls blocked with overlay');
+        }
         
         // Add event listener for when video ends
         videoPlayer.onended = function() {
