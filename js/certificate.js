@@ -29,10 +29,6 @@ function generateCumulativeCertificate() {
     const completed = JSON.parse(localStorage.getItem(progressKey) || '[]');
     
     // Module pairs: video index and quiz ID
-    // Module 1: video index 0, quiz index 1
-    // Module 2: video index 2, quiz index 3
-    // Module 3: video index 4, quiz index 5
-    // Module 4: video index 6, quiz index 7
     const pairs = [
         { videoIndex: 0, quizId: 'quiz-1', name: 'Open Airborne Computing Platforms' },
         { videoIndex: 2, quizId: 'quiz-2', name: 'UAV Communications and Networking' },
@@ -61,42 +57,41 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Calculate average score
-    const averageScore = Math.round(
-        completedModules.reduce((sum, m) => sum + m.score, 0) / completedModules.length
-    );
-    
-    // Create modules list HTML - simple and compact
-    const modulesListHTML = completedModules.map(m => `
-        <div style="padding: 8px 12px; background: #f0f9ff; border-left: 3px solid #0064A4; margin: 5px 0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 14px; color: #333; font-weight: 500;">✓ ${m.name}</span>
-            <span style="font-size: 14px; color: #0064A4; font-weight: bold; margin-left: 15px;">${m.score}%</span>
-        </div>
-    `).join('');
-
-    // Create modules grid HTML - 2x2 layout without percentages
+    // Create modules grid - two columns for better landscape layout
     const modulesGridHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 700px; margin: 15px auto;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; margin: 25px auto; max-width: 900px; padding: 0 20px;">
             ${completedModules.map(m => `
-                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-                    <div style="font-size: 14px; color: #333;">✓ ${m.name}</div>
+                <div style="text-align: center;">
+                    <span style="font-size: 15px; color: #333;">✓ ${m.name}</span>
                 </div>
             `).join('')}
         </div>
     `;
 
-    // Create certificate HTML - matching physical certificate design
+    // Create certificate HTML - LANDSCAPE OPTIMIZED
     const certificateHTML = `
         <!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Certificate of Completion</title>
+            <title>Certificate of Completion - ${userName}</title>
             <style>
+                /* FORCE LANDSCAPE ORIENTATION */
                 @page {
                     size: A4 landscape;
                     margin: 0;
+                }
+                
+                @media print {
+                    @page {
+                        size: landscape;
+                    }
+                    
+                    html, body {
+                        width: 297mm;
+                        height: 210mm;
+                    }
                 }
                 
                 * {
@@ -105,116 +100,140 @@ function generateCumulativeCertificate() {
                     box-sizing: border-box;
                 }
                 
+                html {
+                    width: 100%;
+                    height: 100%;
+                }
+                
                 body {
-                    font-family: Arial, sans-serif;
-                    background: #f5f5f5;
+                    font-family: 'Arial', 'Helvetica', sans-serif;
+                    background: #e8e8e8;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     min-height: 100vh;
                     padding: 20px;
+                    width: 100%;
+                    overflow-x: auto;
                 }
                 
+                /* LANDSCAPE CONTAINER - FIXED DIMENSIONS */
                 .certificate-container {
                     width: 297mm;
                     height: 210mm;
+                    min-width: 297mm;
+                    min-height: 210mm;
+                    max-width: 297mm;
+                    max-height: 210mm;
                     background: white;
-                    padding: 40px 60px;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                    padding: 35px 50px;
+                    box-shadow: 0 10px 50px rgba(0,0,0,0.3);
                     position: relative;
+                    display: block;
                 }
                 
+                /* GOLD BORDER */
                 .certificate-border {
                     position: absolute;
-                    top: 20px;
-                    left: 20px;
-                    right: 20px;
-                    bottom: 20px;
-                    border: 4px solid #B8860B;
+                    top: 15px;
+                    left: 15px;
+                    right: 15px;
+                    bottom: 15px;
+                    border: 5px solid #B8860B;
                     pointer-events: none;
+                    z-index: 1;
                 }
                 
+                /* CONTENT LAYOUT */
                 .certificate-content {
                     position: relative;
-                    z-index: 1;
+                    z-index: 2;
                     text-align: center;
                     height: 100%;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
-                    padding: 30px 20px 10px 20px;
+                    padding: 35px 30px 20px 30px;
                 }
                 
-                .decorative-top {
+                /* DATE - TOP LEFT */
+                .cert-date {
                     position: absolute;
-                    top: 50px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 200px;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, #B8860B, transparent);
+                    top: 22px;
+                    left: 28px;
+                    font-size: 12px;
+                    color: #555;
+                    z-index: 3;
                 }
                 
-                .decorative-top::before,
-                .decorative-top::after {
-                    content: '✦';
+                /* UAV ICON - TOP RIGHT */
+                .uav-icon {
                     position: absolute;
-                    top: -7px;
-                    font-size: 18px;
+                    top: 18px;
+                    right: 28px;
+                    font-size: 50px;
                     color: #B8860B;
+                    opacity: 0.4;
+                    z-index: 3;
                 }
                 
-                .decorative-top::before {
-                    left: -25px;
-                }
-                
-                .decorative-top::after {
-                    right: -25px;
-                }
-                
+                /* MAIN TITLE */
                 .cert-title {
-                    font-size: 40px;
+                    font-size: 48px;
                     font-weight: bold;
                     color: #000;
                     margin: 0 0 8px 0;
+                    letter-spacing: 4px;
+                    line-height: 1.1;
+                }
+                
+                /* SUBTITLE */
+                .cert-subtitle {
+                    font-size: 17px;
+                    color: #444;
+                    margin-bottom: 18px;
+                    font-weight: normal;
+                }
+                
+                /* RECIPIENT NAME */
+                .recipient-name {
+                    font-size: 42px;
+                    font-weight: bold;
+                    color: #000;
+                    margin: 18px 0;
+                    text-transform: uppercase;
                     letter-spacing: 2px;
                 }
                 
-                .cert-subtitle {
-                    font-size: 16px;
-                    color: #333;
-                    margin-bottom: 12px;
-                }
-                
+                /* COMPLETION TEXT */
                 .cert-text {
-                    font-size: 14px;
-                    color: #333;
-                    margin: 6px 0;
-                }
-                
-                .recipient-name {
-                    font-size: 36px;
-                    font-weight: bold;
-                    color: #000;
+                    font-size: 15px;
+                    color: #444;
                     margin: 10px 0;
-                    text-transform: uppercase;
                 }
                 
+                /* COURSE TITLE */
                 .course-title {
-                    font-size: 20px;
+                    font-size: 22px;
                     font-weight: bold;
                     color: #000;
-                    margin: 8px 0 12px 0;
+                    margin: 12px 0 20px 0;
                     line-height: 1.3;
+                    letter-spacing: 1px;
                 }
                 
+                /* MODULES SECTION */
+                .modules-section {
+                    margin: 20px 0;
+                }
+                
+                /* SIGNATURES - 4 COLUMNS IN LANDSCAPE */
                 .signatures-container {
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
                     gap: 30px;
-                    margin-top: 0;
+                    margin-top: 10px;
                     padding: 0 20px;
-                    margin-bottom: 10px;
                 }
                 
                 .signature-block {
@@ -222,90 +241,64 @@ function generateCumulativeCertificate() {
                 }
                 
                 .signature-line {
-                    width: 140px;
-                    border-top: 1.5px solid #000;
-                    margin: 0 auto 5px;
+                    width: 150px;
+                    border-top: 2px solid #000;
+                    margin: 0 auto 6px;
                 }
                 
                 .signature-name {
-                    font-size: 11px;
+                    font-size: 12px;
                     font-weight: bold;
                     color: #000;
-                    margin-bottom: 2px;
+                    margin-bottom: 3px;
                 }
                 
                 .signature-title {
-                    font-size: 9px;
+                    font-size: 10px;
                     color: #666;
-                    line-height: 1.2;
+                    line-height: 1.3;
                 }
                 
+                /* NSF LOGO - BOTTOM RIGHT */
                 .nsf-logo {
                     position: absolute;
-                    bottom: 25px;
-                    right: 40px;
-                    width: 50px;
-                    height: 50px;
-                }
-                
-                .cert-date {
-                    position: absolute;
-                    top: 25px;
-                    left: 35px;
-                    font-size: 11px;
-                    color: #666;
-                }
-                
-                .uav-icon {
-                    position: absolute;
-                    top: 25px;
+                    bottom: 22px;
                     right: 35px;
-                    font-size: 45px;
-                    color: #B8860B;
-                    opacity: 0.3;
+                    width: 55px;
+                    height: 55px;
+                    z-index: 3;
                 }
                 
-                @media print {
-                    body {
-                        background: white;
-                        padding: 0;
-                    }
-                    
-                    .certificate-container {
-                        box-shadow: none;
-                        page-break-after: always;
-                    }
-                    
-                    .no-print {
-                        display: none !important;
-                    }
-                }
-                
+                /* PRINT BUTTONS */
                 .print-buttons {
                     position: fixed;
                     top: 20px;
                     right: 20px;
                     z-index: 1000;
                     display: flex;
-                    gap: 10px;
+                    gap: 12px;
                 }
                 
                 .print-btn {
-                    padding: 12px 24px;
+                    padding: 14px 28px;
                     background: #0064A4;
                     color: white;
                     border: none;
-                    border-radius: 5px;
+                    border-radius: 6px;
                     cursor: pointer;
                     font-size: 16px;
                     font-weight: bold;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                    transition: all 0.3s;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
                 }
                 
                 .print-btn:hover {
-                    background: #003366;
+                    background: #004d80;
                     transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
                 }
                 
                 .print-btn.secondary {
@@ -316,45 +309,111 @@ function generateCumulativeCertificate() {
                     background: #d66a2a;
                 }
                 
+                /* PRINT INSTRUCTION BANNER */
+                .print-instruction {
+                    position: fixed;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #fff3cd;
+                    border: 2px solid #ffc107;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    color: #856404;
+                    font-weight: bold;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                    text-align: center;
+                }
+                
+                /* PRINT STYLES */
                 @media print {
-                    body {
+                    html, body {
+                        width: 297mm;
+                        height: 210mm;
+                        margin: 0;
+                        padding: 0;
                         background: white;
+                    }
+                    
+                    body {
+                        display: block;
                         padding: 0;
                     }
                     
                     .certificate-container {
                         box-shadow: none;
+                        margin: 0;
+                        page-break-after: always;
+                        width: 297mm;
+                        height: 210mm;
                     }
                     
                     .no-print {
                         display: none !important;
                     }
                 }
+                
+                /* RESPONSIVE - SCALE DOWN ON SMALLER SCREENS */
+                @media screen and (max-width: 1200px) {
+                    body {
+                        padding: 10px;
+                    }
+                    
+                    .certificate-container {
+                        transform: scale(0.8);
+                        transform-origin: center;
+                    }
+                }
+                
+                @media screen and (max-width: 900px) {
+                    .certificate-container {
+                        transform: scale(0.6);
+                    }
+                    
+                    .print-buttons {
+                        top: 10px;
+                        right: 10px;
+                    }
+                    
+                    .print-btn {
+                        padding: 10px 20px;
+                        font-size: 14px;
+                    }
+                }
             </style>
         </head>
         <body>
+            <!-- PRINT BUTTONS -->
             <div class="print-buttons no-print">
                 <button class="print-btn" onclick="window.print()">
-                    <i class="fas fa-print"></i> Print Certificate
+                    🖨️ Print Certificate
                 </button>
                 <button class="print-btn secondary" onclick="window.close()">
-                    <i class="fas fa-times"></i> Close
+                    ✕ Close
                 </button>
             </div>
             
+            <!-- PRINT INSTRUCTION -->
+            <div class="print-instruction no-print">
+                📄 When printing, ensure "Landscape" orientation is selected in print settings
+            </div>
+            
+            <!-- CERTIFICATE -->
             <div class="certificate-container">
+                <!-- GOLD BORDER -->
                 <div class="certificate-border">
-                    <!-- Date (top left, inside border) -->
+                    <!-- DATE (TOP LEFT) -->
                     <div class="cert-date">Date Issued: ${currentDate}</div>
                     
-                    <!-- UAV Icon (top right, inside border) -->
+                    <!-- UAV ICON (TOP RIGHT) -->
                     <div class="uav-icon">✈</div>
-                    
-                    <!-- Decorative top design -->
-                    <div class="decorative-top"></div>
                 </div>
                 
+                <!-- MAIN CONTENT -->
                 <div class="certificate-content">
+                    <!-- TOP SECTION -->
                     <div>
                         <h1 class="cert-title">CERTIFICATE OF COMPLETION</h1>
                         <p class="cert-subtitle">This Award Certifies That</p>
@@ -365,9 +424,13 @@ function generateCumulativeCertificate() {
                         
                         <h3 class="course-title">UNMANNED AERIAL SYSTEM CYBER INFRASTRUCTURE</h3>
                         
-                        ${modulesGridHTML}
+                        <!-- MODULES -->
+                        <div class="modules-section">
+                            ${modulesGridHTML}
+                        </div>
                     </div>
                     
+                    <!-- SIGNATURES SECTION -->
                     <div class="signatures-container">
                         <div class="signature-block">
                             <div class="signature-line"></div>
@@ -395,11 +458,11 @@ function generateCumulativeCertificate() {
                     </div>
                 </div>
                 
-                <!-- NSF Logo (bottom right) -->
+                <!-- NSF LOGO (BOTTOM RIGHT) -->
                 <div class="nsf-logo">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="50" r="45" fill="#003f87" stroke="#003f87" stroke-width="2"/>
-                        <text x="50" y="60" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white" text-anchor="middle">NSF</text>
+                        <text x="50" y="62" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white" text-anchor="middle">NSF</text>
                     </svg>
                 </div>
             </div>
@@ -408,14 +471,14 @@ function generateCumulativeCertificate() {
     `;
 
     // Open certificate in new window
-    const certificateWindow = window.open('', '_blank');
+    const certificateWindow = window.open('', '_blank', 'width=1200,height=900');
     if (certificateWindow) {
         certificateWindow.document.write(certificateHTML);
         certificateWindow.document.close();
-        showNotification('Certificate opened in new window!', 'success');
+        showNotification('Certificate opened! Ensure "Landscape" is selected when printing.', 'success');
     } else {
         showNotification('Please allow popups to view certificate', 'error');
     }
 }
 
-console.log('%c🎓 Certificate System Loaded', 'color: #F47E3C; font-weight: bold;');
+console.log('%c🎓 Certificate System Loaded - Landscape Optimized', 'color: #F47E3C; font-weight: bold;');
