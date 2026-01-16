@@ -59,10 +59,10 @@ function generateCumulativeCertificate() {
     
     // Create modules grid - two columns for better landscape layout
     const modulesGridHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; margin: 25px auto; max-width: 900px; padding: 0 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 50px; margin: 15px auto 0; max-width: 850px;">
             ${completedModules.map(m => `
                 <div style="text-align: center;">
-                    <span style="font-size: 15px; color: #333;">✓ ${m.name}</span>
+                    <span style="font-size: 14px; color: #333;">✓ ${m.name}</span>
                 </div>
             `).join('')}
         </div>
@@ -153,7 +153,7 @@ function generateCumulativeCertificate() {
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
-                    padding: 35px 30px 20px 30px;
+                    padding: 50px 30px 25px 30px;
                 }
                 
                 /* DATE - TOP LEFT */
@@ -179,60 +179,60 @@ function generateCumulativeCertificate() {
                 
                 /* MAIN TITLE */
                 .cert-title {
-                    font-size: 48px;
+                    font-size: 46px;
                     font-weight: bold;
                     color: #000;
-                    margin: 0 0 8px 0;
+                    margin: 0 0 6px 0;
                     letter-spacing: 4px;
                     line-height: 1.1;
                 }
                 
                 /* SUBTITLE */
                 .cert-subtitle {
-                    font-size: 17px;
+                    font-size: 16px;
                     color: #444;
-                    margin-bottom: 18px;
+                    margin-bottom: 12px;
                     font-weight: normal;
                 }
                 
                 /* RECIPIENT NAME */
                 .recipient-name {
-                    font-size: 42px;
+                    font-size: 40px;
                     font-weight: bold;
                     color: #000;
-                    margin: 18px 0;
+                    margin: 12px 0;
                     text-transform: uppercase;
                     letter-spacing: 2px;
                 }
                 
                 /* COMPLETION TEXT */
                 .cert-text {
-                    font-size: 15px;
+                    font-size: 14px;
                     color: #444;
-                    margin: 10px 0;
+                    margin: 8px 0;
                 }
                 
                 /* COURSE TITLE */
                 .course-title {
-                    font-size: 22px;
+                    font-size: 21px;
                     font-weight: bold;
                     color: #000;
-                    margin: 12px 0 20px 0;
+                    margin: 10px 0 15px 0;
                     line-height: 1.3;
                     letter-spacing: 1px;
                 }
                 
                 /* MODULES SECTION */
                 .modules-section {
-                    margin: 20px 0;
+                    margin: 15px 0 0 0;
                 }
                 
                 /* SIGNATURES - 4 COLUMNS IN LANDSCAPE */
                 .signatures-container {
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
-                    gap: 30px;
-                    margin-top: 10px;
+                    gap: 25px;
+                    margin-top: 0;
                     padding: 0 20px;
                 }
                 
@@ -269,14 +269,12 @@ function generateCumulativeCertificate() {
                     z-index: 3;
                 }
                 
-                /* PRINT BUTTONS */
+                /* PRINT BUTTON - SINGLE BUTTON ONLY */
                 .print-buttons {
                     position: fixed;
                     top: 20px;
                     right: 20px;
                     z-index: 1000;
-                    display: flex;
-                    gap: 12px;
                 }
                 
                 .print-btn {
@@ -290,41 +288,12 @@ function generateCumulativeCertificate() {
                     font-weight: bold;
                     box-shadow: 0 4px 15px rgba(0,0,0,0.25);
                     transition: all 0.3s ease;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
                 }
                 
                 .print-btn:hover {
                     background: #004d80;
                     transform: translateY(-2px);
                     box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-                }
-                
-                .print-btn.secondary {
-                    background: #F47E3C;
-                }
-                
-                .print-btn.secondary:hover {
-                    background: #d66a2a;
-                }
-                
-                /* PRINT INSTRUCTION BANNER */
-                .print-instruction {
-                    position: fixed;
-                    bottom: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: #fff3cd;
-                    border: 2px solid #ffc107;
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    font-size: 14px;
-                    color: #856404;
-                    font-weight: bold;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                    z-index: 1000;
-                    text-align: center;
                 }
                 
                 /* PRINT STYLES */
@@ -385,19 +354,11 @@ function generateCumulativeCertificate() {
             </style>
         </head>
         <body>
-            <!-- PRINT BUTTONS -->
+            <!-- PRINT BUTTON - SINGLE BUTTON ONLY -->
             <div class="print-buttons no-print">
                 <button class="print-btn" onclick="window.print()">
                     🖨️ Print Certificate
                 </button>
-                <button class="print-btn secondary" onclick="window.close()">
-                    ✕ Close
-                </button>
-            </div>
-            
-            <!-- PRINT INSTRUCTION -->
-            <div class="print-instruction no-print">
-                📄 When printing, ensure "Landscape" orientation is selected in print settings
             </div>
             
             <!-- CERTIFICATE -->
