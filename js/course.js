@@ -362,20 +362,56 @@ function getDefaultModuleIndex() {
 // ===================================
 function pauseCurrentVideo() {
     const videoPlayer = document.getElementById('videoPlayer');
-    if (videoPlayer && videoPlayer.contentWindow) {
-        try {
-            // Pause YouTube iframe videos
-            videoPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            // Pause Vimeo iframe videos
-            videoPlayer.contentWindow.postMessage('{"method":"pause"}', '*');
-        } catch (e) {
-            console.log('Could not pause iframe video');
-        }
-    }
+    if (!videoPlayer) return;
     
-    // Also try to pause if it's a regular HTML5 video
-    if (videoPlayer && typeof videoPlayer.pause === 'function') {
-        videoPlayer.pause();
+    try {
+        // For Google Drive videos - stop by clearing and resetting src
+        if (videoPlayer.src && videoPlayer.src.includes('drive.google.com')) {
+            const currentSrc = videoPlayer.src;
+            videoPlayer.src = 'about:blank';
+            // Store the src to reload later if needed
+            videoPlayer.setAttribute('data-paused-src', currentSrc);
+            console.log('Google Drive video stopped');
+            return;
+        }
+        
+        // For YouTube videos
+        if (videoPlayer.src && videoPlayer.src.includes('youtube.com')) {
+            videoPlayer.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: 'pauseVideo',
+                args: ''
+            }), '*');
+            console.log('YouTube video paused');
+            return;
+        }
+        
+        // For Vimeo videos
+        if (videoPlayer.src && videoPlayer.src.includes('vimeo.com')) {
+            videoPlayer.contentWindow.postMessage(JSON.stringify({
+                method: 'pause'
+            }), '*');
+            console.log('Vimeo video paused');
+            return;
+        }
+        
+        // For HTML5 video elements
+        if (videoPlayer.tagName === 'VIDEO' && typeof videoPlayer.pause === 'function') {
+            videoPlayer.pause();
+            console.log('HTML5 video paused');
+            return;
+        }
+        
+        // Generic fallback for any iframe
+        if (videoPlayer.tagName === 'IFRAME') {
+            const currentSrc = videoPlayer.src;
+            videoPlayer.src = 'about:blank';
+            videoPlayer.setAttribute('data-paused-src', currentSrc);
+            console.log('Generic iframe video stopped');
+        }
+        
+    } catch (e) {
+        console.log('Error pausing video:', e);
     }
 }
 
