@@ -495,6 +495,35 @@ function loadVideoModule(module) {
         
         videoPlayer.src = videoUrl;
         
+        // CRITICAL: Hide subtitle button with CSS after iframe loads
+        videoPlayer.onload = function() {
+            try {
+                // Inject CSS to hide subtitle controls
+                const style = document.createElement('style');
+                style.textContent = `
+                    iframe#videoPlayer {
+                        pointer-events: auto;
+                    }
+                    /* Hide subtitle button in Google Drive player */
+                    .ytp-subtitles-button,
+                    .ytp-subtitles-button-icon,
+                    button[aria-label*="Subtitle"],
+                    button[aria-label*="Caption"],
+                    .captions-button,
+                    [class*="subtitle"],
+                    [class*="caption"] {
+                        display: none !important;
+                        visibility: hidden !important;
+                        opacity: 0 !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                console.log('✅ Subtitle button hidden via CSS');
+            } catch (e) {
+                console.log('Could not inject CSS:', e);
+            }
+        };
+        
         // Add event listener for when video ends
         videoPlayer.onended = function() {
             if (!completedModules.has(currentModuleIndex)) {
