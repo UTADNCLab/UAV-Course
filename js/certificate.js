@@ -96,7 +96,7 @@ function generateCumulativeCertificate() {
             <title>Certificate of Completion</title>
             <style>
                 @page {
-                    size: A4 portrait;
+                    size: A4 landscape;
                     margin: 0;
                 }
                 
@@ -117,10 +117,10 @@ function generateCumulativeCertificate() {
                 }
                 
                 .certificate-container {
-                    width: 210mm;
-                    height: 297mm;
+                    width: 297mm;
+                    height: 210mm;
                     background: white;
-                    padding: 50px;
+                    padding: 40px 60px;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
                     position: relative;
                 }
@@ -147,39 +147,39 @@ function generateCumulativeCertificate() {
                 }
                 
                 .cert-title {
-                    font-size: 48px;
+                    font-size: 40px;
                     font-weight: bold;
                     color: #000;
-                    margin: 20px 0 10px 0;
+                    margin: 10px 0 5px 0;
                     letter-spacing: 2px;
                 }
                 
                 .cert-subtitle {
-                    font-size: 20px;
+                    font-size: 16px;
                     color: #333;
-                    margin-bottom: 30px;
+                    margin-bottom: 15px;
                 }
                 
                 .cert-text {
-                    font-size: 16px;
+                    font-size: 14px;
                     color: #333;
-                    margin: 10px 0;
+                    margin: 8px 0;
                 }
                 
                 .recipient-name {
-                    font-size: 42px;
+                    font-size: 36px;
                     font-weight: bold;
                     color: #000;
-                    margin: 20px 0;
+                    margin: 12px 0;
                     text-transform: uppercase;
                 }
                 
                 .course-title {
-                    font-size: 22px;
+                    font-size: 20px;
                     font-weight: bold;
                     color: #000;
-                    margin: 15px 0;
-                    line-height: 1.4;
+                    margin: 10px 0;
+                    line-height: 1.3;
                 }
                 
                 .score-info {
@@ -191,10 +191,10 @@ function generateCumulativeCertificate() {
                 
                 .signatures-container {
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 20px;
-                    margin-top: 30px;
-                    padding: 0 40px;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 30px;
+                    margin-top: 20px;
+                    padding: 0 20px;
                 }
                 
                 .signature-block {
@@ -222,25 +222,26 @@ function generateCumulativeCertificate() {
                 
                 .nsf-logo {
                     position: absolute;
-                    bottom: 30px;
-                    right: 50px;
-                    width: 60px;
-                    height: 60px;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 50px;
+                    height: 50px;
                 }
                 
                 .cert-date {
                     position: absolute;
-                    top: 50px;
-                    left: 50px;
-                    font-size: 14px;
+                    top: 30px;
+                    left: 40px;
+                    font-size: 12px;
                     color: #666;
                 }
                 
                 .uav-icon {
                     position: absolute;
-                    top: 50px;
-                    right: 50px;
-                    font-size: 60px;
+                    top: 30px;
+                    right: 40px;
+                    font-size: 50px;
                     color: #B8860B;
                     opacity: 0.3;
                 }

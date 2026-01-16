@@ -484,19 +484,21 @@ function loadVideoModule(module) {
         // Remove subtitle controls by modifying Google Drive URLs
         let videoUrl = module.videoUrl;
         
-        // For Google Drive videos, force captions OFF
+        // For Google Drive videos, try to disable captions completely
         if (videoUrl.includes('drive.google.com')) {
             // Remove any existing parameters
             videoUrl = videoUrl.split('?')[0].split('#')[0];
             
-            // CRITICAL: cc_load_policy=0 forces captions OFF by default
-            // This prevents auto-opening of captions
-            videoUrl += '?cc_load_policy=0&hl=en&modestbranding=1&rel=0&showinfo=0';
+            // Multiple parameters to try to disable captions:
+            // cc_load_policy=0: Don't show captions by default
+            // cc_lang_pref=: Empty language preference
+            // hl=en: Interface language
+            videoUrl += '?cc_load_policy=0&cc_lang_pref=&hl=en&modestbranding=1&rel=0&showinfo=0&controls=1';
         }
         
         videoPlayer.src = videoUrl;
         
-        console.log('✅ Video loaded with captions disabled by default');
+        console.log('✅ Video loaded with captions disabled');
         
         // Add event listener for when video ends
         videoPlayer.onended = function() {
