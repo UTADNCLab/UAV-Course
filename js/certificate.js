@@ -383,7 +383,7 @@ function generateCumulativeCertificate() {
                         
                         <p class="cert-text">Has Successfully Completed Training On</p>
                         
-                        <h3 class="course-title">UNMANNED AERIAL SYSTEMS CYBER INFRASTRUCTURE</h3>
+                        <h3 class="course-title">UAV DESIGN: FOUNDATIONS OF CYBER-PHYSICAL SYSTEMS</h3>
                         
                         <!-- MODULES -->
                         <div class="modules-section">
