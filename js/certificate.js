@@ -141,17 +141,17 @@ function generateCumulativeCertificate() {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
-                    justify-content: center;
-                    padding: 20px;
+                    justify-content: space-between;
+                    padding: 30px 20px 10px 20px;
                 }
                 
                 .decorative-top {
                     position: absolute;
-                    top: 30px;
+                    top: 50px;
                     left: 50%;
                     transform: translateX(-50%);
                     width: 200px;
-                    height: 3px;
+                    height: 2px;
                     background: linear-gradient(90deg, transparent, #B8860B, transparent);
                 }
                 
@@ -159,44 +159,44 @@ function generateCumulativeCertificate() {
                 .decorative-top::after {
                     content: '✦';
                     position: absolute;
-                    top: -8px;
-                    font-size: 20px;
+                    top: -7px;
+                    font-size: 18px;
                     color: #B8860B;
                 }
                 
                 .decorative-top::before {
-                    left: -30px;
+                    left: -25px;
                 }
                 
                 .decorative-top::after {
-                    right: -30px;
+                    right: -25px;
                 }
                 
                 .cert-title {
                     font-size: 40px;
                     font-weight: bold;
                     color: #000;
-                    margin: 10px 0 5px 0;
+                    margin: 0 0 8px 0;
                     letter-spacing: 2px;
                 }
                 
                 .cert-subtitle {
                     font-size: 16px;
                     color: #333;
-                    margin-bottom: 15px;
+                    margin-bottom: 12px;
                 }
                 
                 .cert-text {
                     font-size: 14px;
                     color: #333;
-                    margin: 8px 0;
+                    margin: 6px 0;
                 }
                 
                 .recipient-name {
                     font-size: 36px;
                     font-weight: bold;
                     color: #000;
-                    margin: 12px 0;
+                    margin: 10px 0;
                     text-transform: uppercase;
                 }
                 
@@ -204,7 +204,7 @@ function generateCumulativeCertificate() {
                     font-size: 20px;
                     font-weight: bold;
                     color: #000;
-                    margin: 10px 0;
+                    margin: 8px 0 12px 0;
                     line-height: 1.3;
                 }
                 
@@ -212,8 +212,9 @@ function generateCumulativeCertificate() {
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
                     gap: 30px;
-                    margin-top: 20px;
+                    margin-top: 0;
                     padding: 0 20px;
+                    margin-bottom: 10px;
                 }
                 
                 .signature-block {
