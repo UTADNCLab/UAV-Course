@@ -481,17 +481,16 @@ function loadVideoModule(module) {
     if (moduleNumber) moduleNumber.textContent = (Math.floor(currentModuleIndex / 2) + 1);
     if (videoDescription) videoDescription.textContent = module.description;
     if (videoPlayer) {
-        // Remove subtitle controls by adding cc_load_policy=0 to Google Drive URLs
+        // Remove subtitle controls by modifying Google Drive URLs
         let videoUrl = module.videoUrl;
         
-        // For Google Drive videos, ensure subtitles are disabled
+        // For Google Drive videos, ensure subtitles are completely disabled
         if (videoUrl.includes('drive.google.com')) {
-            // Add parameter to disable captions
-            if (videoUrl.includes('?')) {
-                videoUrl += '&cc_load_policy=0&controls=1';
-            } else {
-                videoUrl += '?cc_load_policy=0&controls=1';
-            }
+            // Remove any existing subtitle parameters
+            videoUrl = videoUrl.split('?')[0].split('#')[0];
+            
+            // Add parameters to disable ALL subtitle features
+            videoUrl += '?cc_load_policy=3&cc_lang_pref=none&hl=en&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3';
         }
         
         videoPlayer.src = videoUrl;
