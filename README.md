@@ -1,397 +1,240 @@
 # 🚁 UAV Computing & Networking Course Platform
 
-A professional, interactive online course platform built with HTML, CSS, and JavaScript. Features video lessons, quizzes, progress tracking, and certificate generation.
+A professional, interactive online course platform with authentication, progress tracking, and Google Sheets backend integration.
 
-## 📋 Table of Contents
+## 🌐 Live Site
 
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [How to Edit Course Content](#how-to-edit-course-content)
-- [Adding/Changing Videos](#addingchanging-videos)
-- [Editing Quiz Questions](#editing-quiz-questions)
-- [Customizing Styling](#customizing-styling)
-- [Progress Tracking](#progress-tracking)
-- [Certificate Generation](#certificate-generation)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
+**Course Website:** https://jaymehta12110.github.io/UAV-Course/
 
-## ✨ Features
+## ✨ Key Features
+
+### 🔐 User Authentication
+- User registration and login system
+- Password hashing for security
+- Session management
+- Google Sheets backend for user data
 
 ### 🎥 Video Learning
-- Wide, responsive video player
-- Support for YouTube, Vimeo, and local videos
-- Module descriptions and metadata
+- YouTube/Vimeo video support
+- Auto-pause when switching modules
 - Progress tracking per video
+- Module descriptions and metadata
 
 ### 📝 Interactive Quizzes
 - Multiple choice questions
 - Instant feedback with explanations
 - Pass/fail system (70% required)
-- Retry option for failed quizzes
 - Score tracking and analytics
 
 ### 📊 Progress Tracking
-- Visual progress bars
-- Module completion checkmarks
-- Time spent tracking
-- Learning streak counter
-- Achievement system
+- Real-time progress synchronization
+- Google Sheets backend storage
+- Visual progress indicators
+- Module completion tracking
 
 ### 🏆 Certificate Generation
-- Automatic certificate upon course completion
+- Automatic certificate upon completion
 - Personalized with student name
 - Professional design
-- Downloadable
+- Downloadable as image
 
 ### 📱 Responsive Design
 - Mobile-friendly interface
-- Collapsible sidebar on mobile
-- Touch-optimized controls
 - Works on all devices
+- Touch-optimized controls
 
-### 🎨 Modern UI
-- Udemy-inspired design
-- Smooth animations
-- Professional color scheme
-- Clean typography
+## 🚀 Quick Start
 
-## 🚀 Getting Started
+### For Students
 
-### Option 1: Open Directly in Browser
+1. Visit: https://jaymehta12110.github.io/UAV-Course/
+2. Click "Login" or "Register"
+3. Create an account or login
+4. Start learning!
 
-1. Navigate to the `course-platform` folder
-2. Double-click `index.html`
-3. The course will open in your default browser
+### For Administrators
 
-### Option 2: Use a Local Server (Recommended)
+**Admin Tools:**
+- `admin-password-reset.html` - Reset user passwords
+- `clear-cache.html` - Clear browser cache/logout
+- `SYSTEM_RESET_GUIDE.md` - Complete reset instructions
 
-Using a local server prevents CORS issues when loading JSON data.
+## 📁 Project Structure
 
-**Using Python:**
-```bash
-cd course-platform
-python -m http.server 8000
 ```
-Then open: `http://localhost:8000`
-
-**Using Node.js (http-server):**
-```bash
-npm install -g http-server
-cd course-platform
-http-server
+course/
+├── index.html              # Landing page
+├── course.html             # Main course interface
+├── css/
+│   ├── styles.css         # Course page styles
+│   └── landing-styles.css # Landing page styles
+├── js/
+│   ├── auth.js            # Authentication system
+│   ├── course.js          # Course logic
+│   ├── quiz.js            # Quiz functionality
+│   ├── certificate.js     # Certificate generation
+│   └── contact.js         # Contact form
+├── data/
+│   └── course-data.json   # Course content
+├── backend/
+│   └── google-apps-script.js  # Backend API
+├── admin-password-reset.html  # Admin tool
+├── clear-cache.html           # Cache clearing tool
+├── SYSTEM_RESET_GUIDE.md      # Reset instructions
+└── README.md                  # This file
 ```
 
-**Using VS Code:**
-- Install "Live Server" extension
-- Right-click `index.html`
-- Select "Open with Live Server"
+## 🔧 System Administration
 
-## 📝 How to Edit Course Content
+### Reset User Password
 
-All course content is stored in `data/course-data.json`. This makes it easy to update without touching the code.
+1. Open `admin-password-reset.html`
+2. Enter user email
+3. Enter new password
+4. Click "Reset Password"
 
-### Editing Course Information
+### Clear User Cache
 
-Open `data/course-data.json` and modify the `course` section:
+Users can clear their local cache:
+1. Open `clear-cache.html`
+2. Click "Clear All Data"
+3. User will be logged out
+4. Can login again to restore progress from backend
+
+### Complete System Reset
+
+See `SYSTEM_RESET_GUIDE.md` for detailed instructions on:
+- Clearing all users from backend
+- Resetting browser cache
+- Starting fresh with same URLs
+- Preventing auto-login
+
+## 🎓 Course Content Management
+
+### Editing Course Content
+
+All content is in `data/course-data.json`:
 
 ```json
 {
   "course": {
     "title": "Your Course Title",
-    "subtitle": "Your Course Subtitle",
-    "description": "Your detailed course description...",
-    "welcomeMessage": "Your welcome message...",
-    "congratulationsMessage": "Your completion message...",
-    "learningOutcomes": [
-      "Outcome 1",
-      "Outcome 2"
-    ],
-    "prerequisites": [
-      "Prerequisite 1",
-      "Prerequisite 2"
-    ],
-    "targetAudience": [
-      "Audience 1",
-      "Audience 2"
-    ]
-  }
+    "description": "Course description..."
+  },
+  "modules": [
+    {
+      "id": 1,
+      "title": "Module Title",
+      "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
+      "type": "video"
+    }
+  ]
 }
 ```
 
-### Editing Instructor Information
+### Adding Videos
 
+**YouTube:**
 ```json
 {
-  "instructor": {
-    "name": "Your Name",
-    "title": "Your Title",
-    "bio": "Your bio...",
-    "image": "assets/images/instructor.jpg"
-  }
+  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID"
 }
 ```
 
-## 🎥 Adding/Changing Videos
-
-### Using YouTube Videos
-
-1. Get the YouTube video ID from the URL
-   - Example: `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
-   - Video ID: `dQw4w9WgXcQ`
-
-2. Update the module in `course-data.json`:
-
+**Vimeo:**
 ```json
 {
-  "id": 1,
-  "title": "Your Video Title",
-  "description": "Your video description...",
-  "videoUrl": "https://www.youtube.com/embed/YOUR_VIDEO_ID",
-  "duration": "45 min",
-  "type": "video"
+  "videoUrl": "https://player.vimeo.com/video/VIDEO_ID"
 }
 ```
 
-### Using Vimeo Videos
+### Adding Quiz Questions
 
 ```json
 {
-  "videoUrl": "https://player.vimeo.com/video/YOUR_VIDEO_ID"
-}
-```
-
-### Using Local Video Files
-
-1. Create a `videos` folder inside `assets`:
-   ```
-   course-platform/
-   └── assets/
-       └── videos/
-           └── module1.mp4
-   ```
-
-2. Update the module:
-
-```json
-{
-  "videoUrl": "assets/videos/module1.mp4"
-}
-```
-
-**Note:** For local videos, you'll need to modify the HTML to use a `<video>` tag instead of `<iframe>`. Contact me if you need help with this.
-
-## 📝 Editing Quiz Questions
-
-Each quiz module in `course-data.json` has a `questions` array:
-
-```json
-{
-  "id": 2,
-  "title": "Quiz 1: Module Name",
-  "description": "Test your understanding...",
   "type": "quiz",
   "questions": [
     {
-      "question": "Your question here?",
-      "options": [
-        "Option A",
-        "Option B",
-        "Option C",
-        "Option D"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Explanation of the correct answer..."
-    }
-  ]
-}
-```
-
-### Important Notes:
-- `correctAnswer` is the **index** of the correct option (0, 1, 2, or 3)
-- Option 0 = first option, Option 1 = second option, etc.
-- Always provide an explanation for learning purposes
-
-### Adding More Questions
-
-Simply add more question objects to the `questions` array:
-
-```json
-{
-  "questions": [
-    {
-      "question": "Question 1?",
+      "question": "Your question?",
       "options": ["A", "B", "C", "D"],
       "correctAnswer": 0,
-      "explanation": "Explanation..."
-    },
-    {
-      "question": "Question 2?",
-      "options": ["A", "B", "C", "D"],
-      "correctAnswer": 2,
-      "explanation": "Explanation..."
+      "explanation": "Why this is correct..."
     }
   ]
 }
 ```
 
-## 🎨 Customizing Styling
+## 🔗 Backend Integration
+
+### Google Sheets Setup
+
+The course uses Google Sheets as a database:
+
+**Spreadsheet ID:** `1EToB-Hs0GLOnB3Egi55fxKdeFTOC-Fg8p0BP9jiEvmc`
+
+**Sheets:**
+- `Users` - User accounts
+- `Progress` - User progress data
+- `Professors` - Instructor information
+
+### Web App URL
+
+Backend API: `https://script.google.com/macros/s/AKfycbxz-4ZhhhuSxBWs8cZ5NMnBlHf-Q_PdYwhxWjQOizXSP69U9l4EqkJYWWu7YMQctXUkTw/exec`
+
+### Updating Backend
+
+1. Open Google Apps Script
+2. Copy code from `backend/google-apps-script.js`
+3. Deploy as Web App
+4. Update URL in `js/auth.js` if changed
+
+## 🎨 Customization
 
 ### Changing Colors
 
-Open `css/styles.css` and modify the CSS variables at the top:
+Edit `css/styles.css` or `css/landing-styles.css`:
 
 ```css
 :root {
-    --primary-color: #5624d0;        /* Main brand color */
-    --primary-dark: #401b9c;         /* Darker shade */
-    --primary-light: #7c4dff;        /* Lighter shade */
-    --accent-color: #f3722c;         /* Accent color */
-    --success-color: #28a745;        /* Success messages */
-    --text-primary: #1c1d1f;         /* Main text color */
-    --bg-primary: #ffffff;           /* Background color */
+    --primary-color: #0064A4;
+    --accent-color: #F47E3C;
+    --success-color: #28a745;
 }
 ```
 
 ### Changing Fonts
 
-Add your font import at the top of `styles.css`:
-
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Your+Font&display=swap');
-
 body {
     font-family: 'Your Font', sans-serif;
 }
 ```
 
-### Modifying Layout
-
-- **Sidebar width:** Search for `.sidebar { width: 350px; }` in `styles.css`
-- **Video aspect ratio:** Modify `.video-container { padding-bottom: 56.25%; }` (56.25% = 16:9)
-- **Content width:** Change `.main-container { max-width: 1400px; }`
-
-## 📊 Progress Tracking
-
-Progress is automatically saved to the browser's localStorage:
-
-- **Completed modules** are tracked
-- **Quiz scores** are saved
-- **Time spent** is recorded
-- **Learning streak** is maintained
-
-### Resetting Progress
-
-Users can reset their progress by opening the browser console (F12) and typing:
-
-```javascript
-resetProgress()
-```
-
-### Exporting Progress
-
-Add this button to your HTML if you want users to export their progress:
-
-```javascript
-downloadProgress()  // In browser console
-```
-
-## 🏆 Certificate Generation
-
-Certificates are automatically generated when a student completes all modules.
-
-### Customizing the Certificate
-
-Edit the certificate template in `index.html`:
-
-```html
-<div id="certificateTemplate" style="display: none;">
-    <!-- Modify the certificate design here -->
-</div>
-```
-
-### Certificate Download
-
-The certificate can be downloaded as an image. For better quality, you can integrate `html2canvas`:
-
-Add this before the closing `</body>` tag in `index.html`:
-
-```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-```
-
 ## 🌐 Deployment
 
-### GitHub Pages
+### Current Deployment
 
-1. Create a GitHub repository
-2. Upload all files from `course-platform` folder
-3. Go to Settings → Pages
-4. Select main branch as source
-5. Your site will be live at `https://yourusername.github.io/repository-name`
+- **Platform:** GitHub Pages
+- **Repository:** jaymehta12110/UAV-Course
+- **URL:** https://jaymehta12110.github.io/UAV-Course/
 
-### Netlify
+### Deploying Updates
 
-1. Drag and drop the `course-platform` folder to [Netlify Drop](https://app.netlify.com/drop)
-2. Your site is instantly live!
+```bash
+git add .
+git commit -m "Your update message"
+git push origin main
+```
 
-### Vercel
+Changes go live automatically in 1-2 minutes.
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Navigate to `course-platform` folder
-3. Run: `vercel`
-4. Follow the prompts
+## 🔒 Security Features
 
-### Traditional Web Hosting
-
-Upload all files from `course-platform` folder to your web host via FTP.
-
-## 🔧 Troubleshooting
-
-### Videos Not Loading
-
-**Problem:** Videos show a blank screen
-
-**Solutions:**
-- Check if the video URL is correct
-- Ensure you're using the embed URL (not the watch URL)
-- For YouTube: Use `https://www.youtube.com/embed/VIDEO_ID`
-- For local videos, use a local server (not file://)
-
-### JSON Data Not Loading
-
-**Problem:** Course content doesn't appear
-
-**Solutions:**
-- Use a local server instead of opening the file directly
-- Check browser console (F12) for errors
-- Verify `course-data.json` is valid JSON (use [JSONLint](https://jsonlint.com/))
-
-### Progress Not Saving
-
-**Problem:** Progress resets on page reload
-
-**Solutions:**
-- Check if localStorage is enabled in your browser
-- Clear browser cache and try again
-- Check browser console for errors
-
-### Mobile Menu Not Working
-
-**Problem:** Sidebar doesn't open on mobile
-
-**Solutions:**
-- Clear browser cache
-- Check if JavaScript is enabled
-- Try a different browser
-
-### Certificate Not Downloading
-
-**Problem:** Certificate download doesn't work
-
-**Solutions:**
-- Add the html2canvas library (see Certificate Generation section)
-- Allow pop-ups in your browser
-- Try right-clicking and "Save image as..."
+- ✅ Password hashing (SHA-256)
+- ✅ Secure session management
+- ✅ Backend data validation
+- ✅ HTTPS encryption (via GitHub Pages)
+- ✅ No passwords stored in frontend
 
 ## 📱 Browser Compatibility
 
@@ -400,72 +243,86 @@ Tested and working on:
 - ✅ Firefox 88+
 - ✅ Safari 14+
 - ✅ Edge 90+
-- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+- ✅ Mobile browsers
 
-## 🎯 Adding More Modules
+## 🐛 Troubleshooting
 
-To add more video/quiz modules:
+### Video Keeps Playing in Background
 
-1. Open `data/course-data.json`
-2. Add a new module object to the `modules` array:
+**Fixed!** Videos now auto-pause when switching to quizzes or other modules.
 
-```json
-{
-  "id": 9,
-  "title": "New Module Title",
-  "description": "Module description...",
-  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID",
-  "duration": "30 min",
-  "type": "video"
-}
-```
+### Login Issues
 
-3. Add a corresponding quiz:
+1. Clear browser cache using `clear-cache.html`
+2. Try incognito/private mode
+3. Check browser console for errors
 
-```json
-{
-  "id": 10,
-  "title": "Quiz 5: New Module",
-  "description": "Test your knowledge...",
-  "type": "quiz",
-  "questions": [...]
-}
-```
+### Progress Not Saving
 
-The platform will automatically update!
+1. Check internet connection
+2. Verify backend URL is correct
+3. Check Google Sheets permissions
 
-## 💡 Tips for Best Results
+### Registration Not Working
 
-1. **Video Quality:** Use 1080p videos for best viewing experience
-2. **Quiz Design:** Keep questions clear and concise
-3. **Explanations:** Always provide detailed explanations for quiz answers
-4. **Module Length:** Keep videos between 30-60 minutes for optimal engagement
-5. **Testing:** Test on multiple devices before deploying
+1. Check if email is already registered
+2. Verify backend is accessible
+3. Check browser console for errors
 
-## 🆘 Need Help?
+## 🆘 Support
 
-If you encounter any issues or need customization:
+**For Issues:**
+1. Check browser console (F12) for errors
+2. Review `SYSTEM_RESET_GUIDE.md`
+3. Try clearing cache with `clear-cache.html`
 
-1. Check the browser console (F12) for error messages
-2. Verify all file paths are correct
-3. Ensure JSON syntax is valid
-4. Test in a different browser
+## 📊 Recent Updates
 
-## 📄 License
+### Latest Changes (2024)
+- ✅ Fixed video auto-pause when switching modules
+- ✅ Cleaned up 45+ unnecessary documentation files
+- ✅ Added admin password reset tool
+- ✅ Added cache clearing tool
+- ✅ Created comprehensive system reset guide
+- ✅ Improved repository organization
 
-This course platform is provided as-is for educational purposes.
+## 📄 Important Files
+
+**Keep These:**
+- `README.md` - Main documentation
+- `HOW-TO-RUN.md` - Setup instructions
+- `SYSTEM_RESET_GUIDE.md` - Reset procedures
+- `Quiz_2.md`, `Quiz_3.md`, `Quiz_4.md` - Quiz content
+
+**Admin Tools:**
+- `admin-password-reset.html` - Password management
+- `clear-cache.html` - Cache management
+- `cleanup-docs.bat` - Documentation cleanup script
+
+## 🎯 Future Enhancements
+
+Potential improvements:
+- Email verification
+- Password recovery via email
+- Advanced analytics dashboard
+- Course completion certificates via email
+- Multi-language support
+
+## 📝 License
+
+Educational use. All rights reserved.
 
 ## 🎓 Credits
 
-Built with:
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Font Awesome Icons
-- Google Fonts
+**Course Content:** UAV Design & Cyber-Physical Systems
+**Platform:** Custom-built with HTML, CSS, JavaScript
+**Backend:** Google Apps Script + Google Sheets
+**Hosting:** GitHub Pages
 
 ---
 
-**Happy Teaching! 🚀**
+**For detailed reset instructions, see:** `SYSTEM_RESET_GUIDE.md`
 
-For questions or support, refer to the troubleshooting section above.
+**For admin tools, use:** `admin-password-reset.html` or `clear-cache.html`
+
+**Live Site:** https://jaymehta12110.github.io/UAV-Course/
