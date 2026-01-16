@@ -153,7 +153,7 @@ function generateCumulativeCertificate() {
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
-                    padding: 50px 30px 25px 30px;
+                    padding: 45px 30px 25px 30px;
                 }
                 
                 /* DATE - TOP LEFT */
@@ -224,7 +224,7 @@ function generateCumulativeCertificate() {
                 
                 /* MODULES SECTION */
                 .modules-section {
-                    margin: 15px 0 0 0;
+                    margin: 25px 0 0 0;
                 }
                 
                 /* SIGNATURES - 4 COLUMNS IN LANDSCAPE */
@@ -383,7 +383,7 @@ function generateCumulativeCertificate() {
                         
                         <p class="cert-text">Has Successfully Completed Training On</p>
                         
-                        <h3 class="course-title">UNMANNED AERIAL SYSTEM CYBER INFRASTRUCTURE</h3>
+                        <h3 class="course-title">UNMANNED AERIAL SYSTEMS CYBER INFRASTRUCTURE</h3>
                         
                         <!-- MODULES -->
                         <div class="modules-section">
