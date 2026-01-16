@@ -74,13 +74,12 @@ function generateCumulativeCertificate() {
         </div>
     `).join('');
 
-    // Create modules grid HTML - 2x2 layout
+    // Create modules grid HTML - 2x2 layout without percentages
     const modulesGridHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 700px; margin: 20px auto;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 700px; margin: 15px auto;">
             ${completedModules.map(m => `
-                <div style="text-align: center; padding: 12px; background: #f8f9fa; border-radius: 5px;">
-                    <div style="font-size: 14px; color: #333; margin-bottom: 5px;">✓ ${m.name}</div>
-                    <div style="font-size: 16px; color: #0064A4; font-weight: bold;">${m.score}%</div>
+                <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <div style="font-size: 14px; color: #333;">✓ ${m.name}</div>
                 </div>
             `).join('')}
         </div>
@@ -127,10 +126,10 @@ function generateCumulativeCertificate() {
                 
                 .certificate-border {
                     position: absolute;
-                    top: 30px;
-                    left: 30px;
-                    right: 30px;
-                    bottom: 30px;
+                    top: 20px;
+                    left: 20px;
+                    right: 20px;
+                    bottom: 20px;
                     border: 4px solid #B8860B;
                     pointer-events: none;
                 }
@@ -142,8 +141,35 @@ function generateCumulativeCertificate() {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
-                    justify-content: space-between;
+                    justify-content: center;
                     padding: 20px;
+                }
+                
+                .decorative-top {
+                    position: absolute;
+                    top: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 200px;
+                    height: 3px;
+                    background: linear-gradient(90deg, transparent, #B8860B, transparent);
+                }
+                
+                .decorative-top::before,
+                .decorative-top::after {
+                    content: '✦';
+                    position: absolute;
+                    top: -8px;
+                    font-size: 20px;
+                    color: #B8860B;
+                }
+                
+                .decorative-top::before {
+                    left: -30px;
+                }
+                
+                .decorative-top::after {
+                    right: -30px;
                 }
                 
                 .cert-title {
@@ -182,13 +208,6 @@ function generateCumulativeCertificate() {
                     line-height: 1.3;
                 }
                 
-                .score-info {
-                    font-size: 16px;
-                    color: #333;
-                    margin: 15px 0;
-                    font-weight: 500;
-                }
-                
                 .signatures-container {
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
@@ -222,26 +241,25 @@ function generateCumulativeCertificate() {
                 
                 .nsf-logo {
                     position: absolute;
-                    bottom: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
+                    bottom: 25px;
+                    right: 40px;
                     width: 50px;
                     height: 50px;
                 }
                 
                 .cert-date {
                     position: absolute;
-                    top: 30px;
-                    left: 40px;
-                    font-size: 12px;
+                    top: 25px;
+                    left: 35px;
+                    font-size: 11px;
                     color: #666;
                 }
                 
                 .uav-icon {
                     position: absolute;
-                    top: 30px;
-                    right: 40px;
-                    font-size: 50px;
+                    top: 25px;
+                    right: 35px;
+                    font-size: 45px;
                     color: #B8860B;
                     opacity: 0.3;
                 }
@@ -324,13 +342,16 @@ function generateCumulativeCertificate() {
             </div>
             
             <div class="certificate-container">
-                <div class="certificate-border"></div>
-                
-                <!-- Date (top left) -->
-                <div class="cert-date">Date Issued: ${currentDate}</div>
-                
-                <!-- UAV Icon (top right) -->
-                <div class="uav-icon">✈</div>
+                <div class="certificate-border">
+                    <!-- Date (top left, inside border) -->
+                    <div class="cert-date">Date Issued: ${currentDate}</div>
+                    
+                    <!-- UAV Icon (top right, inside border) -->
+                    <div class="uav-icon">✈</div>
+                    
+                    <!-- Decorative top design -->
+                    <div class="decorative-top"></div>
+                </div>
                 
                 <div class="certificate-content">
                     <div>
@@ -344,10 +365,6 @@ function generateCumulativeCertificate() {
                         <h3 class="course-title">UNMANNED AERIAL SYSTEM CYBER INFRASTRUCTURE</h3>
                         
                         ${modulesGridHTML}
-                        
-                        <p class="score-info">
-                            Average Score: ${averageScore}% • ${completedModules.length} of 4 Modules Completed
-                        </p>
                     </div>
                     
                     <div class="signatures-container">
@@ -377,7 +394,7 @@ function generateCumulativeCertificate() {
                     </div>
                 </div>
                 
-                <!-- NSF Logo (bottom left) -->
+                <!-- NSF Logo (bottom right) -->
                 <div class="nsf-logo">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="50" r="45" fill="#003f87" stroke="#003f87" stroke-width="2"/>
