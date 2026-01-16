@@ -419,13 +419,15 @@ function generateCumulativeCertificate() {
                     </div>
                 </div>
                 
-                <!-- NSF LOGO (BOTTOM RIGHT) -->
+                <!-- NSF LOGO (BOTTOM RIGHT) - COMMENTED OUT FOR NOW -->
+                <!-- Uncomment this section when you want to display the NSF logo
                 <div class="nsf-logo">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="50" r="45" fill="#003f87" stroke="#003f87" stroke-width="2"/>
                         <text x="50" y="62" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="white" text-anchor="middle">NSF</text>
                     </svg>
                 </div>
+                -->
             </div>
         </body>
         </html>
