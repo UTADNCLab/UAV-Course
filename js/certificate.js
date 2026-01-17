@@ -12,6 +12,36 @@ function showThankYouBeforeCertificate() {
         return;
     }
 
+    // Get completed module count
+    const email = user.email ? user.email.toLowerCase() : 'guest';
+    const quizKey = `uav_course_quiz_scores_${email}`;
+    const quizScores = JSON.parse(localStorage.getItem(quizKey) || '{}');
+    const progressKey = `uav_course_progress_${email}`;
+    const completed = JSON.parse(localStorage.getItem(progressKey) || '[]');
+    
+    // Count eligible modules (both video AND quiz with 80%+)
+    const pairs = [
+        { videoIndex: 0, quizId: 'quiz-1' },
+        { videoIndex: 2, quizId: 'quiz-2' },
+        { videoIndex: 4, quizId: 'quiz-3' },
+        { videoIndex: 6, quizId: 'quiz-4' }
+    ];
+    
+    let completedCount = 0;
+    pairs.forEach(pair => {
+        const videoDone = completed.includes(pair.videoIndex);
+        const quiz = quizScores[pair.quizId];
+        const quizOk = quiz && quiz.percentage >= 80;
+        if (videoDone && quizOk) {
+            completedCount++;
+        }
+    });
+    
+    const totalModules = 4;
+    const moduleText = completedCount === totalModules 
+        ? 'all modules' 
+        : `${completedCount}/${totalModules} modules`;
+
     // Create thank you modal
     const thankYouModal = document.createElement('div');
     thankYouModal.style.cssText = `
@@ -42,7 +72,7 @@ function showThankYouBeforeCertificate() {
                 Congratulations!
             </h2>
             <p style="color: #e3f2fd; font-size: 18px; line-height: 1.6; margin-bottom: 30px;">
-                Thank you for completing the course modules! Your dedication to learning UAV technology is commendable. 
+                Thank you for completing ${moduleText}! Your dedication to learning UAV technology is commendable. 
                 Your certificate is ready to view and download.
             </p>
             <button onclick="proceedToCertificate()" style="
