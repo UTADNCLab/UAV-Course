@@ -57,12 +57,12 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - LEFT-ALIGNED with LARGER font and MORE spacing
+    // Create modules list - 2 COLUMNS with LARGER font
     const modulesGridHTML = `
-        <div style="margin: 40px auto 0; max-width: 750px; text-align: left;">
+        <div style="margin: 45px auto 0; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px 50px; text-align: left;">
             ${completedModules.map(m => `
-                <div style="margin: 18px 0; padding-left: 0;">
-                    <span style="font-size: 20px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+                <div style="padding-left: 0;">
+                    <span style="font-size: 22px; color: #333; font-weight: 500;">✓ ${m.name}</span>
                 </div>
             `).join('')}
         </div>
