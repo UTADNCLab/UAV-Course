@@ -57,12 +57,12 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - LEFT-ALIGNED with checkmarks lined up
+    // Create modules list - LEFT-ALIGNED with LARGER font and MORE spacing
     const modulesGridHTML = `
-        <div style="margin: 35px auto 0; max-width: 700px; text-align: left;">
+        <div style="margin: 40px auto 0; max-width: 750px; text-align: left;">
             ${completedModules.map(m => `
-                <div style="margin: 12px 0; padding-left: 0;">
-                    <span style="font-size: 18px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+                <div style="margin: 18px 0; padding-left: 0;">
+                    <span style="font-size: 20px; color: #333; font-weight: 500;">✓ ${m.name}</span>
                 </div>
             `).join('')}
         </div>
@@ -179,46 +179,46 @@ function generateCumulativeCertificate() {
                 
                 /* MAIN TITLE - LARGER */
                 .cert-title {
-                    font-size: 52px;
+                    font-size: 54px;
                     font-weight: bold;
                     color: #000;
-                    margin: 0 0 15px 0;
+                    margin: 0 0 18px 0;
                     letter-spacing: 5px;
                     line-height: 1.1;
                 }
                 
                 /* SUBTITLE - LARGER AND MOVED DOWN */
                 .cert-subtitle {
-                    font-size: 20px;
+                    font-size: 22px;
                     color: #444;
-                    margin-bottom: 20px;
+                    margin-bottom: 22px;
                     font-weight: normal;
                 }
                 
                 /* RECIPIENT NAME - MUCH LARGER */
                 .recipient-name {
-                    font-size: 52px;
+                    font-size: 56px;
                     font-weight: bold;
                     color: #4A7BA7;
-                    margin: 20px 0;
+                    margin: 22px 0;
                     text-transform: uppercase;
                     letter-spacing: 3px;
                 }
                 
                 /* COMPLETION TEXT - LARGER */
                 .cert-text {
-                    font-size: 18px;
+                    font-size: 20px;
                     color: #444;
-                    margin: 15px 0;
+                    margin: 18px 0;
                     font-weight: 500;
                 }
                 
                 /* COURSE TITLE - EVEN LARGER WITH BETTER FONT */
                 .course-title {
-                    font-size: 30px;
+                    font-size: 32px;
                     font-weight: bold;
                     color: #000;
-                    margin: 15px 0 20px 0;
+                    margin: 18px 0 25px 0;
                     line-height: 1.4;
                     letter-spacing: 2px;
                     font-family: 'Georgia', 'Times New Roman', serif;
@@ -226,7 +226,7 @@ function generateCumulativeCertificate() {
                 
                 /* MODULES SECTION - MORE SPACING */
                 .modules-section {
-                    margin: 30px 0 0 0;
+                    margin: 35px 0 0 0;
                 }
                 
                 /* SIGNATURES - 4 COLUMNS IN LANDSCAPE */
