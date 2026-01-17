@@ -413,8 +413,8 @@ function loadModule(index) {
         pauseCurrentVideo();
         
         // Generate and show certificate
-        if (typeof generateCumulativeCertificate === 'function') {
-            generateCumulativeCertificate();
+        if (typeof showThankYouBeforeCertificate === 'function') {
+            showThankYouBeforeCertificate();
         } else {
             showNotification('Certificate system loading...', 'info');
         }

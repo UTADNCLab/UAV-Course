@@ -3,6 +3,96 @@
 // ===================================
 
 // ===================================
+// SHOW THANK YOU MESSAGE BEFORE CERTIFICATE
+// ===================================
+function showThankYouBeforeCertificate() {
+    const user = window.authFunctions ? window.authFunctions.currentUser() : null;
+    if (!user) {
+        showNotification('Please login to generate certificate', 'error');
+        return;
+    }
+
+    // Create thank you modal
+    const thankYouModal = document.createElement('div');
+    thankYouModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    `;
+
+    thankYouModal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #0064A4 0%, #4A7BA7 100%);
+            padding: 50px 60px;
+            border-radius: 15px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: slideIn 0.4s ease-out;
+        ">
+            <div style="font-size: 60px; margin-bottom: 20px;">🎓</div>
+            <h2 style="color: white; font-size: 32px; margin-bottom: 20px; font-weight: bold;">
+                Congratulations!
+            </h2>
+            <p style="color: #e3f2fd; font-size: 18px; line-height: 1.6; margin-bottom: 30px;">
+                Thank you for completing the course modules! Your dedication to learning UAV technology is commendable. 
+                Your certificate is ready to view and download.
+            </p>
+            <button onclick="proceedToCertificate()" style="
+                background: white;
+                color: #0064A4;
+                border: none;
+                padding: 15px 40px;
+                font-size: 18px;
+                font-weight: bold;
+                border-radius: 8px;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)'" 
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)'">
+                View Certificate →
+            </button>
+        </div>
+        <style>
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    `;
+
+    document.body.appendChild(thankYouModal);
+}
+
+// ===================================
+// PROCEED TO CERTIFICATE (AFTER THANK YOU)
+// ===================================
+function proceedToCertificate() {
+    // Remove thank you modal
+    const modal = document.querySelector('div[style*="position: fixed"]');
+    if (modal) {
+        modal.remove();
+    }
+    
+    // Now generate the actual certificate
+    generateCumulativeCertificate();
+}
+
+// ===================================
 // GENERATE CUMULATIVE CERTIFICATE
 // ===================================
 function generateCumulativeCertificate() {
