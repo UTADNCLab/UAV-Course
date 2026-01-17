@@ -57,11 +57,11 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - single column, one below the other with LARGER font
+    // Create modules list - LEFT-ALIGNED with checkmarks lined up
     const modulesGridHTML = `
-        <div style="margin: 30px auto 0; max-width: 800px;">
+        <div style="margin: 35px auto 0; max-width: 700px; text-align: left;">
             ${completedModules.map(m => `
-                <div style="text-align: center; margin: 10px 0;">
+                <div style="margin: 12px 0; padding-left: 0;">
                     <span style="font-size: 18px; color: #333; font-weight: 500;">✓ ${m.name}</span>
                 </div>
             `).join('')}
@@ -213,14 +213,14 @@ function generateCumulativeCertificate() {
                     font-weight: 500;
                 }
                 
-                /* COURSE TITLE - LARGER WITH BETTER FONT */
+                /* COURSE TITLE - EVEN LARGER WITH BETTER FONT */
                 .course-title {
-                    font-size: 26px;
+                    font-size: 30px;
                     font-weight: bold;
                     color: #000;
                     margin: 15px 0 20px 0;
                     line-height: 1.4;
-                    letter-spacing: 1.5px;
+                    letter-spacing: 2px;
                     font-family: 'Georgia', 'Times New Roman', serif;
                 }
                 
