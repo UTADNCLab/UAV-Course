@@ -150,10 +150,10 @@ function generateCumulativeCertificate() {
     
     // Module pairs: video index and quiz ID
     const pairs = [
-        { videoIndex: 0, quizId: 'quiz-1', name: 'Open Airborne Computing Platforms' },
-        { videoIndex: 2, quizId: 'quiz-2', name: 'UAV Communications and Networking' },
-        { videoIndex: 4, quizId: 'quiz-3', name: 'Networked Control and Co-Design' },
-        { videoIndex: 6, quizId: 'quiz-4', name: 'Airborne Computing and AI' }
+        { videoIndex: 0, quizId: 'quiz-1', name: 'Open Airborne Computing Platforms', moduleNumber: 1 },
+        { videoIndex: 2, quizId: 'quiz-2', name: 'UAV Communications and Networking', moduleNumber: 2 },
+        { videoIndex: 4, quizId: 'quiz-3', name: 'Networked Control and Co-Design', moduleNumber: 3 },
+        { videoIndex: 6, quizId: 'quiz-4', name: 'Airborne Computing and AI', moduleNumber: 4 }
     ];
     
     const completedModules = [];
@@ -167,7 +167,8 @@ function generateCumulativeCertificate() {
         if (videoDone && quizOk) {
             completedModules.push({
                 name: pair.name,
-                score: quiz.percentage
+                score: quiz.percentage,
+                moduleNumber: pair.moduleNumber
             });
         }
     });
@@ -177,12 +178,12 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - SINGLE COLUMN with NUMBERS
+    // Create modules list - SINGLE COLUMN with ACTUAL MODULE NUMBERS
     const modulesGridHTML = `
         <div style="margin: 35px auto 0; max-width: 750px; text-align: left;">
-            ${completedModules.map((m, index) => `
+            ${completedModules.map(m => `
                 <div style="padding: 8px 0;">
-                    <span style="font-size: 20px; color: #333; font-weight: 500;">${index + 1}. ${m.name}</span>
+                    <span style="font-size: 20px; color: #333; font-weight: 500;">${m.moduleNumber}. ${m.name}</span>
                 </div>
             `).join('')}
         </div>
