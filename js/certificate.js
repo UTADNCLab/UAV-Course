@@ -177,12 +177,12 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - 2 COLUMNS with LARGER font
+    // Create modules list - SINGLE COLUMN with NUMBERS
     const modulesGridHTML = `
-        <div style="margin: 45px auto 0; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px 50px; text-align: left;">
-            ${completedModules.map(m => `
-                <div style="padding-left: 0;">
-                    <span style="font-size: 22px; color: #333; font-weight: 500;">✓ ${m.name}</span>
+        <div style="margin: 35px auto 0; max-width: 750px; text-align: left;">
+            ${completedModules.map((m, index) => `
+                <div style="padding: 8px 0;">
+                    <span style="font-size: 20px; color: #333; font-weight: 500;">${index + 1}. ${m.name}</span>
                 </div>
             `).join('')}
         </div>
