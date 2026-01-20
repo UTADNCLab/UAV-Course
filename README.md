@@ -15,7 +15,6 @@ A professional, interactive online course platform with authentication, progress
 - Google Sheets backend for user data
 
 ### 🎥 Video Learning
-- YouTube/Vimeo video support
 - Auto-pause when switching modules
 - Progress tracking per video
 - Module descriptions and metadata
@@ -23,7 +22,7 @@ A professional, interactive online course platform with authentication, progress
 ### 📝 Interactive Quizzes
 - Multiple choice questions
 - Instant feedback with explanations
-- Pass/fail system (70% required)
+- Pass/fail system (80% required)
 - Score tracking and analytics
 
 ### 📊 Progress Tracking
@@ -35,13 +34,12 @@ A professional, interactive online course platform with authentication, progress
 ### 🏆 Certificate Generation
 - Automatic certificate upon completion
 - Personalized with student name
-- Professional design
-- Downloadable as image
+- Selective module certificate
+- Downloadable as pdf
 
 ### 📱 Responsive Design
 - Mobile-friendly interface
 - Works on all devices
-- Touch-optimized controls
 
 ## 🚀 Quick Start
 
@@ -132,22 +130,6 @@ All content is in `data/course-data.json`:
 }
 ```
 
-### Adding Videos
-
-**YouTube:**
-```json
-{
-  "videoUrl": "https://www.youtube.com/embed/VIDEO_ID"
-}
-```
-
-**Vimeo:**
-```json
-{
-  "videoUrl": "https://player.vimeo.com/video/VIDEO_ID"
-}
-```
-
 ### Adding Quiz Questions
 
 ```json
@@ -175,7 +157,6 @@ The course uses Google Sheets as a database:
 **Sheets:**
 - `Users` - User accounts
 - `Progress` - User progress data
-- `Professors` - Instructor information
 
 ### Web App URL
 
@@ -236,14 +217,6 @@ Changes go live automatically in 1-2 minutes.
 - ✅ HTTPS encryption (via GitHub Pages)
 - ✅ No passwords stored in frontend
 
-## 📱 Browser Compatibility
-
-Tested and working on:
-- ✅ Chrome 90+
-- ✅ Firefox 88+
-- ✅ Safari 14+
-- ✅ Edge 90+
-- ✅ Mobile browsers
 
 ## 🐛 Troubleshooting
 
@@ -251,40 +224,6 @@ Tested and working on:
 
 **Fixed!** Videos now auto-pause when switching to quizzes or other modules.
 
-### Login Issues
-
-1. Clear browser cache using `clear-cache.html`
-2. Try incognito/private mode
-3. Check browser console for errors
-
-### Progress Not Saving
-
-1. Check internet connection
-2. Verify backend URL is correct
-3. Check Google Sheets permissions
-
-### Registration Not Working
-
-1. Check if email is already registered
-2. Verify backend is accessible
-3. Check browser console for errors
-
-## 🆘 Support
-
-**For Issues:**
-1. Check browser console (F12) for errors
-2. Review `SYSTEM_RESET_GUIDE.md`
-3. Try clearing cache with `clear-cache.html`
-
-## 📊 Recent Updates
-
-### Latest Changes (2024)
-- ✅ Fixed video auto-pause when switching modules
-- ✅ Cleaned up 45+ unnecessary documentation files
-- ✅ Added admin password reset tool
-- ✅ Added cache clearing tool
-- ✅ Created comprehensive system reset guide
-- ✅ Improved repository organization
 
 ## 📄 Important Files
 
@@ -308,9 +247,7 @@ Potential improvements:
 - Course completion certificates via email
 - Multi-language support
 
-## 📝 License
-
-Educational use. All rights reserved.
+Educational use. 
 
 ## 🎓 Credits
 
