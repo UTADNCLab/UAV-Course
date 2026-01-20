@@ -178,12 +178,12 @@ function generateCumulativeCertificate() {
         return;
     }
     
-    // Create modules list - SINGLE COLUMN with ACTUAL MODULE NUMBERS
+    // Create modules list - SINGLE COLUMN with BULLET POINTS
     const modulesGridHTML = `
-        <div style="margin: 35px auto 0; max-width: 750px; text-align: left;">
+        <div style="margin: 35px auto 0; max-width: 750px; text-align: center;">
             ${completedModules.map(m => `
                 <div style="padding: 8px 0;">
-                    <span style="font-size: 20px; color: #333; font-weight: 500;">${m.moduleNumber}. ${m.name}</span>
+                    <span style="font-size: 20px; color: #333; font-weight: 500;">• ${m.name}</span>
                 </div>
             `).join('')}
         </div>
