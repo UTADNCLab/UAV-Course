@@ -179,13 +179,25 @@ function generateCumulativeCertificate() {
     }
     
     // Create modules list - SINGLE COLUMN with BULLET POINTS
+
+
     const modulesGridHTML = `
-        <div style="margin: 35px auto 0; max-width: 750px; display: flex; flex-direction: column; align-items: center;">
+        <div style="margin: 35px auto 0; max-width: 900px; text-align: center;">
+            <ul style="
+                display: inline-block;        /* keeps whole list centered */
+                text-align: left;             /* aligns bullets + text uniformly */
+                list-style-position: outside; /* classic bullet alignment */
+                padding-left: 28px;           /* controls bullet indent */
+                margin: 0;
+                font-size: 20px;
+                color: #333;
+                font-weight: 500;
+                line-height: 1.9;
+            ">
             ${completedModules.map(m => `
-                <div style="padding: 8px 0; text-align: center;">
-                    <span style="font-size: 20px; color: #333; font-weight: 500;">• ${m.name}</span>
-                </div>
+                <li style="margin: 4px 0;">${m.name}</li>
             `).join('')}
+            </ul>
         </div>
     `;
 
