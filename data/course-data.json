@@ -37,7 +37,7 @@
     {
       "id": 1,
       "title": "Module 1: Open Airborne Computing Platforms",
-      "description": "Learn how modern drones are designed as modular systems that combine control, communication, and onboard computing. This lecture covers UAV hardware basics from frames and motors to controllers and sensors and explains how open airborne platforms make it easier to test, upgrade, and integrate new technologies for real-world applications.",
+      "description": "Learn how modern UAVs are designed as modular systems that combine control, communication, and onboard computing. This lecture covers UAV hardware basics from frames and motors to controllers and sensors and explains how open airborne platforms make it easier to test, upgrade, and integrate new technologies for real-world applications.",
       "videoUrl": "https://drive.google.com/file/d/1GFbVMbXLZ5uQfOMlRtGs3zMcwfb8afSP/preview",
       "duration": "45 min",
       "type": "video"
@@ -347,7 +347,7 @@
     {
       "id": 7,
       "title": "Module 4: Power of Airborne Computing in UAV System",
-      "description": "Explore how drones act as flying computers. This lecture focuses on onboard AI processing, comparison of computing boards like Jetson and Intel, and virtualization tools such as Docker and KVM. You'll also learn how UAVs share workloads through distributed and federated computing, enabling smarter, faster, and more resilient swarm operations.",
+      "description": "Explore how UAVs act as flying computers. This lecture focuses on onboard AI processing, comparison of computing boards like Jetson and Intel, and virtualization tools such as Docker and KVM. You'll also learn how UAVs share workloads through distributed and federated computing, enabling smarter, faster, and more resilient swarm operations.",
       "videoUrl": "https://drive.google.com/file/d/1ab5twRVurxzilGWQU9Oi6MhqXq615a_Y/preview",
       "duration": "60 min",
       "type": "video"
